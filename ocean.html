@@ -282,6 +282,14 @@
 </div></div>
 
 <script>
+window.onerror = function(msg, src, line){
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#e0533f;'
+                  + 'color:#fff;font-size:13px;padding:8px 10px;line-height:1.5';
+  d.textContent = '화면을 그리지 못했어요: ' + msg + ' (' + line + '줄)';
+  document.body.appendChild(d);
+};
+
 /* ══════════════════════════════════════════════════════════
    1. 음원 설정  ── 여기에 오디오북 음원을 넣으세요
    src : mp3 주소나 파일 이름 (예: "audio/at-home-in-the-ocean.mp3")
@@ -364,6 +372,12 @@ const barFill=$('barFill'), countEl=$('count');
 
 const STORE = 'ocean-progress-v1';
 let idx = 0, cursor = 0, misses = 0, touched = false;
+
+/* 앱 안의 미리보기 창처럼 저장이 막힌 곳에서도 멈추지 않도록 감싸둡니다 */
+let memSave = null;
+function saveIdx(i){ try{ localStorage.setItem(STORE, String(i)); }catch(e){ memSave = String(i); } }
+function loadIdx(){ try{ return localStorage.getItem(STORE); }catch(e){ return memSave; } }
+function clearIdx(){ try{ localStorage.removeItem(STORE); }catch(e){ memSave = null; } }
 
 /* ── 물결 모양 사진틀 (책 그림처럼) ── */
 function scallop(w,h,r){
@@ -460,7 +474,7 @@ function renderCard(){
 
   countEl.textContent = (idx+1) + ' / ' + CARDS.length;
   barFill.style.width = (idx / CARDS.length * 100) + '%';
-  localStorage.setItem(STORE, String(idx));
+  saveIdx(idx);
 }
 
 function markNow(){
@@ -512,7 +526,8 @@ tilesEl.addEventListener('click', e => {
     misses++;
     if(misses >= 3){
       const want = c.words[cursor];
-      const h = [...tilesEl.querySelectorAll('.tile:not(.used)')].find(x => x.dataset.w === want);
+      const h = Array.prototype.slice.call(tilesEl.querySelectorAll('.tile:not(.used)'))
+                    .filter(function(x){ return x.dataset.w === want; })[0];
       if(h) h.classList.add('hint');
     }
   }
@@ -522,7 +537,7 @@ btnListen.addEventListener('click', () => { touched = true; playSentence(); });
 
 btnNext.addEventListener('click', () => {
   if(idx === CARDS.length-1){
-    localStorage.removeItem(STORE);
+    clearIdx();
     $('ovEnd').classList.add('on');
     return;
   }
@@ -537,7 +552,7 @@ $('btnAgain').addEventListener('click', () => {
   idx = 0; renderCard();
 });
 $('btnRestart').addEventListener('click', () => {
-  localStorage.removeItem(STORE);
+  clearIdx();
   idx = 0; renderCard();
 });
 $('btnHelp').addEventListener('click', () => $('ovHelp').classList.add('on'));
@@ -545,7 +560,7 @@ $('btnHelpClose').addEventListener('click', () => $('ovHelp').classList.remove('
 $('ovHelp').addEventListener('click', function(e){ if(e.target === this) this.classList.remove('on'); });
 
 /* 하던 곳에서 이어서 */
-const saved = parseInt(localStorage.getItem(STORE) || '0', 10);
+const saved = parseInt(loadIdx() || '0', 10) || 0;
 if(saved > 0 && saved < CARDS.length) idx = saved;
 renderCard();
 </script>
