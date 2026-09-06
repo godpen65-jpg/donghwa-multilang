@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>바다 영어 채우기 · At Home in the Ocean</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdf6e8; --ink:#4a3a2a; --line:#e6d9bd;
+    --tile-top:#ffbe5c; --tile-bot:#f79c1a; --tile-edge:#d97f12;
+    --blue:#1a6fc4; --green:#2e9e5b; --red:#e0533f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; padding:12px;
+    font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,#9fe3f7 0%,#46a2d6 55%,#1f6ea8 100%);
+    min-height:100vh;
+  }
+
+  /* 상단 바 */
+  .topbar{max-width:1020px;margin:0 auto 10px;display:flex;align-items:center;gap:10px;}
+  .icon-btn{
+    background:rgba(255,255,255,.9);border:none;border-radius:14px;
+    width:42px;height:42px;font-size:20px;cursor:pointer;color:#2a6a95;
+    box-shadow:0 3px 0 rgba(0,0,0,.15);text-decoration:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.15);}
+  .dots{flex:1;display:flex;gap:8px;justify-content:center;}
+  .dots span{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.45);}
+  .dots span.on{background:#fff;transform:scale(1.25);}
+
+  /* 책 */
+  .book{
+    max-width:1020px;margin:0 auto;display:flex;position:relative;
+    background:#e8a24a;
+    border-radius:24px;padding:12px;box-shadow:0 18px 40px rgba(0,0,0,.3);
+  }
+  .page{flex:1;background:var(--paper);padding:18px 16px 22px;min-height:430px;}
+  .page-left{border-radius:18px 0 0 18px;border-right:2px dashed var(--line);}
+  .page-right{border-radius:0 18px 18px 0;}
+
+  .ribbon{
+    background:#f2683c;color:#fff;border-radius:10px;
+    padding:8px 14px;font-size:19px;text-align:center;margin-bottom:6px;
+    box-shadow:0 3px 0 #c94a24;
+  }
+  .round-name{text-align:center;font-size:16px;color:#9c8b70;margin:8px 0 14px;}
+
+  /* 단어 타일 */
+  .tray{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-content:flex-start;}
+  .tile{
+    background:linear-gradient(var(--tile-top),var(--tile-bot));
+    color:#fff;border:none;border-radius:13px;
+    box-shadow:0 5px 0 var(--tile-edge);
+    padding:11px 20px;font-size:21px;font-family:inherit;
+    cursor:pointer;touch-action:none;user-select:none;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .tile.sel{transform:translateY(-5px) scale(1.07);box-shadow:0 9px 0 var(--tile-edge),0 0 0 4px #fff3d0;}
+  .tile.used{visibility:hidden;}
+  .tile.bad{animation:shake .4s;background:linear-gradient(#ff9a8b,#e0533f);box-shadow:0 5px 0 #b13a29;}
+  .tile.ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.08);margin:0;}
+
+  /* 문장 */
+  .line{display:flex;gap:8px;align-items:flex-start;padding:11px 2px;border-bottom:1px dashed var(--line);}
+  .line:last-child{border-bottom:none;}
+  .line .body{flex:1;}
+  .sent{
+    margin:0;font-size:20px;line-height:2;
+    font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  }
+  .blank{
+    display:inline-block;min-width:70px;padding:0 5px;margin:0 3px;text-align:center;
+    border-bottom:3px dotted #bcac8e;color:transparent;font-weight:700;line-height:1.25;
+    cursor:pointer;transition:color .15s;
+  }
+  .blank.done{border-bottom-color:var(--green);color:var(--blue);}
+  .blank.hot{background:#fff0c9;border-bottom-color:var(--tile-bot);}
+  .blank.bad{animation:shake .4s;border-bottom-color:var(--red);}
+  .blank.pop{animation:pop .35s;}
+  .ko{display:none;margin:2px 0 0;font-size:15px;color:#a08f74;}
+  .ko.show{display:block;}
+  .spk{
+    background:#e8f3fb;border:none;border-radius:50%;width:34px;height:34px;
+    font-size:16px;cursor:pointer;flex:none;margin-top:6px;color:#2a6a95;
+  }
+  .spk:active{transform:scale(.92);}
+
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.28)}100%{transform:scale(1)}}
+
+  /* 완료 화면 */
+  .ov{position:fixed;inset:0;z-index:500;background:rgba(20,50,75,.6);display:none;
+      align-items:center;justify-content:center;padding:18px;}
+  .ov.on{display:flex;}
+  .ov-box{background:#fff;border-radius:26px;padding:28px 24px;max-width:400px;width:100%;text-align:center;
+          box-shadow:0 20px 50px rgba(0,0,0,.3);}
+  .ov-box h2{font-size:26px;margin:0 0 8px;color:#f2683c;}
+  .ov-box p{font-size:17px;color:#7d6f5c;margin:0 0 18px;line-height:1.6;}
+  .big-btn{
+    background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;border:none;
+    border-radius:15px;padding:13px 26px;font-size:20px;font-family:inherit;
+    box-shadow:0 5px 0 var(--tile-edge);cursor:pointer;margin:4px;
+  }
+  .big-btn.ghost-btn{background:#eee6d6;color:#7d6f5c;box-shadow:0 5px 0 #cfc3ae;}
+
+  /* 도움말 */
+  .help-box{text-align:left;}
+  .help-box h2{text-align:center;}
+  .help-box ul{padding-left:20px;margin:8px 0;}
+  .help-box li{font-size:17px;line-height:1.7;color:#5d5040;margin-bottom:4px;}
+
+  /* 작은 화면 */
+  @media (max-width:800px){
+    body{padding:8px;}
+    .book{flex-direction:column;padding:8px;}
+    .page{min-height:0;padding:14px 12px;}
+    .page-left{order:2;border-radius:0 0 16px 16px;border-right:none;border-top:2px dashed var(--line);
+               position:sticky;bottom:0;z-index:20;box-shadow:0 -6px 14px rgba(0,0,0,.08);}
+    .page-right{order:1;border-radius:16px 16px 0 0;}
+    .sent{font-size:18px;line-height:1.95;}
+    .tile{font-size:19px;padding:10px 16px;}
+    .ribbon{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="icon-btn" href="index.html" title="동화 모음으로">←</a>
+  <div class="dots" id="dots"></div>
+  <button class="icon-btn" id="btnReset" type="button" title="이 판 다시하기">↻</button>
+  <button class="icon-btn" id="btnHelp" type="button" title="사용법">?</button>
+</div>
+
+<div class="book">
+  <div class="page page-left">
+    <div class="ribbon">At Home in the Ocean</div>
+    <div class="round-name" id="roundName"></div>
+    <div class="tray" id="tray"></div>
+  </div>
+  <div class="page page-right">
+    <div id="lines"></div>
+  </div>
+</div>
+
+<div class="ov" id="ovWin"><div class="ov-box">
+  <h2 id="winTitle">잘했어요!</h2>
+  <p id="winText"></p>
+  <button class="big-btn" id="btnNext" type="button">다음</button>
+</div></div>
+
+<div class="ov" id="ovHelp"><div class="ov-box help-box">
+  <h2>🌊 어떻게 하나요?</h2>
+  <ul>
+    <li>오른쪽 문장에 <b>빈칸</b>이 있어요.</li>
+    <li>단어를 <b>눌렀다가 빈칸을 누르면</b> 들어가요. 끌어다 놓아도 돼요.</li>
+    <li>맞으면 파란 글씨로 남고, 틀리면 <b>한국어 뜻</b>이 살짝 보여요.</li>
+    <li>🔊 를 누르면 문장을 <b>영어로 읽어줘요</b>.</li>
+    <li>↻ 는 지금 판을 처음부터 다시 해요.</li>
+  </ul>
+  <p style="font-size:15px;color:#a08f74;margin-top:14px;">
+    책 『At Home in the Ocean』 (Rozanne Lanczak Williams) 16~28쪽 문장으로 만들었어요.</p>
+  <button class="big-btn ghost-btn" id="btnHelpClose" type="button">닫기</button>
+</div></div>
+
+<script>
+/* ── 여기만 고치면 다른 책으로 바꿀 수 있어요 ──
+   {단어} 로 감싼 부분이 빈칸이 됩니다. */
+const ROUNDS = [
+  {
+    name: "1판 · 크고 파란 바다",
+    lines: [
+      { en: "The ocean is big! It is big and {blue} as {far} as you can see.",
+        ko: "바다는 커요! 눈에 보이는 데까지 크고 파래요." },
+      { en: "It is {home} to many plants and animals.",
+        ko: "바다는 많은 식물과 동물의 집이에요." },
+      { en: "The biggest animals in the ocean are blue {whales}.",
+        ko: "바다에서 가장 큰 동물은 흰긴수염고래예요." },
+      { en: "They eat {little} animals called krill.",
+        ko: "크릴이라는 작은 동물을 먹어요." }
+    ]
+  },
+  {
+    name: "2판 · 차가운 물, 따뜻한 물",
+    lines: [
+      { en: "Many animals {live} in {cold} water. Brrr!",
+        ko: "많은 동물이 차가운 물에 살아요. 으으, 추워!" },
+      { en: "Penguins swim fast! They flap {their} wings in the water.",
+        ko: "펭귄은 빠르게 헤엄쳐요! 물속에서 날개를 파닥여요." },
+      { en: "Manatees live {where} the water is {warm}.",
+        ko: "매너티는 물이 따뜻한 곳에 살아요." },
+      { en: "This turtle digs in the sand and {lays} its eggs.",
+        ko: "이 거북은 모래를 파고 알을 낳아요." }
+    ]
+  },
+  {
+    name: "3판 · 바다는 우리 집",
+    lines: [
+      { en: "Kelp is the biggest {plant} in the ocean.",
+        ko: "켈프는 바다에서 가장 큰 식물이에요." },
+      { en: "Kelp can {grow} two feet in a day!",
+        ko: "켈프는 하루에 60센티미터나 자랄 수 있어요!" },
+      { en: "Sea otters can get {lots} of food here.",
+        ko: "해달은 여기서 먹이를 많이 얻어요." },
+      { en: "Lots of plants and animals, big and {little}, live in the ocean.",
+        ko: "크고 작은 많은 식물과 동물이 바다에 살아요." },
+      { en: "The ocean is {their} home.",
+        ko: "바다가 그들의 집이에요." }
+    ]
+  }
+];
+
+const trayEl  = document.getElementById('tray');
+const linesEl = document.getElementById('lines');
+const dotsEl  = document.getElementById('dots');
+const nameEl  = document.getElementById('roundName');
+
+let roundIdx = 0;
+let selected = null;
+let hotBlank = null;
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function renderDots(){
+  dotsEl.innerHTML = '';
+  ROUNDS.forEach((_,i)=>{
+    const s = document.createElement('span');
+    if(i===roundIdx) s.className = 'on';
+    dotsEl.appendChild(s);
+  });
+}
+
+function renderRound(){
+  const round = ROUNDS[roundIdx];
+  nameEl.textContent = round.name;
+  linesEl.innerHTML = '';
+  trayEl.innerHTML = '';
+  selected = null;
+  const words = [];
+
+  round.lines.forEach((line, li) => {
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.dataset.li = li;
+
+    const spk = document.createElement('button');
+    spk.type = 'button';
+    spk.className = 'spk';
+    spk.textContent = '🔊';
+    spk.dataset.text = line.en.replace(/[{}]/g,'');
+    row.appendChild(spk);
+
+    const body = document.createElement('div');
+    body.className = 'body';
+
+    const p = document.createElement('p');
+    p.className = 'sent';
+    line.en.split(/\{([^}]+)\}/).forEach((part, i) => {
+      if(i % 2 === 0){
+        p.appendChild(document.createTextNode(part));
+      } else {
+        const b = document.createElement('span');
+        b.className = 'blank';
+        b.dataset.answer = part;
+        b.dataset.li = li;
+        b.textContent = part;   /* 글자는 투명, 칸 너비만 잡아줘요 */
+        p.appendChild(b);
+        words.push(part);
+      }
+    });
+    body.appendChild(p);
+
+    const ko = document.createElement('p');
+    ko.className = 'ko';
+    ko.textContent = line.ko;
+    body.appendChild(ko);
+
+    row.appendChild(body);
+    linesEl.appendChild(row);
+  });
+
+  shuffle(words).forEach(w => {
+    const t = document.createElement('button');
+    t.type = 'button';
+    t.className = 'tile';
+    t.dataset.word = w;
+    t.textContent = w;
+    trayEl.appendChild(t);
+  });
+
+  renderDots();
+}
+
+function clearSel(){
+  if(selected) selected.classList.remove('sel');
+  selected = null;
+}
+
+function setHot(b){
+  if(hotBlank === b) return;
+  if(hotBlank) hotBlank.classList.remove('hot');
+  hotBlank = (b && b.dataset.done !== '1') ? b : null;
+  if(hotBlank) hotBlank.classList.add('hot');
+}
+
+function tryPlace(tile, blank){
+  if(!tile || !blank || blank.dataset.done === '1') return;
+
+  if(tile.dataset.word.toLowerCase() === blank.dataset.answer.toLowerCase()){
+    blank.dataset.done = '1';
+    blank.classList.add('done','pop');
+    setTimeout(()=>blank.classList.remove('pop'), 360);
+    tile.classList.add('used');
+    clearSel();
+    checkRoundDone();
+  } else {
+    blank.classList.add('bad');
+    tile.classList.add('bad');
+    setTimeout(()=>{ blank.classList.remove('bad'); tile.classList.remove('bad'); }, 450);
+    const ko = linesEl.querySelector('.line[data-li="'+blank.dataset.li+'"] .ko');
+    if(ko) ko.classList.add('show');
+    clearSel();
+  }
+}
+
+function checkRoundDone(){
+  const left = linesEl.querySelectorAll('.blank:not(.done)').length;
+  if(left > 0) return;
+  const last = (roundIdx === ROUNDS.length - 1);
+  document.getElementById('winTitle').textContent = last ? '🎉 다 끝냈어요!' : '👏 잘했어요!';
+  document.getElementById('winText').textContent = last
+    ? '바다에 사는 친구들 이야기를 모두 채웠어요.'
+    : '다음 판으로 가볼까요?';
+  document.getElementById('btnNext').textContent = last ? '처음부터' : '다음';
+  setTimeout(()=>document.getElementById('ovWin').classList.add('on'), 450);
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+
+/* 끌어놓기 (마우스·손가락 모두) */
+let drag = null;
+
+trayEl.addEventListener('pointerdown', e => {
+  const t = e.target.closest('.tile');
+  if(!t || t.classList.contains('used')) return;
+  drag = { tile:t, x0:e.clientX, y0:e.clientY, moved:false, ghost:null };
+});
+
+document.addEventListener('pointermove', e => {
+  if(!drag) return;
+  const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+  if(!drag.moved && Math.hypot(dx,dy) > 8){
+    drag.moved = true;
+    clearSel();
+    const g = drag.tile.cloneNode(true);
+    g.classList.add('ghost');
+    document.body.appendChild(g);
+    drag.ghost = g;
+    drag.tile.style.opacity = '.25';
+  }
+  if(drag.moved){
+    e.preventDefault();
+    drag.ghost.style.left = e.clientX + 'px';
+    drag.ghost.style.top  = e.clientY + 'px';
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    setHot(el && el.closest ? el.closest('.blank') : null);
+  }
+}, { passive:false });
+
+document.addEventListener('pointerup', e => {
+  if(!drag) return;
+  if(drag.moved){
+    drag.ghost.remove();
+    drag.tile.style.opacity = '';
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const b = el && el.closest ? el.closest('.blank') : null;
+    setHot(null);
+    if(b) tryPlace(drag.tile, b);
+  } else {
+    if(selected === drag.tile){
+      clearSel();
+    } else {
+      clearSel();
+      selected = drag.tile;
+      drag.tile.classList.add('sel');
+    }
+  }
+  drag = null;
+});
+
+document.addEventListener('pointercancel', () => {
+  if(drag && drag.ghost){ drag.ghost.remove(); drag.tile.style.opacity=''; }
+  setHot(null);
+  drag = null;
+});
+
+/* 눌러서 넣기 */
+linesEl.addEventListener('click', e => {
+  const spk = e.target.closest('.spk');
+  if(spk){ speak(spk.dataset.text); return; }
+  const b = e.target.closest('.blank');
+  if(b && selected) tryPlace(selected, b);
+});
+
+/* 버튼들 */
+document.getElementById('btnReset').addEventListener('click', renderRound);
+
+document.getElementById('btnNext').addEventListener('click', () => {
+  document.getElementById('ovWin').classList.remove('on');
+  roundIdx = (roundIdx + 1) % ROUNDS.length;
+  renderRound();
+  window.scrollTo(0,0);
+});
+
+document.getElementById('btnHelp').addEventListener('click', () =>
+  document.getElementById('ovHelp').classList.add('on'));
+document.getElementById('btnHelpClose').addEventListener('click', () =>
+  document.getElementById('ovHelp').classList.remove('on'));
+document.getElementById('ovHelp').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('on');
+});
+
+renderRound();
+</script>
+</body>
+</html>
