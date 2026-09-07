@@ -97,10 +97,19 @@
 
   /* 본문 */
   .txt{flex:1;}
-  .ln{padding:9px 2px;border-bottom:1px dashed #eadfc6;}
+  .ln{padding:9px 2px;border-bottom:1px dashed #eadfc6;
+      display:flex;gap:9px;align-items:flex-start;}
   .ln:last-child{border-bottom:none;}
+  .ln .body{flex:1;min-width:0;}
   .ln p{margin:0;font-size:20px;line-height:1.85;
         font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;}
+  .spk{
+    background:#e8f3fb;border:none;border-radius:50%;width:36px;height:36px;
+    font-size:15px;cursor:pointer;flex:none;margin-top:5px;color:#1f6491;
+    box-shadow:0 3px 0 #c3ddef;
+  }
+  .spk:active{transform:translateY(2px);box-shadow:0 1px 0 #c3ddef;}
+  .spk.on{background:#fff0c9;box-shadow:0 3px 0 var(--tile-bot);}
   .ln.now p{color:var(--blue);}
   .ln .kohint{display:none;margin:3px 0 0;font-size:14px;color:var(--muted);}
   .ln .kohint.show{display:block;}
@@ -234,13 +243,13 @@
     <div class="txt" id="txt"></div>
     <div class="tiles" id="tilesNarrow"></div>
     <div class="actions">
-      <button class="btn" id="btnListen" type="button">🔊 들어보기</button>
+      <button class="btn" id="btnListen" type="button">🔊 전체 듣기</button>
       <button class="btn go" id="btnNext" type="button" hidden>다음 ▶</button>
     </div>
   </div>
 </div>
 
-<div class="stamp">v3 · 빈칸 한 칸씩 눌러 채우기</div>
+<div class="stamp">v4 · 빈칸 채우기 + 문장별 듣기</div>
 
 <div class="ov" id="ovEnd"><div class="ov-box">
   <h2>🎉 다 읽었어요!</h2>
@@ -254,7 +263,8 @@
     <li>글을 읽다가 <b>빈칸</b>이 나오면, 아래 단어 중 <b>알맞은 것을 눌러요</b>.</li>
     <li>지금 채울 빈칸은 <b>파란 줄</b>로 깜빡여요.</li>
     <li>틀리면 단어가 흔들려요. 세 번 틀리면 <b>정답 단어</b>가 반짝여요.</li>
-    <li>🔊 를 누르면 그 쪽 글을 <b>영어로 들려줘요</b>.</li>
+    <li>문장 옆 <b>🔊</b> 를 누르면 <b>그 문장만</b> 들려줘요.</li>
+    <li>아래 <b>전체 듣기</b>를 누르면 그 쪽을 처음부터 들려줘요.</li>
     <li>다 채우면 <b>한국어 뜻</b>이 아래에 나와요.</li>
   </ul>
   <p class="note">
@@ -389,6 +399,22 @@ audioEl.addEventListener('timeupdate', function(){
 function pageText(){
   return PAGES[idx].lines.map(function(l){ return l.en.replace(/[{}]/g,''); }).join(' ');
 }
+function speak(text, t){
+  if(AUDIO.src && t){
+    try{
+      stopAt = t[1];
+      audioEl.currentTime = t[0];
+      audioEl.play();
+      return;
+    }catch(e){ /* 음원을 못 읽으면 읽어주기로 */ }
+  }
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=0.82;
+  speechSynthesis.speak(u);
+}
+
 function playPage(){
   const p = PAGES[idx];
   if(AUDIO.src){
@@ -426,6 +452,16 @@ function renderPage(){
     const row = document.createElement('div');
     row.className = 'ln'; row.dataset.li = li;
 
+    const spk = document.createElement('button');
+    spk.type = 'button'; spk.className = 'spk'; spk.textContent = '🔊';
+    spk.title = '이 문장 듣기';
+    spk.dataset.text = line.en.replace(/[{}]/g, '');
+    if(line.t) spk.dataset.t = line.t.join(',');
+    row.appendChild(spk);
+
+    const body = document.createElement('div');
+    body.className = 'body';
+
     const para = document.createElement('p');
     line.en.split(/\{([^}]+)\}/).forEach(function(part, i){
       if(i % 2 === 0){
@@ -440,13 +476,14 @@ function renderPage(){
         answers.push(part);
       }
     });
-    row.appendChild(para);
+    body.appendChild(para);
 
     const ko = document.createElement('p');
     ko.className = 'kohint';
     ko.textContent = line.ko;
-    row.appendChild(ko);
+    body.appendChild(ko);
 
+    row.appendChild(body);
     txtEl.appendChild(row);
   });
 
@@ -472,7 +509,7 @@ function markNow(){
   const rows = txtEl.querySelectorAll('.ln');
   for(let i=0;i<rows.length;i++) rows[i].classList.remove('now');
   const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
-  if(b){ b.classList.add('now'); b.parentNode.parentNode.classList.add('now'); }
+  if(b){ b.classList.add('now'); const row = b.closest('.ln'); if(row) row.classList.add('now'); }
 }
 
 function finishPage(){
@@ -523,6 +560,17 @@ function onTile(e){
 }
 tilesWide.addEventListener('click', onTile);
 tilesNarrow.addEventListener('click', onTile);
+
+txtEl.addEventListener('click', function(e){
+  const s = e.target.closest ? e.target.closest('.spk') : null;
+  if(!s) return;
+  touched = true;
+  const marks = txtEl.querySelectorAll('.spk.on');
+  for(let i=0;i<marks.length;i++) marks[i].classList.remove('on');
+  s.classList.add('on');
+  setTimeout(function(){ s.classList.remove('on'); }, 1400);
+  speak(s.dataset.text, s.dataset.t ? s.dataset.t.split(',').map(Number) : null);
+});
 
 $('btnListen').addEventListener('click', function(){ touched = true; playPage(); });
 
