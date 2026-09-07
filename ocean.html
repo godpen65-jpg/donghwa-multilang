@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>바다 영어 문장 만들기 · At Home in the Ocean</title>
+<title>바다 빈칸 채우기 · At Home in the Ocean</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -12,12 +12,11 @@
     --paper:#fdf7ea; --ink:#43382c; --muted:#a2937a;
     --tile-top:#ffc064; --tile-bot:#f79c1a; --tile-edge:#d17c10;
     --blue:#1560ad; --green:#2e9e5b; --red:#e0533f;
-    --frame:#bfe4fb;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
   body{
-    margin:0;padding:10px;min-height:100%;
+    margin:0;padding:10px;min-height:100%;background:#2f8ac2;
     font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
     color:var(--ink);overflow-x:hidden;
   }
@@ -30,11 +29,7 @@
     background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.85),rgba(255,255,255,.18) 60%,rgba(255,255,255,.05));
     animation:rise linear infinite;
   }
-  @keyframes rise{
-    0%{transform:translateY(0) translateX(0);opacity:0}
-    12%{opacity:.9}
-    100%{transform:translateY(-104vh) translateX(22px);opacity:0}
-  }
+  @keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.9}100%{transform:translateY(-104vh) translateX(22px);opacity:0}}
   .kelp{animation:sway 7s ease-in-out infinite;transform-origin:bottom center;}
   .kelp.b{animation-duration:9s;animation-delay:-2s;}
   .kelp.c{animation-duration:8s;animation-delay:-4s;}
@@ -46,9 +41,12 @@
   .swim{animation:swim 26s linear infinite;}
   .swim.b{animation-duration:34s;animation-delay:-9s}
   @keyframes swim{0%{transform:translateX(-160px)}100%{transform:translateX(1360px)}}
+  @media (prefers-reduced-motion:reduce){
+    .kelp,.ray,.swim,.bubbles i{animation:none;}
+  }
 
   /* ── 상단 바 ── */
-  .topbar{max-width:960px;margin:0 auto 10px;display:flex;align-items:center;gap:8px;}
+  .topbar{max-width:980px;margin:0 auto 10px;display:flex;align-items:center;gap:8px;}
   .icon-btn{
     background:rgba(255,255,255,.92);border:none;border-radius:14px;
     width:42px;height:42px;font-size:19px;cursor:pointer;color:#1f6491;
@@ -59,65 +57,37 @@
   .bar{flex:1;height:12px;border-radius:99px;background:rgba(255,255,255,.4);overflow:hidden;}
   .bar i{display:block;height:100%;width:0;border-radius:99px;
          background:linear-gradient(90deg,#ffd166,#f79c1a);transition:width .35s;}
-  .count{color:#fff;font-size:15px;min-width:56px;text-align:center;
-         text-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .count{color:#fff;font-size:15px;min-width:52px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.3);}
 
   /* ── 책 ── */
   .book{
-    max-width:960px;margin:0 auto;display:flex;gap:0;
+    max-width:980px;margin:0 auto;display:flex;
     background:#e8a24a;border-radius:24px;padding:11px;
     box-shadow:0 20px 44px rgba(0,20,40,.38);
   }
   .side{
-    width:37%;background:var(--paper);border-radius:18px 0 0 18px;
+    width:34%;background:var(--paper);border-radius:18px 0 0 18px;
     border-right:2px dashed #e7dcc3;padding:16px 12px;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
   }
-  .main{
-    flex:1;background:var(--paper);border-radius:0 18px 18px 0;
-    padding:18px 16px 20px;display:flex;flex-direction:column;
-  }
+  .main{flex:1;background:var(--paper);border-radius:0 18px 18px 0;padding:18px 16px;
+        display:flex;flex-direction:column;}
 
-  .art{position:relative;width:190px;height:190px;}
+  .art{position:relative;width:150px;height:150px;flex:none;}
   .art svg{position:absolute;inset:0;width:100%;height:100%;}
-  .art span{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font-size:88px;line-height:1;filter:drop-shadow(0 5px 6px rgba(0,0,0,.18));
-  }
-  .label{
-    background:#fff;color:var(--blue);border-radius:99px;
-    padding:6px 18px;font-size:17px;box-shadow:0 2px 6px rgba(0,0,0,.14);
-  }
+  .art span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+            font-size:68px;line-height:1;filter:drop-shadow(0 5px 6px rgba(0,0,0,.18));}
+  .label{background:#fff;color:var(--blue);border-radius:99px;padding:6px 16px;font-size:16px;
+         box-shadow:0 2px 6px rgba(0,0,0,.14);}
   .pagenum{color:var(--muted);font-size:14px;}
 
-  /* 문장 만드는 칸 */
-  .target{
-    background:#fffdf6;border:2px solid #eee0c4;border-radius:14px;
-    padding:16px 13px;min-height:92px;
-    font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;
-    font-size:21px;line-height:1.95;
-  }
-  .target .w{color:var(--blue);font-weight:700;margin:0 2px;}
-  .target .w.pre{color:#8b7c66;font-weight:400;}
-  .target .slot{
-    display:inline-block;min-width:54px;border-bottom:4px dotted #c0ad89;
-    margin:0 4px;vertical-align:2px;
-  }
-  .target .slot.now{border-bottom-color:var(--tile-bot);animation:blink 1.1s infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-  .target mark{background:#ffe94f;color:var(--blue);padding:0 2px;border-radius:3px;}
-  .target.ok{border-color:var(--green);background:#f4fbf6;}
-
-  .ko{margin:10px 2px 0;font-size:16px;color:var(--muted);min-height:22px;}
-
   /* 단어 타일 */
-  .tiles{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:14px;flex:1;align-content:flex-start;}
+  .tiles{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:6px;}
   .tile{
-    background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;
-    border:none;border-radius:13px;box-shadow:0 5px 0 var(--tile-edge);
-    padding:11px 18px;font-size:21px;font-family:inherit;cursor:pointer;
-    font-family:'Trebuchet MS',system-ui,sans-serif;font-weight:700;
-    transition:transform .1s,box-shadow .1s,opacity .2s;
+    background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;border:none;
+    border-radius:13px;box-shadow:0 5px 0 var(--tile-edge);padding:11px 20px;font-size:21px;
+    font-family:'Trebuchet MS',system-ui,sans-serif;font-weight:700;cursor:pointer;
+    transition:transform .1s,box-shadow .1s,opacity .25s;
   }
   .tile:active{transform:translateY(3px);box-shadow:0 2px 0 var(--tile-edge);}
   .tile.used{opacity:0;pointer-events:none;transform:scale(.6);}
@@ -125,21 +95,40 @@
   .tile.hint{box-shadow:0 5px 0 var(--tile-edge),0 0 0 4px #fff0a8;}
   @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 
-  /* 아래 버튼 줄 */
-  .actions{display:flex;gap:9px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
-  .btn{
-    border:none;border-radius:15px;padding:12px 22px;font-size:19px;
-    font-family:inherit;cursor:pointer;
-    background:#e9f4fc;color:#1f6491;box-shadow:0 4px 0 #c3ddef;
+  /* 본문 */
+  .txt{flex:1;}
+  .ln{padding:9px 2px;border-bottom:1px dashed #eadfc6;}
+  .ln:last-child{border-bottom:none;}
+  .ln p{margin:0;font-size:20px;line-height:1.85;
+        font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;}
+  .ln.now p{color:var(--blue);}
+  .ln .kohint{display:none;margin:3px 0 0;font-size:14px;color:var(--muted);}
+  .ln .kohint.show{display:block;}
+  .blank{
+    display:inline-block;min-width:56px;text-align:center;padding:0 5px;margin:0 3px;
+    border-bottom:3px solid #cbbb9c;color:transparent;font-weight:700;line-height:1.2;
   }
+  .blank.now{border-bottom-color:var(--blue);animation:blink 1.2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+  .blank.done{color:var(--blue);border-bottom-color:var(--green);}
+  .blank.done.key{background:#ffe94f;border-radius:4px;}
+  .blank.bad{animation:shake .4s;border-bottom-color:var(--red);}
+
+  /* 버튼 줄 */
+  .actions{display:flex;gap:9px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+  .btn{border:none;border-radius:15px;padding:12px 22px;font-size:19px;font-family:inherit;
+       cursor:pointer;background:#e9f4fc;color:#1f6491;box-shadow:0 4px 0 #c3ddef;}
   .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #c3ddef;}
   .btn.go{background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;box-shadow:0 4px 0 var(--tile-edge);}
   .btn.go:active{box-shadow:0 2px 0 var(--tile-edge);}
   .btn[hidden]{display:none;}
 
+  .stamp{max-width:980px;margin:10px auto 4px;text-align:center;font-size:13px;
+         color:#fff;opacity:.85;text-shadow:0 1px 3px rgba(0,0,0,.35);}
+
   /* 덮개 */
-  .ov{position:fixed;inset:0;z-index:500;background:rgba(8,45,75,.62);
-      display:none;align-items:center;justify-content:center;padding:18px;}
+  .ov{position:fixed;inset:0;z-index:500;background:rgba(8,45,75,.62);display:none;
+      align-items:center;justify-content:center;padding:18px;}
   .ov.on{display:flex;}
   .ov-box{background:#fff;border-radius:26px;padding:26px 22px;max-width:420px;width:100%;
           text-align:center;box-shadow:0 22px 50px rgba(0,0,0,.35);}
@@ -151,34 +140,30 @@
   .help li{font-size:16px;line-height:1.75;color:#5d5040;margin-bottom:4px;}
   .help .note{font-size:14px;color:#a2937a;margin-top:14px;}
 
-  .stamp{
-    max-width:960px;margin:10px auto 4px;text-align:center;
-    font-size:13px;color:#fff;opacity:.85;text-shadow:0 1px 3px rgba(0,0,0,.35);
-  }
-
   @media (max-width:820px){
     body{padding:8px;}
     .book{flex-direction:column;padding:8px;}
     .side{width:100%;border-radius:16px 16px 0 0;border-right:none;
-          border-bottom:2px dashed #e7dcc3;flex-direction:row;padding:12px;gap:14px;}
+          border-bottom:2px dashed #e7dcc3;flex-direction:row;padding:12px;gap:14px;
+          align-items:center;justify-content:flex-start;}
+    .side .who{display:flex;flex-direction:column;gap:5px;align-items:flex-start;}
+    .side .tiles{display:none;}
     .main{border-radius:0 0 16px 16px;padding:14px 12px 16px;}
-    .art{width:110px;height:110px;flex:none;}
-    .art span{font-size:52px;}
-    .side .meta{display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
-    .target{font-size:19px;line-height:1.9;}
-    .tile{font-size:19px;padding:10px 15px;}
+    .art{width:96px;height:96px;}
+    .art span{font-size:44px;}
+    .ln p{font-size:19px;line-height:1.85;}
+    .main .tiles{display:flex;}
+    .tile{font-size:19px;padding:10px 16px;}
   }
+  @media (min-width:821px){ .main .tiles{display:none;} }
 </style>
 </head>
 <body>
 
-<!-- 바다 배경 -->
 <svg class="sea" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"   stop-color="#8fe0f7"/>
-      <stop offset=".42" stop-color="#3ea3d8"/>
-      <stop offset="1"   stop-color="#0e4d80"/>
+      <stop offset="0" stop-color="#8fe0f7"/><stop offset=".42" stop-color="#3ea3d8"/><stop offset="1" stop-color="#0e4d80"/>
     </linearGradient>
     <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#e9d4a4"/><stop offset="1" stop-color="#c9ab74"/>
@@ -196,9 +181,7 @@
       <ellipse cx="46" cy="330" rx="14" ry="6"/><polygon points="32,330 20,324 20,336"/></g>
   </g>
   <path d="M0,720 C180,678 340,742 520,712 C700,682 880,742 1060,706 C1120,694 1170,700 1200,694 L1200,800 L0,800 Z" fill="url(#sand)"/>
-  <g fill="#7f6a4d" opacity=".55">
-    <ellipse cx="250" cy="742" rx="62" ry="26"/><ellipse cx="930" cy="756" rx="78" ry="30"/>
-  </g>
+  <g fill="#7f6a4d" opacity=".55"><ellipse cx="250" cy="742" rx="62" ry="26"/><ellipse cx="930" cy="756" rx="78" ry="30"/></g>
   <g stroke-linecap="round" fill="none">
     <g transform="translate(90,730)"><g class="kelp">
       <path d="M0,0 C-26,-88 30,-150 -4,-244 C-34,-326 26,-380 0,-470" stroke="#2f7f45" stroke-width="13"/>
@@ -233,7 +216,7 @@
 <div class="topbar">
   <a class="icon-btn" href="index.html" title="동화 모음으로">←</a>
   <div class="bar"><i id="barFill"></i></div>
-  <div class="count" id="count">1 / 1</div>
+  <div class="count" id="count">–</div>
   <button class="icon-btn" id="btnRestart" type="button" title="처음부터">↻</button>
   <button class="icon-btn" id="btnHelp" type="button" title="사용법">?</button>
 </div>
@@ -241,15 +224,15 @@
 <div class="book">
   <div class="side">
     <div class="art" id="art"></div>
-    <div class="meta" style="text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;">
+    <div class="who">
       <div class="label" id="label"></div>
       <div class="pagenum" id="pagenum"></div>
     </div>
+    <div class="tiles" id="tilesWide"></div>
   </div>
   <div class="main">
-    <div class="target" id="target"></div>
-    <p class="ko" id="ko"></p>
-    <div class="tiles" id="tiles"></div>
+    <div class="txt" id="txt"></div>
+    <div class="tiles" id="tilesNarrow"></div>
     <div class="actions">
       <button class="btn" id="btnListen" type="button">🔊 들어보기</button>
       <button class="btn go" id="btnNext" type="button" hidden>다음 ▶</button>
@@ -257,25 +240,25 @@
   </div>
 </div>
 
-<div class="stamp">v2 · 눌러서 문장 만들기 (끌어놓기 없음)</div>
+<div class="stamp">v3 · 빈칸 한 칸씩 눌러 채우기</div>
 
 <div class="ov" id="ovEnd"><div class="ov-box">
   <h2>🎉 다 읽었어요!</h2>
-  <p>바다에 사는 친구들 이야기를 문장으로 모두 만들었어요.</p>
+  <p>바다에 사는 친구들 이야기를 끝까지 채웠어요.</p>
   <button class="btn go" id="btnAgain" type="button">처음부터 다시</button>
 </div></div>
 
 <div class="ov" id="ovHelp"><div class="ov-box help">
   <h2>🌊 어떻게 하나요?</h2>
   <ul>
-    <li>아래 단어를 <b>순서대로 눌러</b> 문장을 만들어요.</li>
-    <li>맞으면 위 칸에 <b>한 단어씩 채워져요</b>.</li>
-    <li>틀리면 단어가 흔들려요. 세 번 틀리면 <b>다음에 누를 단어</b>가 반짝여요.</li>
-    <li>🔊 를 누르면 문장을 <b>영어로 들려줘요</b>.</li>
-    <li>문장을 완성하면 한국어 뜻과 <b>노란색 중요 단어</b>가 보여요.</li>
+    <li>글을 읽다가 <b>빈칸</b>이 나오면, 아래 단어 중 <b>알맞은 것을 눌러요</b>.</li>
+    <li>지금 채울 빈칸은 <b>파란 줄</b>로 깜빡여요.</li>
+    <li>틀리면 단어가 흔들려요. 세 번 틀리면 <b>정답 단어</b>가 반짝여요.</li>
+    <li>🔊 를 누르면 그 쪽 글을 <b>영어로 들려줘요</b>.</li>
+    <li>다 채우면 <b>한국어 뜻</b>이 아래에 나와요.</li>
   </ul>
   <p class="note">
-    책 『At Home in the Ocean』 (Rozanne Lanczak Williams) 16~28쪽 문장이에요.<br>
+    책 『At Home in the Ocean』 (Rozanne Lanczak Williams) 16~28쪽이에요.<br>
     음원 파일을 넣으면 사람 목소리로 들려주고, 없으면 브라우저 읽어주기로 들려줘요.
   </p>
   <button class="btn" id="btnHelpClose" type="button">닫기</button>
@@ -291,95 +274,79 @@ window.onerror = function(msg, src, line){
 };
 
 /* ══════════════════════════════════════════════════════════
-   1. 음원 설정  ── 여기에 오디오북 음원을 넣으세요
-   src : mp3 주소나 파일 이름 (예: "audio/at-home-in-the-ocean.mp3")
-         비워두면 브라우저 읽어주기로 대신합니다.
-   각 문장의 t:[시작초, 끝초] 구간만 재생됩니다.
+   1. 음원 설정 ── 여기에 오디오북 음원을 넣으세요
+      src 를 비워두면 브라우저 읽어주기로 대신합니다.
+      각 쪽의 t:[시작초, 끝초] 구간만 재생됩니다.
    ══════════════════════════════════════════════════════════ */
 const AUDIO = { src: "" };
 
 /* ══════════════════════════════════════════════════════════
-   2. 본문  ── 다른 책으로 바꾸려면 여기만 고치면 됩니다.
-   art  : 그림 자리에 넣을 그림문자
-   label: 책에 붙어 있던 파란 이름표
-   key  : 완성한 뒤 노란색으로 표시할 중요 단어
-   t    : 음원에서 이 문장의 [시작초, 끝초]
+   2. 본문 ── 다른 책으로 바꾸려면 여기만 고치면 됩니다.
+      {단어} 가 빈칸이 됩니다. 한 문장에 한 칸이면 알맞아요.
+      key : 책에 형광펜으로 칠해져 있던 단어
    ══════════════════════════════════════════════════════════ */
 const PAGES = [
-  { page:16, art:"🐬", label:"dolphins", sents:[
-    { en:"The ocean is big!", ko:"바다는 커요!" },
-    { en:"It is big and blue as far as you can see.", ko:"눈에 보이는 데까지 크고 파래요.", key:["blue","far"] }
+  { page:16, art:"🐬", label:"dolphins", key:["blue","far"], lines:[
+    { en:"The ocean is {big}!", ko:"바다는 커요!" },
+    { en:"It is big and {blue} as {far} as you can see.", ko:"눈에 보이는 데까지 크고 파래요." }
   ]},
-  { page:17, art:"🦈", label:"reef shark", sents:[
-    { en:"It is home to many plants and animals.", ko:"바다는 많은 식물과 동물의 집이에요.", key:["home"] }
+  { page:17, art:"🦈", label:"reef shark", key:["home"], lines:[
+    { en:"It is {home} to many plants and {animals}.", ko:"바다는 많은 식물과 동물의 집이에요." }
   ]},
-  { page:18, art:"🐋", label:"blue whale", sents:[
-    { en:"The biggest animals in the ocean are blue whales.", ko:"바다에서 가장 큰 동물은 흰긴수염고래예요." },
-    { en:"They eat little animals called krill.", ko:"크릴이라는 작은 동물을 먹어요.", key:["little"] }
+  { page:18, art:"🐋", label:"blue whale", key:["little"], lines:[
+    { en:"The {biggest} animals in the ocean are blue whales.", ko:"바다에서 가장 큰 동물은 흰긴수염고래예요." },
+    { en:"They eat {little} animals called {krill}.", ko:"크릴이라는 작은 동물을 먹어요." }
   ]},
-  { page:20, art:"🐚", label:"sea urchins", sents:[
-    { en:"Many animals live in cold water.", ko:"많은 동물이 차가운 물에 살아요.", key:["live","cold","water"] },
+  { page:20, art:"🐚", label:"sea urchins", key:["live","cold"], lines:[
+    { en:"Many animals {live} in {cold} water.", ko:"많은 동물이 차가운 물에 살아요." },
     { en:"Brrr!", ko:"으으, 추워!" }
   ]},
-  { page:21, art:"🐧", label:"penguins", sents:[
-    { en:"Penguins swim fast!", ko:"펭귄은 빠르게 헤엄쳐요!" },
-    { en:"They flap their wings to zip, zip, zip in the water.", ko:"날개를 파닥이며 물속을 쌩쌩 지나가요.", key:["their"] }
+  { page:21, art:"🐧", label:"penguins", key:["their"], lines:[
+    { en:"Penguins swim {fast}!", ko:"펭귄은 빠르게 헤엄쳐요!" },
+    { en:"They flap {their} wings to zip, zip, zip in the {water}.", ko:"날개를 파닥이며 물속을 쌩쌩 지나가요." }
   ]},
-  { page:22, art:"🦭", label:"manatee", sents:[
-    { en:"Manatees live where the water is warm.", ko:"매너티는 물이 따뜻한 곳에 살아요.", key:["where","warm"] },
-    { en:"They do not swim fast.", ko:"빠르게 헤엄치지 않아요." }
+  { page:22, art:"🦭", label:"manatee", key:["where","warm"], lines:[
+    { en:"Manatees live {where} the water is {warm}.", ko:"매너티는 물이 따뜻한 곳에 살아요." },
+    { en:"They do not swim {fast}.", ko:"빠르게 헤엄치지 않아요." }
   ]},
-  { page:23, art:"🦭", label:"manatees", sents:[
-    { en:"Manatees eat lots and lots of plants.", ko:"매너티는 식물을 아주 많이 먹어요.", key:["lots"] },
-    { en:"Then they rest.", ko:"그러고 나서 쉬어요." }
+  { page:23, art:"🦭", label:"manatees", key:["lots"], lines:[
+    { en:"Manatees eat {lots} and lots of {plants}.", ko:"매너티는 식물을 아주 많이 먹어요." },
+    { en:"Then they {rest}.", ko:"그러고 나서 쉬어요." }
   ]},
-  { page:24, art:"🐢", label:"turtle", sents:[
-    { en:"This turtle swims far!", ko:"이 거북은 멀리까지 헤엄쳐요!", key:["far"] },
-    { en:"It digs in the sand and lays its eggs.", ko:"모래를 파고 알을 낳아요.", key:["lays"] },
-    { en:"Then it swims back to its ocean home.", ko:"그러고 나서 바다 집으로 돌아가요.", key:["home"] }
+  { page:24, art:"🐢", label:"turtle", key:["lays"], lines:[
+    { en:"This turtle swims {far}!", ko:"이 거북은 멀리까지 헤엄쳐요!" },
+    { en:"It digs in the {sand} and {lays} its eggs.", ko:"모래를 파고 알을 낳아요." },
+    { en:"Then it swims back to its ocean {home}.", ko:"그러고 나서 바다 집으로 돌아가요." }
   ]},
-  { page:26, art:"🌿", label:"kelp", sents:[
-    { en:"Kelp is the biggest plant in the ocean.", ko:"켈프는 바다에서 가장 큰 식물이에요." },
-    { en:"It can grow fast.", ko:"빠르게 자랄 수 있어요.", key:["grow"] }
+  { page:26, art:"🌿", label:"kelp", key:["grow"], lines:[
+    { en:"Kelp is the {biggest} plant in the ocean.", ko:"켈프는 바다에서 가장 큰 식물이에요." },
+    { en:"It can {grow} fast.", ko:"빠르게 자랄 수 있어요." }
   ]},
-  { page:27, art:"🦦", label:"sea otter", sents:[
-    { en:"Kelp can grow two feet in a day!", ko:"켈프는 하루에 60센티미터나 자랄 수 있어요!", key:["grow"] },
-    { en:"Sea otters can get lots of food here.", ko:"해달은 여기서 먹이를 많이 얻어요.", key:["lots"] }
+  { page:27, art:"🦦", label:"sea otter", key:["lots"], lines:[
+    { en:"Kelp can grow two {feet} in a day!", ko:"켈프는 하루에 60센티미터나 자랄 수 있어요!" },
+    { en:"Sea otters can get {lots} of {food} here.", ko:"해달은 여기서 먹이를 많이 얻어요." }
   ]},
-  { page:28, art:"🐠", label:"coral reef", sents:[
-    { en:"Lots of plants and animals, big and little, live in the ocean.", ko:"크고 작은 많은 식물과 동물이 바다에 살아요.", key:["little","live"] },
-    { en:"The ocean is their home.", ko:"바다가 그들의 집이에요.", key:["their","home"] }
+  { page:28, art:"🐠", label:"coral reef", key:["little","their"], lines:[
+    { en:"Lots of plants and animals, big and {little}, live in the ocean.", ko:"크고 작은 많은 식물과 동물이 바다에 살아요." },
+    { en:"The ocean is {their} {home}.", ko:"바다가 그들의 집이에요." }
   ]}
 ];
 
-/* ── 문장 목록 만들기 ── */
-const CARDS = [];
-PAGES.forEach(p => p.sents.forEach(s => {
-  const words = s.en.split(/\s+/);
-  CARDS.push({
-    page:p.page, art:p.art, label:p.label,
-    en:s.en, ko:s.ko, key:s.key || [], t:s.t || null,
-    words: words,
-    pre: Math.max(0, words.length - 8)   /* 긴 문장은 앞부분을 미리 채워둬요 */
-  });
-}));
+const $ = function(id){ return document.getElementById(id); };
+const artEl=$('art'), labelEl=$('label'), pageEl=$('pagenum'), txtEl=$('txt');
+const tilesWide=$('tilesWide'), tilesNarrow=$('tilesNarrow');
+const btnNext=$('btnNext'), barFill=$('barFill'), countEl=$('count');
 
-const $ = id => document.getElementById(id);
-const artEl=$('art'), labelEl=$('label'), pageEl=$('pagenum');
-const targetEl=$('target'), koEl=$('ko'), tilesEl=$('tiles');
-const btnNext=$('btnNext'), btnListen=$('btnListen');
-const barFill=$('barFill'), countEl=$('count');
+const STORE = 'ocean-progress-v3';
+let idx = 0, cursor = 0, answers = [], misses = 0, touched = false;
 
-const STORE = 'ocean-progress-v1';
-let idx = 0, cursor = 0, misses = 0, touched = false;
-
-/* 앱 안의 미리보기 창처럼 저장이 막힌 곳에서도 멈추지 않도록 감싸둡니다 */
+/* 저장이 막힌 곳에서도 멈추지 않도록 */
 let memSave = null;
 function saveIdx(i){ try{ localStorage.setItem(STORE, String(i)); }catch(e){ memSave = String(i); } }
 function loadIdx(){ try{ return localStorage.getItem(STORE); }catch(e){ return memSave; } }
 function clearIdx(){ try{ localStorage.removeItem(STORE); }catch(e){ memSave = null; } }
 
-/* ── 물결 모양 사진틀 (책 그림처럼) ── */
+/* 책 그림처럼 물결 모양 사진틀 */
 function scallop(w,h,r){
   const nx = Math.max(2, Math.round(w/(2*r))), ny = Math.max(2, Math.round(h/(2*r)));
   const sx = w/nx, sy = h/ny;
@@ -391,7 +358,7 @@ function scallop(w,h,r){
   return d + ' Z';
 }
 function drawArt(emoji){
-  const w=150,h=150,r=15;
+  const w=124,h=124,r=13;
   artEl.innerHTML =
     '<svg viewBox="'+(-r-6)+' '+(-r-6)+' '+(w+2*r+12)+' '+(h+2*r+12)+'">' +
       '<path d="'+scallop(w,h,r)+'" fill="#dff1fd" stroke="#bfe4fb" stroke-width="7"/>' +
@@ -399,8 +366,7 @@ function drawArt(emoji){
     '</svg><span>'+emoji+'</span>';
 }
 
-/* ── 거품 ── */
-(function bubbles(){
+(function makeBubbles(){
   const box = $('bubbles');
   for(let i=0;i<16;i++){
     const b=document.createElement('i');
@@ -413,156 +379,169 @@ function drawArt(emoji){
   }
 })();
 
-/* ── 소리 ── */
+/* 소리 */
 const audioEl = new Audio();
 let stopAt = null;
 if(AUDIO.src) audioEl.src = AUDIO.src;
-audioEl.addEventListener('timeupdate', () => {
+audioEl.addEventListener('timeupdate', function(){
   if(stopAt !== null && audioEl.currentTime >= stopAt){ audioEl.pause(); stopAt = null; }
 });
-function playSentence(){
-  const c = CARDS[idx];
+function pageText(){
+  return PAGES[idx].lines.map(function(l){ return l.en.replace(/[{}]/g,''); }).join(' ');
+}
+function playPage(){
+  const p = PAGES[idx];
   if(AUDIO.src){
     try{
-      stopAt = c.t ? c.t[1] : null;
-      audioEl.currentTime = c.t ? c.t[0] : 0;
+      stopAt = p.t ? p.t[1] : null;
+      audioEl.currentTime = p.t ? p.t[0] : 0;
       audioEl.play();
       return;
-    }catch(e){ /* 음원을 못 읽으면 아래 읽어주기로 */ }
+    }catch(e){ /* 음원을 못 읽으면 읽어주기로 */ }
   }
   if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(c.en);
-  u.lang = 'en-US'; u.rate = 0.82;
+  const u = new SpeechSynthesisUtterance(pageText());
+  u.lang='en-US'; u.rate=0.82;
   speechSynthesis.speak(u);
 }
 
-/* ── 화면 그리기 ── */
 function norm(w){ return w.replace(/[^A-Za-z']/g,'').toLowerCase(); }
 function shuffle(a){
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; }
   return a;
 }
 
-function renderCard(){
-  const c = CARDS[idx];
-  cursor = c.pre; misses = 0;
+function renderPage(){
+  const p = PAGES[idx];
+  cursor = 0; misses = 0; answers = [];
 
-  drawArt(c.art);
-  labelEl.textContent = c.label;
-  pageEl.textContent = c.page + '쪽';
-  koEl.textContent = '';
-  targetEl.classList.remove('ok');
+  drawArt(p.art);
+  labelEl.textContent = p.label;
+  pageEl.textContent = p.page + '쪽';
   btnNext.hidden = true;
 
-  targetEl.innerHTML = '';
-  c.words.forEach((w,i) => {
-    const s = document.createElement('span');
-    if(i < c.pre){ s.className='w pre'; s.textContent = w; }
-    else { s.className='slot'; s.dataset.i = i; }
-    targetEl.appendChild(s);
-    targetEl.appendChild(document.createTextNode(' '));
+  txtEl.innerHTML = '';
+  p.lines.forEach(function(line, li){
+    const row = document.createElement('div');
+    row.className = 'ln'; row.dataset.li = li;
+
+    const para = document.createElement('p');
+    line.en.split(/\{([^}]+)\}/).forEach(function(part, i){
+      if(i % 2 === 0){
+        para.appendChild(document.createTextNode(part));
+      } else {
+        const b = document.createElement('span');
+        b.className = 'blank';
+        b.dataset.answer = part;
+        b.dataset.n = answers.length;
+        b.textContent = part;      /* 글자는 투명, 칸 너비만 잡아줘요 */
+        para.appendChild(b);
+        answers.push(part);
+      }
+    });
+    row.appendChild(para);
+
+    const ko = document.createElement('p');
+    ko.className = 'kohint';
+    ko.textContent = line.ko;
+    row.appendChild(ko);
+
+    txtEl.appendChild(row);
   });
+
+  const list = shuffle(answers.slice());
+  [tilesWide, tilesNarrow].forEach(function(box){
+    box.innerHTML = '';
+    list.forEach(function(w, i){
+      const b = document.createElement('button');
+      b.type='button'; b.className='tile'; b.dataset.w=w; b.dataset.i=i; b.textContent=w;
+      box.appendChild(b);
+    });
+  });
+
   markNow();
-
-  tilesEl.innerHTML = '';
-  shuffle(c.words.slice(c.pre).map((w,i)=>({w:w, i:i}))).forEach(o => {
-    const b = document.createElement('button');
-    b.type='button'; b.className='tile'; b.dataset.w = o.w; b.textContent = o.w;
-    tilesEl.appendChild(b);
-  });
-
-  countEl.textContent = (idx+1) + ' / ' + CARDS.length;
-  barFill.style.width = (idx / CARDS.length * 100) + '%';
+  countEl.textContent = (idx+1) + ' / ' + PAGES.length;
+  barFill.style.width = (idx / PAGES.length * 100) + '%';
   saveIdx(idx);
 }
 
 function markNow(){
-  targetEl.querySelectorAll('.slot').forEach(s => s.classList.remove('now'));
-  const s = targetEl.querySelector('.slot[data-i="'+cursor+'"]');
-  if(s) s.classList.add('now');
+  const all = txtEl.querySelectorAll('.blank');
+  for(let i=0;i<all.length;i++) all[i].classList.remove('now');
+  const rows = txtEl.querySelectorAll('.ln');
+  for(let i=0;i<rows.length;i++) rows[i].classList.remove('now');
+  const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
+  if(b){ b.classList.add('now'); b.parentNode.parentNode.classList.add('now'); }
 }
 
-function fillSlot(word){
-  const s = targetEl.querySelector('.slot[data-i="'+cursor+'"]');
-  if(!s) return;
-  const span = document.createElement('span');
-  span.className = 'w'; span.textContent = word;
-  s.replaceWith(span);
-  cursor++;
-  markNow();
-}
-
-function finishCard(){
-  const c = CARDS[idx];
-  targetEl.classList.add('ok');
-  targetEl.innerHTML = c.words.map(w =>
-    c.key.some(k => norm(k) === norm(w))
-      ? '<mark>'+w+'</mark>'
-      : '<span class="w">'+w+'</span>'
-  ).join(' ');
-  koEl.textContent = c.ko;
+function finishPage(){
+  const p = PAGES[idx];
+  const key = p.key || [];
+  const done = txtEl.querySelectorAll('.blank.done');
+  for(let i=0;i<done.length;i++){
+    if(key.some(function(k){ return norm(k) === norm(done[i].dataset.answer); })) done[i].classList.add('key');
+  }
+  const kos = txtEl.querySelectorAll('.kohint');
+  for(let i=0;i<kos.length;i++) kos[i].classList.add('show');
   btnNext.hidden = false;
-  btnNext.textContent = (idx === CARDS.length-1) ? '끝내기 🎉' : '다음 ▶';
-  barFill.style.width = ((idx+1) / CARDS.length * 100) + '%';
-  setTimeout(playSentence, 250);
+  btnNext.textContent = (idx === PAGES.length-1) ? '끝내기 🎉' : '다음 ▶';
+  barFill.style.width = ((idx+1) / PAGES.length * 100) + '%';
+  setTimeout(playPage, 250);
 }
 
-tilesEl.addEventListener('click', e => {
-  const t = e.target.closest('.tile');
+function onTile(e){
+  const t = e.target.closest ? e.target.closest('.tile') : null;
   if(!t || t.classList.contains('used')) return;
   touched = true;
-  const c = CARDS[idx];
 
-  if(t.dataset.w === c.words[cursor]){
-    t.classList.add('used');
-    fillSlot(t.dataset.w);
-    misses = 0;
-    tilesEl.querySelectorAll('.hint').forEach(x => x.classList.remove('hint'));
-    if(cursor >= c.words.length) finishCard();
+  if(t.dataset.w === answers[cursor]){
+    /* 양쪽(넓은 화면용·좁은 화면용) 같은 자리 타일을 함께 없앱니다 */
+    const same = document.querySelectorAll('.tile[data-i="'+t.dataset.i+'"]');
+    for(let i=0;i<same.length;i++) same[i].classList.add('used');
+
+    const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
+    b.classList.remove('now'); b.classList.add('done');
+    cursor++; misses = 0;
+    const hints = document.querySelectorAll('.tile.hint');
+    for(let i=0;i<hints.length;i++) hints[i].classList.remove('hint');
+
+    if(cursor >= answers.length){ markNow(); finishPage(); }
+    else markNow();
   } else {
     t.classList.add('bad');
-    setTimeout(()=>t.classList.remove('bad'), 450);
+    setTimeout(function(){ t.classList.remove('bad'); }, 450);
+    const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
+    if(b){ b.classList.add('bad'); setTimeout(function(){ b.classList.remove('bad'); }, 450); }
     misses++;
     if(misses >= 3){
-      const want = c.words[cursor];
-      const h = Array.prototype.slice.call(tilesEl.querySelectorAll('.tile:not(.used)'))
-                    .filter(function(x){ return x.dataset.w === want; })[0];
-      if(h) h.classList.add('hint');
+      const want = answers[cursor];
+      const all = document.querySelectorAll('.tile:not(.used)');
+      for(let i=0;i<all.length;i++) if(all[i].dataset.w === want) all[i].classList.add('hint');
     }
   }
-});
+}
+tilesWide.addEventListener('click', onTile);
+tilesNarrow.addEventListener('click', onTile);
 
-btnListen.addEventListener('click', () => { touched = true; playSentence(); });
+$('btnListen').addEventListener('click', function(){ touched = true; playPage(); });
 
-btnNext.addEventListener('click', () => {
-  if(idx === CARDS.length-1){
-    clearIdx();
-    $('ovEnd').classList.add('on');
-    return;
-  }
-  idx++;
-  renderCard();
-  if(touched) setTimeout(playSentence, 350);
+btnNext.addEventListener('click', function(){
+  if(idx === PAGES.length-1){ clearIdx(); $('ovEnd').classList.add('on'); return; }
+  idx++; renderPage();
+  if(touched) setTimeout(playPage, 350);
   window.scrollTo(0,0);
 });
 
-$('btnAgain').addEventListener('click', () => {
-  $('ovEnd').classList.remove('on');
-  idx = 0; renderCard();
-});
-$('btnRestart').addEventListener('click', () => {
-  clearIdx();
-  idx = 0; renderCard();
-});
-$('btnHelp').addEventListener('click', () => $('ovHelp').classList.add('on'));
-$('btnHelpClose').addEventListener('click', () => $('ovHelp').classList.remove('on'));
+$('btnAgain').addEventListener('click', function(){ $('ovEnd').classList.remove('on'); idx=0; renderPage(); });
+$('btnRestart').addEventListener('click', function(){ clearIdx(); idx=0; renderPage(); });
+$('btnHelp').addEventListener('click', function(){ $('ovHelp').classList.add('on'); });
+$('btnHelpClose').addEventListener('click', function(){ $('ovHelp').classList.remove('on'); });
 $('ovHelp').addEventListener('click', function(e){ if(e.target === this) this.classList.remove('on'); });
 
-/* 하던 곳에서 이어서 */
 const saved = parseInt(loadIdx() || '0', 10) || 0;
-if(saved > 0 && saved < CARDS.length) idx = saved;
-renderCard();
+if(saved > 0 && saved < PAGES.length) idx = saved;
+renderPage();
 </script>
 </body>
 </html>
