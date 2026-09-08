@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Treasure Map — Reading Test</title>
+<style>
+  @page { size: A4; margin: 14mm 14mm 12mm 14mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Verdana", "DejaVu Sans", "NanumGothic", Arial, sans-serif;
+    color: #1e1e1e;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+
+  header.top {
+    border: 2.5px solid #2d5c88;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  header.top h1 {
+    margin: 0;
+    font-size: 19pt;
+    color: #2d5c88;
+    letter-spacing: .5px;
+  }
+  header.top .book {
+    margin: 3px 0 9px;
+    font-size: 10.5pt;
+    color: #55677a;
+  }
+  .fields {
+    display: flex;
+    gap: 22px;
+    font-size: 11pt;
+  }
+  .fields span { flex: 1; border-bottom: 1.5px dotted #7d8c9c; padding-bottom: 2px; }
+
+  h2.part {
+    background: #2d5c88;
+    color: #fff;
+    font-size: 13pt;
+    margin: 0 0 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+  p.hint {
+    margin: 0 0 12px;
+    font-size: 10.5pt;
+    color: #4a5b6b;
+    font-style: italic;
+  }
+
+  .wordbox {
+    border: 2px dashed #d38b2f;
+    background: #fdf5e7;
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 12pt;
+    letter-spacing: .3px;
+  }
+  .wordbox b { color: #a5620d; margin: 0 7px; white-space: nowrap; }
+
+  ol.qs { margin: 0; padding-left: 0; list-style: none; counter-reset: q; }
+  ol.qs > li {
+    counter-increment: q;
+    margin-bottom: 13px;
+    padding-left: 34px;
+    position: relative;
+    page-break-inside: avoid;
+  }
+  ol.qs > li::before {
+    content: counter(q) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: bold;
+    color: #2d5c88;
+  }
+  .stem { margin: 0 0 4px; }
+  .blank { letter-spacing: 1px; color: #2d5c88; font-weight: bold; }
+  .choices { display: flex; gap: 26px; font-size: 11.5pt; padding-left: 4px; }
+  .choices span { white-space: nowrap; }
+
+  .score {
+    margin-top: 16px;
+    border-top: 2px solid #2d5c88;
+    padding-top: 7px;
+    text-align: right;
+    font-size: 11pt;
+    color: #2d5c88;
+    font-weight: bold;
+  }
+
+  /* answer key */
+  .key h2 { color: #2d5c88; font-size: 15pt; margin: 0 0 10px; }
+  table.key {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+    margin-bottom: 18px;
+  }
+  table.key th, table.key td {
+    border: 1px solid #b9c6d2;
+    padding: 5px 8px;
+    text-align: left;
+  }
+  table.key th { background: #eaf1f7; color: #2d5c88; }
+  table.key td.n { width: 34px; text-align: center; font-weight: bold; }
+  table.key td.a { width: 46px; text-align: center; font-weight: bold; color: #b0400f; }
+  .note { font-size: 10pt; color: #55677a; }
+</style>
+</head>
+<body>
+
+<!-- ===================== PAGE 1 ===================== -->
+<div class="page">
+  <header class="top">
+    <h1>The Treasure Map &mdash; Reading Test</h1>
+    <div class="book">Book: <i>The Treasure Map</i> by Trisha Speed Shaskan &nbsp;|&nbsp; 20 questions</div>
+    <div class="fields">
+      <span>Name: </span>
+      <span>Date: </span>
+      <span>Score: ______ / 20</span>
+    </div>
+  </header>
+
+  <h2 class="part">Part A. Words (1&ndash;10)</h2>
+  <p class="hint">Read the sentence. Circle the best word for the blank.</p>
+
+  <div class="wordbox">
+    <b>treasure</b> <b>north</b> <b>striped</b> <b>east</b> <b>patch</b><br>
+    <b>south</b> <b>pirate</b> <b>west</b> <b>return</b> <b>yell</b>
+  </div>
+
+  <ol class="qs">
+    <li>
+      <p class="stem">George found a <span class="blank">________</span> map next to his bed.</p>
+      <div class="choices"><span>&#9312; treasure</span><span>&#9313; pencil</span><span>&#9314; milk</span></div>
+    </li>
+    <li>
+      <p class="stem">The first X was one block <span class="blank">________</span> of his house.</p>
+      <div class="choices"><span>&#9312; sand</span><span>&#9313; north</span><span>&#9314; cake</span></div>
+    </li>
+    <li>
+      <p class="stem">George put on a red-and-white <span class="blank">________</span> shirt.</p>
+      <div class="choices"><span>&#9312; hungry</span><span>&#9313; little</span><span>&#9314; striped</span></div>
+    </li>
+    <li>
+      <p class="stem">The park is one block <span class="blank">________</span> of the bus stop.</p>
+      <div class="choices"><span>&#9312; east</span><span>&#9313; bed</span><span>&#9314; door</span></div>
+    </li>
+    <li>
+      <p class="stem">George put the eye <span class="blank">________</span> over his eye.</p>
+      <div class="choices"><span>&#9312; bird</span><span>&#9313; patch</span><span>&#9314; bus</span></div>
+    </li>
+    <li>
+      <p class="stem">The garden is one block <span class="blank">________</span> of the park.</p>
+      <div class="choices"><span>&#9312; map</span><span>&#9313; shirt</span><span>&#9314; south</span></div>
+    </li>
+    <li>
+      <p class="stem">A black <span class="blank">________</span> hat was on top of a pumpkin.</p>
+      <div class="choices"><span>&#9312; pirate</span><span>&#9313; window</span><span>&#9314; apple</span></div>
+    </li>
+    <li>
+      <p class="stem">George walked one block <span class="blank">________</span> to his house.</p>
+      <div class="choices"><span>&#9312; sand</span><span>&#9313; gate</span><span>&#9314; west</span></div>
+    </li>
+    <li>
+      <p class="stem">It is late, so I must <span class="blank">________</span> home now.</p>
+      <div class="choices"><span>&#9312; return</span><span>&#9313; swim</span><span>&#9314; draw</span></div>
+    </li>
+    <li>
+      <p class="stem">His friends <span class="blank">________</span>, &ldquo;Happy birthday, George!&rdquo;</p>
+      <div class="choices"><span>&#9312; sleep</span><span>&#9313; yell</span><span>&#9314; wash</span></div>
+    </li>
+  </ol>
+
+  <div class="score">Part A: &nbsp; ______ / 10</div>
+</div>
+
+<!-- ===================== PAGE 2 ===================== -->
+<div class="page">
+  <header class="top">
+    <h1>The Treasure Map &mdash; Reading Test</h1>
+    <div class="book">Part B &nbsp;|&nbsp; Name: ______________________</div>
+  </header>
+
+  <h2 class="part">Part B. About the Story (11&ndash;20)</h2>
+  <p class="hint">Think about the book. Circle the best answer.</p>
+
+  <ol class="qs" start="11" style="counter-reset: q 10;">
+    <li>
+      <p class="stem">Where did George find the treasure map?</p>
+      <div class="choices"><span>&#9312; Next to his bed</span><span>&#9313; In a tree</span><span>&#9314; At school</span></div>
+    </li>
+    <li>
+      <p class="stem">What did George do after he found the map?</p>
+      <div class="choices"><span>&#9312; He went to sleep</span><span>&#9313; He got dressed</span><span>&#9314; He ate a cake</span></div>
+    </li>
+    <li>
+      <p class="stem">Where was the first X?</p>
+      <div class="choices"><span>&#9312; On the slide</span><span>&#9313; On the door</span><span>&#9314; On the bench</span></div>
+    </li>
+    <li>
+      <p class="stem">What did George put on at the bus stop?</p>
+      <div class="choices"><span>&#9312; A striped shirt</span><span>&#9313; Red shoes</span><span>&#9314; A blue hat</span></div>
+    </li>
+    <li>
+      <p class="stem">Which way did George walk to get to the park?</p>
+      <div class="choices"><span>&#9312; North</span><span>&#9313; East</span><span>&#9314; West</span></div>
+    </li>
+    <li>
+      <p class="stem">Where was the eye patch?</p>
+      <div class="choices"><span>&#9312; In the sand under the slide</span><span>&#9313; In the bus</span><span>&#9314; Under his bed</span></div>
+    </li>
+    <li>
+      <p class="stem">Where was the third X?</p>
+      <div class="choices"><span>&#9312; On the bench</span><span>&#9313; On the garden gate</span><span>&#9314; On the slide</span></div>
+    </li>
+    <li>
+      <p class="stem">What was on top of the pumpkin?</p>
+      <div class="choices"><span>&#9312; A bird</span><span>&#9313; A map</span><span>&#9314; A pirate hat</span></div>
+    </li>
+    <li>
+      <p class="stem">Where did George go at the end of the story?</p>
+      <div class="choices"><span>&#9312; To his house</span><span>&#9313; To the park</span><span>&#9314; To the bus stop</span></div>
+    </li>
+    <li>
+      <p class="stem">What was the hidden treasure?</p>
+      <div class="choices"><span>&#9312; Gold coins</span><span>&#9313; A birthday party</span><span>&#9314; A big ship</span></div>
+    </li>
+  </ol>
+
+  <div class="score">Part B: &nbsp; ______ / 10</div>
+</div>
+
+<!-- ===================== PAGE 3: ANSWER KEY ===================== -->
+<div class="page key">
+  <header class="top">
+    <h1>Answer Key</h1>
+    <div class="book">The Treasure Map &mdash; Reading Test (for the teacher)</div>
+  </header>
+
+  <h2>Part A. Words</h2>
+  <table class="key">
+    <tr><th>No.</th><th>Answer</th><th>Word</th><th>Korean</th></tr>
+    <tr><td class="n">1</td><td class="a">&#9312;</td><td>treasure</td><td>보물</td></tr>
+    <tr><td class="n">2</td><td class="a">&#9313;</td><td>north</td><td>북쪽</td></tr>
+    <tr><td class="n">3</td><td class="a">&#9314;</td><td>striped</td><td>줄무늬가 있는</td></tr>
+    <tr><td class="n">4</td><td class="a">&#9312;</td><td>east</td><td>동쪽</td></tr>
+    <tr><td class="n">5</td><td class="a">&#9313;</td><td>patch</td><td>안대</td></tr>
+    <tr><td class="n">6</td><td class="a">&#9314;</td><td>south</td><td>남쪽</td></tr>
+    <tr><td class="n">7</td><td class="a">&#9312;</td><td>pirate</td><td>해적</td></tr>
+    <tr><td class="n">8</td><td class="a">&#9314;</td><td>west</td><td>서쪽</td></tr>
+    <tr><td class="n">9</td><td class="a">&#9312;</td><td>return</td><td>돌아오다</td></tr>
+    <tr><td class="n">10</td><td class="a">&#9313;</td><td>yell</td><td>소리치다</td></tr>
+  </table>
+
+  <h2>Part B. About the Story</h2>
+  <table class="key">
+    <tr><th>No.</th><th>Answer</th><th>Full answer</th></tr>
+    <tr><td class="n">11</td><td class="a">&#9312;</td><td>Next to his bed</td></tr>
+    <tr><td class="n">12</td><td class="a">&#9313;</td><td>He got dressed</td></tr>
+    <tr><td class="n">13</td><td class="a">&#9314;</td><td>On the bench (at the bus stop)</td></tr>
+    <tr><td class="n">14</td><td class="a">&#9312;</td><td>A red-and-white striped shirt</td></tr>
+    <tr><td class="n">15</td><td class="a">&#9313;</td><td>East</td></tr>
+    <tr><td class="n">16</td><td class="a">&#9312;</td><td>In the sand under the blue slide</td></tr>
+    <tr><td class="n">17</td><td class="a">&#9313;</td><td>On the garden gate (Mrs. Smith&rsquo;s garden)</td></tr>
+    <tr><td class="n">18</td><td class="a">&#9314;</td><td>A black pirate&rsquo;s hat</td></tr>
+    <tr><td class="n">19</td><td class="a">&#9312;</td><td>To his house (he returned home)</td></tr>
+    <tr><td class="n">20</td><td class="a">&#9313;</td><td>A birthday party (&ldquo;Happy birthday, George!&rdquo;)</td></tr>
+  </table>
+
+  <p class="note">George&rsquo;s route: house &rarr; 1 block north (bus stop) &rarr; 1 block east (park) &rarr; 1 block south (Mrs. Smith&rsquo;s garden) &rarr; 1 block west (home).</p>
+</div>
+
+</body>
+</html>
