@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAVE GREEN 가을 시간표</title>
+<style>
+  :root {
+    --bg: #f6f8f1;
+    --paper: #ffffff;
+    --ink: #2f3a25;
+    --muted: #6b7760;
+    --green: #76923c;
+    --green-dark: #4f6428;
+    --green-soft: #eaf0dc;
+    --orange: #e36c0a;
+    --orange-soft: #fdeada;
+    --line: #d5dfc2;
+    --sci: #e8f1fb;
+    --sci-ink: #2c5d8f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 16px;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  header {
+    background: var(--green);
+    color: #fff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  header .slogan { font-size: .9rem; opacity: .9; }
+  header h1 { margin: 6px 0 4px; font-size: 1.6rem; }
+  header .meta { font-size: .95rem; }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0 10px;
+    flex-wrap: wrap;
+  }
+  .tabs button {
+    border: 2px solid var(--green);
+    background: var(--paper);
+    color: var(--green-dark);
+    font: inherit;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .tabs button.on { background: var(--green); color: #fff; }
+  .tabs .print {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+  .note {
+    text-align: center;
+    color: var(--muted);
+    font-size: .85rem;
+    margin: 0 0 12px;
+  }
+  .legend {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: .8rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    margin-right: 5px;
+    vertical-align: -1px;
+    border: 1px solid var(--line);
+  }
+  .legend .la::before { background: var(--paper); }
+  .legend .sc::before { background: var(--sci); }
+  .scroll {
+    overflow-x: auto;
+    background: var(--paper);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  }
+  table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+    font-size: .85rem;
+  }
+  thead th {
+    background: var(--green);
+    color: #fff;
+    padding: 8px 6px;
+    font-weight: 700;
+    border-right: 1px solid rgba(255,255,255,.25);
+    white-space: nowrap;
+  }
+  thead tr.group th {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    font-weight: 600;
+    font-size: .8rem;
+  }
+  thead tr.group th.study { background: var(--orange-soft); color: var(--orange); }
+  thead tr:not(.group) th.study { background: var(--orange); }
+  td {
+    padding: 7px 6px;
+    border-bottom: 1px dotted var(--line);
+    vertical-align: middle;
+    text-align: center;
+    line-height: 1.35;
+  }
+  tr.day-end td { border-bottom: 2px solid var(--green); }
+  tr.sci td { background: var(--sci); }
+  td.day { font-weight: 800; white-space: nowrap; background: var(--paper) !important; }
+  td.date { font-weight: 700; white-space: nowrap; background: var(--paper) !important; }
+  td.date .dow { color: var(--orange); }
+  td.book { white-space: nowrap; }
+  tr.sci td.book { color: var(--sci-ink); font-weight: 600; }
+  td.hw { font-weight: 600; }
+  td.pg { white-space: nowrap; color: var(--muted); }
+  td.test { color: #b3261e; font-weight: 700; }
+  td.empty { color: #c9cfbf; }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: .75rem;
+    margin: 14px 0 6px;
+  }
+  @media (max-width: 600px) {
+    body { padding: 10px; }
+    header h1 { font-size: 1.25rem; }
+  }
+  @media print {
+    @page { size: A4 landscape; margin: 8mm; }
+    body { background: #fff; padding: 0; }
+    .tabs, .note-screen { display: none; }
+    .scroll { box-shadow: none; overflow: visible; }
+    table { min-width: 0; font-size: 8.5pt; }
+    header, thead th, tr.sci td, thead tr.group th {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="slogan">"영어가 놀이가 되고, 숙제가 기다려지는 시간"</div>
+    <h1 id="title">2026 Fall 수업 · 숙제 통합 시간표</h1>
+    <div class="meta">Class : WAVE GREEN &nbsp;·&nbsp; JASON(이제승) Teacher &nbsp;·&nbsp; <b id="ver-label">월수금</b></div>
+  </header>
+
+  <div class="tabs">
+    <button data-ver="mwf" class="on">월·수·금 버전</button>
+    <button data-ver="mf">월·금 버전</button>
+    <button class="print" onclick="window.print()">🖨 인쇄</button>
+  </div>
+  <p class="note" id="note"></p>
+  <div class="legend">
+    <span class="la">Language Arts Pre-Starter</span>
+    <span class="sc">Science Pre-Starter</span>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr class="group">
+          <th colspan="2">수업일</th>
+          <th colspan="4" class="study">수업 진도</th>
+          <th colspan="2">숙제 (Homework)</th>
+          <th colspan="2">단어시험</th>
+          <th colspan="3">e-learning (온라인)</th>
+        </tr>
+        <tr>
+          <th>차시</th>
+          <th>Class Date</th>
+          <th class="study">Textbook</th>
+          <th class="study">Lesson</th>
+          <th class="study">From (Page)</th>
+          <th class="study">To (Page)</th>
+          <th>Contents</th>
+          <th>Page</th>
+          <th>Vitamin</th>
+          <th>Test</th>
+          <th>MVA</th>
+          <th>LangCon Island</th>
+          <th>Subject</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <footer>원본: LangCon Mission (Homework, Test &amp; E-Learning Plan) + 2026 Fall Curriculum Schedule · Phonics Island는 이번 달 과제가 없어 생략</footer>
+</div>
+
+<script>
+const LA = "Language Arts Pre-Starter";
+const SC = "Science Pre-Starter";
+
+// 한 수업일 = 2교시(a, b). 필드: book, lesson, from, fromPg, to, toPg,
+// hw, hwPg, vitamin, test, mva, island, subject
+const DAYS = [
+  { date: "10/02", dow: "금", periods: [
+    { book: LA, lesson: "12", from: "Think and Speak", fromPg: "86", to: "Creative Writing: Presentation", toPg: "89",
+      hw: "Lesson Wrap Up", hwPg: "90~91", island: "Language Art 12", subject: "Grammar" },
+    { book: LA, lesson: "12", from: "Reading day (Journey's 같이 읽기) & Glossary",
+      test: "LanGPop 2차" },
+  ]},
+  { date: "10/07", dow: "수", periods: [
+    { book: SC, lesson: "3", from: "Homework Check and Review", fromPg: "47", toPg: "49" },
+    { book: SC, lesson: "3", from: "LangCon Power - Chapter 3A Check and Review",
+      test: "Science Pop Quiz 3차" },
+  ]},
+  { date: "10/12", dow: "월", periods: [
+    { book: LA, lesson: "13", from: "Warm Up", fromPg: "96", to: "Vocabulary in Context", toPg: "99",
+      hw: "Vocabulary Review", hwPg: "100~101", vitamin: "Language Art Lesson 13 (1~10)",
+      mva: "Language Art Lesson 13", island: "Language Art 13", subject: "Listening" },
+    { book: LA, lesson: "13", from: "Reading day (Journey's 같이 읽기)",
+      vitamin: "Science Lesson 3", science: true },
+  ]},
+  { date: "10/14", dow: "수", periods: [
+    { book: SC, lesson: "4A", from: "Warm Up", fromPg: "51", to: "Focus on Reading", toPg: "55",
+      hw: "LangCon Power - Chapter 4A", mva: "Science Lesson 4", island: "Science 4", subject: "Voca" },
+    { book: SC, lesson: "4B", from: "Focus on Reading", fromPg: "56", to: "Present the Ideas", toPg: "60",
+      hw: "Homework", hwPg: "61~63", island: "Science 4", subject: "Reading" },
+  ]},
+  { date: "10/16", dow: "금", periods: [
+    { book: LA, lesson: "13", from: "Grammar Focus", fromPg: "102", to: "Grammar Practice", toPg: "105",
+      hw: "Grammar Review", hwPg: "106~107", vitamin: "Language Art Lesson 13 (11~20)" },
+    { book: LA, lesson: "13", from: "Comprehension: Text 1", fromPg: "108", to: "Making Connections 1", toPg: "111",
+      hw: "Test Yourself 1", hwPg: "112~113" },
+  ]},
+  { date: "10/19", dow: "월", periods: [
+    { book: LA, lesson: "13", from: "Comprehension: Text 2", fromPg: "114", to: "Making Connections 2", toPg: "117",
+      hw: "Test Yourself 2", hwPg: "118~119" },
+    { book: LA, lesson: "13", from: "Further Comprehension: Text", fromPg: "120", to: "Explore the Texts", toPg: "123",
+      hw: "Listen and Write - Self-Study", hwPg: "124~125" },
+  ]},
+  { date: "10/21", dow: "수", periods: [
+    { book: SC, lesson: "4", from: "Homework Check and Review", fromPg: "61", toPg: "63" },
+    { book: SC, lesson: "4", from: "LangCon Power - Chapter 4A Check and Review",
+      test: "Science Pop Quiz 4차" },
+  ]},
+  { date: "10/23", dow: "금", periods: [
+    { book: LA, lesson: "13", from: "Think and Speak", fromPg: "126", to: "Creative Writing: Presentation", toPg: "129",
+      hw: "Lesson Wrap Up", hwPg: "130~131", island: "Language Art 13", subject: "Grammar" },
+    { book: LA, lesson: "13", from: "Reading day (Journey's 같이 읽기) & Glossary",
+      test: "LanGPop 3차" },
+  ]},
+  { date: "10/26", dow: "월", periods: [
+    { book: LA, lesson: "14", from: "Warm Up", fromPg: "136", to: "Vocabulary in Context", toPg: "139",
+      hw: "Vocabulary Review", hwPg: "140~141", vitamin: "Language Art Lesson 14 (1~10)",
+      mva: "Language Art Lesson 14", island: "Language Art 14", subject: "Listening" },
+    { book: LA, lesson: "14", from: "Reading day (Journey's 같이 읽기)",
+      vitamin: "Science Lesson 4", science: true },
+  ]},
+  { date: "10/28", dow: "수", periods: [
+    { book: SC, lesson: "5A", from: "Warm Up", fromPg: "65", to: "Focus on Reading", toPg: "69",
+      hw: "LangCon Power - Chapter 5A", mva: "Science Lesson 5", island: "Science 5", subject: "Voca" },
+    { book: SC, lesson: "5B", from: "Focus on Reading", fromPg: "70", to: "Present the Ideas", toPg: "74",
+      hw: "Homework", hwPg: "75~77", island: "Science 5", subject: "Reading" },
+  ]},
+  { date: "10/30", dow: "금", periods: [
+    { book: LA, lesson: "14", from: "Grammar Focus", fromPg: "142", to: "Making Connections 1", toPg: "151",
+      hw: "Grammar Review", hwPg: "146~147", vitamin: "Language Art Lesson 14 (11~20)" },
+    { book: "Halloween", lesson: "", from: "Halloween",
+      hw: "Test Yourself 1", hwPg: "152~153" },
+  ]},
+];
+
+const VERSIONS = {
+  mwf: {
+    label: "월수금",
+    note: "월·금 = Language Arts, 수 = Science · 하루 2교시 · 총 11차시",
+    days: DAYS,
+  },
+  mf: {
+    label: "월금",
+    note: "월·금 수업만 모은 버전 (수요일 Science 수업과 Science 단어시험 제외) · 총 7차시",
+    days: DAYS
+      .filter(d => d.dow !== "수")
+      .map(d => ({ ...d, periods: d.periods.map(p => p.science ? { ...p, vitamin: "" } : p) })),
+  },
+};
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const cell = (v, cls = "") => {
+  const empty = !v;
+  return `<td class="${cls}${empty ? " empty" : ""}">${empty ? "–" : esc(v)}</td>`;
+};
+
+function render(key) {
+  const v = VERSIONS[key];
+  document.getElementById("ver-label").textContent = v.label + " 버전";
+  document.getElementById("note").textContent = v.note;
+  document.title = `WAVE GREEN 가을 시간표 (${v.label})`;
+  let html = "";
+  v.days.forEach((d, i) => {
+    d.periods.forEach((p, j) => {
+      const last = j === d.periods.length - 1;
+      const cls = [p.book === SC ? "sci" : "", last ? "day-end" : ""].join(" ").trim();
+      html += `<tr class="${cls}">`;
+      if (j === 0) {
+        html += `<td class="day" rowspan="${d.periods.length}">DAY ${i + 1}</td>`;
+        html += `<td class="date" rowspan="${d.periods.length}">${d.date} <span class="dow">(${d.dow})</span></td>`;
+      }
+      const from = p.from ? p.from + (p.fromPg ? ` (p.${p.fromPg})` : "") : (p.fromPg ? `p.${p.fromPg}` : "");
+      const to = p.to ? p.to + (p.toPg ? ` (p.${p.toPg})` : "") : (p.toPg ? `p.${p.toPg}` : "");
+      html += cell(p.book, "book") + cell(p.lesson) + cell(from) + cell(to)
+            + cell(p.hw, "hw") + cell(p.hwPg, "pg")
+            + cell(p.vitamin) + cell(p.test, "test")
+            + cell(p.mva) + cell(p.island) + cell(p.subject);
+      html += "</tr>";
+    });
+  });
+  document.getElementById("rows").innerHTML = html;
+  document.querySelectorAll(".tabs button[data-ver]").forEach(b => b.classList.toggle("on", b.dataset.ver === key));
+  try { localStorage.setItem("schedule-ver", key); } catch (e) {}
+}
+
+document.querySelectorAll(".tabs button[data-ver]").forEach(b => b.addEventListener("click", () => render(b.dataset.ver)));
+let start = new URLSearchParams(location.search).get("v");
+if (!VERSIONS[start]) { try { start = localStorage.getItem("schedule-ver"); } catch (e) {} }
+render(VERSIONS[start] ? start : "mwf");
+</script>
+</body>
+</html>
