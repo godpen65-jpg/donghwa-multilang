@@ -38,6 +38,7 @@
   header .slogan { font-size: .9rem; opacity: .9; }
   header h1 { margin: 6px 0 4px; font-size: 1.6rem; }
   header .meta { font-size: .95rem; }
+  header h1 .lvl { font-size: .6em; font-weight: 600; opacity: .85; }
   .tabs {
     display: flex;
     gap: 8px;
@@ -127,6 +128,7 @@
   td.date { font-weight: 700; white-space: nowrap; background: var(--paper) !important; }
   td.date .dow { color: var(--orange); }
   td.book { white-space: nowrap; }
+  td.book .short { display: none; }
   tr.sci td.book { color: var(--sci-ink); font-weight: 600; }
   td.hw { font-weight: 600; }
   td.pg { white-space: nowrap; color: var(--muted); }
@@ -142,15 +144,35 @@
     body { padding: 10px; }
     header h1 { font-size: 1.25rem; }
   }
+  /* A4 가로 한 장에 한 버전이 들어가도록 맞춤 */
   @media print {
-    @page { size: A4 landscape; margin: 8mm; }
-    body { background: #fff; padding: 0; }
-    .tabs, .note-screen { display: none; }
-    .scroll { box-shadow: none; overflow: visible; }
-    table { min-width: 0; font-size: 8.5pt; }
-    header, thead th, tr.sci td, thead tr.group th {
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
+    @page { size: A4 landscape; margin: 7mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    html, body { background: #fff; padding: 0; margin: 0; }
+    .wrap { max-width: none; zoom: var(--print-zoom, 1); width: calc(100% / var(--print-zoom, 1)); }
+    .tabs { display: none; }
+    header { border-radius: 6px; padding: 2.5mm 4mm; }
+    header .slogan { font-size: 7.5pt; }
+    header h1 { font-size: 14pt; margin: 1mm 0 0.5mm; }
+    header .meta { font-size: 9pt; }
+    .note { font-size: 7.5pt; margin: 1.5mm 0 1mm; }
+    .legend { display: none; }
+    .scroll { box-shadow: none; overflow: visible; border-radius: 0; }
+    table { min-width: 0; width: 100%; font-size: var(--print-font, 8pt); table-layout: fixed; }
+    thead th { padding: 1.2mm 1mm; font-size: 7.5pt; white-space: normal; }
+    thead tr.group th { padding: 0.8mm 1mm; font-size: 7pt; }
+    td { padding: var(--print-pad, 1.2mm) 1mm; line-height: 1.2; }
+    td.book, td.pg, td.day, td.date { white-space: normal; }
+    td.book .full { display: none; }
+    td.book .short { display: inline; }
+    td.date .dow { display: block; }
+    tr { break-inside: avoid; }
+    col.c-day { width: 5.5%; } col.c-date { width: 5%; } col.c-book { width: 7.5%; }
+    col.c-les { width: 4%; } col.c-from { width: 14%; } col.c-to { width: 13%; }
+    col.c-hw { width: 11.5%; } col.c-pg { width: 5%; } col.c-vit { width: 9.5%; }
+    col.c-test { width: 7%; } col.c-mva { width: 6.5%; } col.c-isl { width: 7%; }
+    col.c-sub { width: 5.5%; }
+    footer { font-size: 6.5pt; margin: 1.5mm 0 0; }
   }
 </style>
 </head>
@@ -158,7 +180,7 @@
 <div class="wrap">
   <header>
     <div class="slogan">"영어가 놀이가 되고, 숙제가 기다려지는 시간"</div>
-    <h1 id="title">2026 Fall 수업 · 숙제 통합 시간표</h1>
+    <h1 id="title">2026 Fall 수업 · 숙제 통합 시간표 <small class="lvl">(Pre-Starter)</small></h1>
     <div class="meta">Class : WAVE GREEN &nbsp;·&nbsp; JASON(이제승) Teacher &nbsp;·&nbsp; <b id="ver-label">월수금</b></div>
   </header>
 
@@ -175,6 +197,11 @@
 
   <div class="scroll">
     <table>
+      <colgroup>
+        <col class="c-day"><col class="c-date"><col class="c-book"><col class="c-les">
+        <col class="c-from"><col class="c-to"><col class="c-hw"><col class="c-pg">
+        <col class="c-vit"><col class="c-test"><col class="c-mva"><col class="c-isl"><col class="c-sub">
+      </colgroup>
       <thead>
         <tr class="group">
           <th colspan="2">수업일</th>
@@ -285,6 +312,7 @@ const VERSIONS = {
     label: "월수금",
     note: "월·금 = Language Arts, 수 = Science · 하루 2교시 · 총 11차시",
     days: DAYS,
+    print: { font: "8.2pt", pad: "0.9mm", zoom: 0.86 },
   },
   mf: {
     label: "월금",
@@ -292,6 +320,7 @@ const VERSIONS = {
     days: DAYS
       .filter(d => d.dow !== "수")
       .map(d => ({ ...d, periods: d.periods.map(p => p.science ? { ...p, vitamin: "" } : p) })),
+    print: { font: "9pt", pad: "1.6mm", zoom: 0.92 },
   },
 };
 
@@ -306,6 +335,9 @@ function render(key) {
   document.getElementById("ver-label").textContent = v.label + " 버전";
   document.getElementById("note").textContent = v.note;
   document.title = `WAVE GREEN 가을 시간표 (${v.label})`;
+  document.documentElement.style.setProperty("--print-font", v.print.font);
+  document.documentElement.style.setProperty("--print-pad", v.print.pad);
+  document.documentElement.style.setProperty("--print-zoom", v.print.zoom);
   let html = "";
   v.days.forEach((d, i) => {
     d.periods.forEach((p, j) => {
@@ -318,7 +350,8 @@ function render(key) {
       }
       const from = p.from ? p.from + (p.fromPg ? ` (p.${p.fromPg})` : "") : (p.fromPg ? `p.${p.fromPg}` : "");
       const to = p.to ? p.to + (p.toPg ? ` (p.${p.toPg})` : "") : (p.toPg ? `p.${p.toPg}` : "");
-      html += cell(p.book, "book") + cell(p.lesson) + cell(from) + cell(to)
+      const short = { [LA]: "Language Arts", [SC]: "Science" }[p.book] || p.book;
+      html += `<td class="book"><span class="full">${esc(p.book)}</span><span class="short">${esc(short)}</span></td>` + cell(p.lesson) + cell(from) + cell(to)
             + cell(p.hw, "hw") + cell(p.hwPg, "pg")
             + cell(p.vitamin) + cell(p.test, "test")
             + cell(p.mva) + cell(p.island) + cell(p.subject);
