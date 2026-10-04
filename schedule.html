@@ -149,7 +149,7 @@
     @page { size: A4 landscape; margin: 7mm; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     html, body { background: #fff; padding: 0; margin: 0; }
-    .wrap { max-width: none; zoom: var(--print-zoom, 1); width: calc(100% / var(--print-zoom, 1)); }
+    .wrap { max-width: none; width: 100%; }
     .tabs { display: none; }
     header { border-radius: 6px; padding: 2.5mm 4mm; }
     header .slogan { font-size: 7.5pt; }
@@ -312,7 +312,7 @@ const VERSIONS = {
     label: "월수금",
     note: "월·금 = Language Arts, 수 = Science · 하루 2교시 · 총 11차시",
     days: DAYS,
-    print: { font: "8.2pt", pad: "0.9mm", zoom: 0.86 },
+    print: { font: "6.6pt", pad: "0.45mm" },
   },
   mf: {
     label: "월금",
@@ -320,7 +320,7 @@ const VERSIONS = {
     days: DAYS
       .filter(d => d.dow !== "수")
       .map(d => ({ ...d, periods: d.periods.map(p => p.science ? { ...p, vitamin: "" } : p) })),
-    print: { font: "9pt", pad: "1.6mm", zoom: 0.92 },
+    print: { font: "8pt", pad: "1.3mm" },
   },
 };
 
@@ -337,7 +337,6 @@ function render(key) {
   document.title = `WAVE GREEN 가을 시간표 (${v.label})`;
   document.documentElement.style.setProperty("--print-font", v.print.font);
   document.documentElement.style.setProperty("--print-pad", v.print.pad);
-  document.documentElement.style.setProperty("--print-zoom", v.print.zoom);
   let html = "";
   v.days.forEach((d, i) => {
     d.periods.forEach((p, j) => {
