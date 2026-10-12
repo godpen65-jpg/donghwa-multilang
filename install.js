@@ -35,6 +35,43 @@
       saved.userChoice.then(function (r) { if (r.outcome === 'accepted') hide(); saved = null; });
     };
     document.body.appendChild(box);
+    place();
+    window.addEventListener('resize', place);
+    setTimeout(place, 800);        // 늦게 생기는 버튼까지 보고 다시 자리 잡기
+  }
+
+  // 페이지에 원래 떠 있는 버튼(사용법 등)과 안 겹치는 구석 찾기
+  var SPOTS = [
+    { right: '12px', bottom: '12px' },
+    { left: '12px', bottom: '12px' },
+    { right: '12px', top: '70px' },
+    { left: '12px', top: '70px' }
+  ];
+  function place() {
+    if (!box) return;
+    var floats = [];
+    var all = document.body.getElementsByTagName('*');
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el === box || box.contains(el)) continue;
+      var pos = getComputedStyle(el).position;
+      if (pos !== 'fixed' && pos !== 'sticky') continue;
+      var r = el.getBoundingClientRect();
+      if (r.width && r.height && r.width < window.innerWidth * 0.9) floats.push(r);
+    }
+    for (var s = 0; s < SPOTS.length; s++) {
+      box.style.left = box.style.right = box.style.top = box.style.bottom = 'auto';
+      for (var k in SPOTS[s]) box.style[k] = SPOTS[s][k];
+      var b = box.getBoundingClientRect(), hit = false;
+      for (var j = 0; j < floats.length; j++) {
+        var f = floats[j];
+        if (b.left < f.right + 6 && b.right > f.left - 6 && b.top < f.bottom + 6 && b.bottom > f.top - 6) { hit = true; break; }
+      }
+      if (!hit) return;
+    }
+    box.style.left = box.style.top = 'auto';   // 다 차 있으면 오른쪽 아래, 대신 반투명
+    box.style.right = box.style.bottom = '12px';
+    box.style.opacity = '.75';
   }
   function hide() { if (box) { box.remove(); box = null; } }
 })();
