@@ -4,7 +4,33 @@
    - 설치할 수 있을 때만 보이고, 이미 설치했거나 앱으로 열었으면 안 보인다 */
 (function () {
   var saved = null;
-  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
+  // 앱으로 설치해서 열었을 때: 갤럭시탭 아래 작업표시줄이 화면 아래를 덮으므로
+  // 페이지 아래에 여백을 줘서 버튼이 작업표시줄 위로 올라오게 한다
+  var st = document.createElement('style');
+  st.textContent = '@media (display-mode: standalone){' +
+    'body{box-sizing:border-box;padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important}}';
+  (document.head || document.documentElement).appendChild(st);
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    // 화면 아래에 붙어 떠 있는 버튼(사용법 등)도 작업표시줄 위로 올리기
+    var lift = function () {
+      var all = document.body.getElementsByTagName('*');
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i];
+        if (el.dataset.hsLifted) continue;
+        var cs = getComputedStyle(el);
+        if (cs.position !== 'fixed') continue;
+        var r = el.getBoundingClientRect();
+        if (!r.height || r.height > window.innerHeight * 0.5) continue;   // 전체 화면 덮개는 그대로
+        if (window.innerHeight - r.bottom > 40) continue;                  // 아래에 붙은 것만
+        el.style.bottom = 'calc(' + cs.bottom + ' + 84px)';
+        el.dataset.hsLifted = '1';
+      }
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lift); else lift();
+    window.addEventListener('load', lift);
+    setTimeout(lift, 1000);
+    return;
+  }
 
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();            // 자동 팝업 막기
