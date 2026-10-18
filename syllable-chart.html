@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>영어 음절 반절표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdf7ea; --ink:#43382c; --muted:#a2937a; --line:#eadfc7;
+    --c1:#5aa9e6; --c1e:#3a83bd;   /* 첫소리 */
+    --c2:#f79c1a; --c2e:#d17c10;   /* 모음 */
+    --c3:#4fb8a0; --c3e:#368a76;   /* 끝소리 */
+    --blue:#1560ad; --green:#2e9e5b; --red:#e0533f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;padding:12px 12px 40px;min-height:100vh;background:#7cc6b4;
+    background-image:radial-gradient(circle at 20% 10%,#a8e0d1 0,transparent 40%),
+                     radial-gradient(circle at 85% 90%,#5fae9b 0,transparent 45%);
+    font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;color:var(--ink);
+  }
+  .wrap{max-width:900px;margin:0 auto;}
+  h1{margin:4px 0 10px;color:#fff;font-size:24px;font-weight:400;text-shadow:0 2px 4px rgba(0,0,0,.2);
+     display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  h1 a{color:#fff;text-decoration:none;font-size:20px;}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .tab{flex:1;min-width:84px;border:none;border-radius:14px;padding:10px 6px;font:inherit;font-size:15px;
+       background:rgba(255,255,255,.55);color:#2d6b5c;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.12);}
+  .tab.on{background:#fff;color:var(--ink);}
+  .card{background:var(--paper);border-radius:22px;padding:18px 16px;box-shadow:0 14px 30px rgba(0,40,30,.25);}
+  .hint{color:var(--muted);font-size:15px;line-height:1.55;margin:0 0 12px;}
+  .sec{font-size:18px;margin:16px 0 8px;color:#2d6b5c;}
+  .sec small{color:var(--muted);font-size:14px;}
+  .hide{display:none;}
+
+  .tiles{display:flex;flex-wrap:wrap;gap:8px;}
+  .tile{min-width:58px;padding:8px 10px 6px;border:none;border-radius:12px;font:inherit;cursor:pointer;color:#fff;
+        display:flex;flex-direction:column;align-items:center;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.25);
+        background:var(--c2);box-shadow:0 4px 0 var(--c2e);}
+  .tile.k1{background:var(--c1);box-shadow:0 4px 0 var(--c1e);}
+  .tile.k3{background:var(--c3);box-shadow:0 4px 0 var(--c3e);}
+  .tile b{font-weight:400;font-size:21px;}
+  .tile i{font-style:normal;font-size:14px;}
+  .tile:active{transform:translateY(3px);box-shadow:none;}
+  .tile.on{outline:3px solid var(--ink);outline-offset:2px;}
+
+  .detail{margin-top:14px;background:#fff;border-radius:16px;padding:12px 14px;border:2px dashed var(--line);min-height:64px;}
+  .detail .big{font-size:30px;}
+  .detail .ko{color:var(--c2e);font-size:22px;margin-left:8px;}
+  .detail p{margin:6px 0 0;font-size:15px;color:#6d6150;line-height:1.5;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .chip{border:none;background:#dff3ee;color:#24705f;border-radius:99px;padding:6px 12px;font:inherit;font-size:16px;cursor:pointer;}
+  .chip small{color:#5f8f83;}
+
+  /* 반절표 */
+  .gridwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;border:2px solid var(--line);background:#fff;}
+  table{border-collapse:collapse;width:100%;min-width:520px;}
+  th,td{border:1px solid #f0e7d3;text-align:center;padding:5px 3px;}
+  th{background:#fbf3e1;font-weight:400;font-size:14px;color:#8a7a5c;position:sticky;top:0;}
+  th.row{position:sticky;left:0;background:#e6f2fb;color:var(--c1e);font-size:18px;z-index:1;}
+  th small{display:block;font-size:12px;}
+  td{cursor:pointer;line-height:1.2;}
+  td b{display:block;font-weight:400;font-size:17px;}
+  td i{font-style:normal;font-size:14px;color:var(--c2e);}
+  td i+i{color:var(--c3e);}
+  td:active,td.on{background:#fff2d6;}
+
+  /* 조합기 */
+  .mix{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .mix label{font-size:14px;color:#2d6b5c;display:block;margin-bottom:4px;}
+  select{width:100%;font:inherit;font-size:16px;padding:8px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);}
+  .result{margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border-radius:16px;padding:14px;border:2px solid var(--line);}
+  .result .sp{font-size:38px;letter-spacing:1px;}
+  .result .sp span:nth-child(1){color:var(--c1e);} .result .sp span:nth-child(2){color:var(--c2e);} .result .sp span:nth-child(3){color:var(--c3e);}
+  .result .kr{font-size:32px;}
+  .result .arrow{font-size:24px;color:var(--muted);}
+
+  .rule{background:#fff;border-radius:14px;padding:10px 14px;margin:8px 0;border-left:6px solid var(--c3);font-size:16px;line-height:1.55;}
+  .rule b{color:#24705f;font-weight:400;}
+  .rule .ex{display:block;color:var(--blue);font-size:15px;}
+
+  .quiz .q{font-size:52px;text-align:center;margin:8px 0 4px;}
+  .quiz .qh{text-align:center;color:var(--muted);font-size:15px;margin-bottom:12px;}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt{border:none;border-radius:14px;padding:14px;font:inherit;font-size:24px;background:#fff;color:var(--ink);
+       box-shadow:0 3px 0 rgba(0,0,0,.12);cursor:pointer;}
+  .opt.ok{background:#d6f2df;color:var(--green);} .opt.no{background:#fbdcd6;color:var(--red);}
+  .score{text-align:center;margin-top:12px;color:#2d6b5c;font-size:17px;}
+  .btn{border:none;border-radius:14px;padding:10px 16px;font:inherit;font-size:17px;cursor:pointer;background:var(--c3);color:#fff;box-shadow:0 3px 0 var(--c3e);}
+  .note{font-size:13px;color:var(--muted);margin-top:16px;line-height:1.55;}
+  @media (max-width:520px){ .mix{grid-template-columns:1fr;} .tile b{font-size:18px;} .tile{min-width:50px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><a href="syllable.html" aria-label="뒤로">◀</a> 영어 음절 반절표</h1>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="how">한눈에 보기</button>
+    <button class="tab" data-tab="parts">음절 카드</button>
+    <button class="tab" data-tab="grid1">반절표 ①</button>
+    <button class="tab" data-tab="grid2">반절표 ②</button>
+    <button class="tab" data-tab="mix">조합하기</button>
+    <button class="tab" data-tab="sight">통째로 외우기</button>
+    <button class="tab" data-tab="quiz">소리 퀴즈</button>
+  </div>
+
+  <!-- 한눈에 보기 -->
+  <section class="card" id="tab-how">
+    <p class="hint">한글이 <b>초성 + 중성 + 종성</b>으로 글자를 만들듯, 영어 음절 덩어리도 <b>첫소리 + 모음 + 끝소리</b>로 만들어져요.
+      이 세 가지 카드를 익히면 처음 보는 단어도 덩어리로 끊어 읽을 수 있어요.</p>
+    <div class="rule"><b>① 첫소리 (자음)</b> — 한글의 ㄱ~ㅎ처럼 덩어리 맨 앞의 소리예요. 혼자 있을 때는 'ㅡ'를 붙여 읽어요.
+      <span class="ex">b 브 · d 드 · s 스 · t 트 · sh 쉬 · ch 치 · th 쓰</span></div>
+    <div class="rule"><b>② 모음 덩어리</b> — 한글의 ㅏ~ㅣ처럼 덩어리의 가운데 소리예요. 같은 글자도 짧게/길게 두 가지로 읽혀요.
+      <span class="ex">a 애(짧게)·에이(길게) · ee 이 · oo 우 · ou 아우 · er 어</span></div>
+    <div class="rule"><b>③ 끝소리</b> — m·n·ng·l은 한글 받침처럼 붙고(ㅁ·ㄴ·ㅇ·ㄹ), 나머지는 따로 한 칸이 돼요.
+      <span class="ex">te·n 텐 → ten / mee·t 미·트 / ni·ce 나이·스 / li·ve 리·브</span></div>
+    <div class="rule"><b>④ 자음이 두 개 붙으면</b> — 앞 자음은 따로 한 칸('ㅡ' 소리)으로 떼어요.
+      <span class="ex">s·tar 스·타 · t·ree 트·리 · p·lay 프·레이 · fir·s·t 퍼·스·트</span></div>
+    <div class="rule"><b>⑤ 모음이 하나면 짧게, 모음으로 끝나면 길게</b>
+      <span class="ex">ten 텐 / be 비 · hot 핫 / go 고 · kit 킷 / ki·te 카이·트</span></div>
+    <div class="rule"><b>⑥ 규칙대로 안 읽히는 단어</b> — the, one, said, was 같은 단어는 '통째로 외우기' 탭에서 그림처럼 외워요.</div>
+    <p class="note">한글 소리는 덩어리를 기억하기 위한 <b>참고 표기</b>예요. 영어는 한글과 달리 같은 철자가 여러 소리로 읽힐 수 있어서(ow 오/아우, ea 이/에),
+      대표 소리를 먼저 익히고 실제 발음은 🔊 소리로 확인해 주세요.</p>
+  </section>
+
+  <!-- 음절 카드 -->
+  <section class="card hide" id="tab-parts">
+    <p class="hint">카드를 누르면 소리와 예시 단어가 나와요. 예시 단어를 누르면 들을 수 있어요.</p>
+    <div id="parts"></div>
+    <div class="detail" id="p-detail"><span class="hint">카드를 눌러 보세요.</span></div>
+  </section>
+
+  <!-- 반절표 ① -->
+  <section class="card hide" id="tab-grid1">
+    <p class="hint">'가갸거겨'처럼 첫소리 × 모음 a·e·i·o·u 표예요. 칸마다 <span style="color:#d17c10">짧은 소리</span>와 <span style="color:#368a76">긴 소리</span>를 함께 적었어요.
+      <br>뒤에 자음이 오면(ten, hot) 짧게, 모음으로 끝나거나 뒤에 e가 오면(be, go, ti·me) 길게 읽어요.</p>
+    <div class="gridwrap"><table id="grid1"></table></div>
+    <div class="detail" id="g1-detail"><span class="hint">칸을 누르면 그 덩어리가 들어간 단어가 나와요.</span></div>
+  </section>
+
+  <!-- 반절표 ② -->
+  <section class="card hide" id="tab-grid2">
+    <p class="hint">모음 짝(ay, ee, oa…)과 r이 붙은 모음(ar, er, or) 표예요. 이 덩어리들은 소리가 거의 하나로 정해져 있어요.</p>
+    <div class="gridwrap"><table id="grid2"></table></div>
+    <div class="detail" id="g2-detail"><span class="hint">칸을 누르면 그 덩어리가 들어간 단어가 나와요.</span></div>
+  </section>
+
+  <!-- 조합하기 -->
+  <section class="card hide" id="tab-mix">
+    <p class="hint">첫소리 + 모음 + 끝소리를 골라 덩어리를 만들어 보세요. 한글 글자를 조합하듯 소리가 만들어져요.</p>
+    <div class="mix">
+      <div><label>① 첫소리</label><select id="m1"></select></div>
+      <div><label>② 모음</label><select id="m2"></select></div>
+      <div><label>③ 끝소리</label><select id="m3"></select></div>
+    </div>
+    <div class="result">
+      <div class="sp" id="m-sp"></div><div class="arrow">→</div><div class="kr" id="m-kr"></div>
+    </div>
+    <div class="sec">이렇게 만들어지는 단어</div>
+    <div class="chips" id="m-words"></div>
+  </section>
+
+  <!-- 통째로 외우기 -->
+  <section class="card hide" id="tab-sight">
+    <p class="hint">자주 나오지만 규칙대로 읽히지 않는 단어예요. 끊지 말고 그림 하나처럼 통째로 외워요.</p>
+    <div class="tiles" id="sight"></div>
+  </section>
+
+  <!-- 소리 퀴즈 -->
+  <section class="card hide quiz" id="tab-quiz">
+    <div class="q" id="qz-q"></div>
+    <div class="qh" id="qz-h"></div>
+    <div class="opts" id="qz-opts"></div>
+    <div class="score" id="qz-score"></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn" id="qz-next">다음 ▶</button></div>
+  </section>
+</div>
+
+<script>
+window.onerror = function(msg, src, line){
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#e0533f;color:#fff;font-size:13px;padding:8px 10px';
+  d.textContent = '화면을 그리지 못했어요: ' + msg + ' (' + line + '줄)';
+  document.body.appendChild(d);
+};
+
+/* ══════════════════════════════════════════════════════════
+   1. 첫소리 ── [철자, 한글 소리, 한글 초성(조합용), 예시 단어(·로 음절 구분)]
+      초성 뒤의 w / y 는 '와·워' '야·셔'처럼 모음을 바꿔 줘요.
+   ══════════════════════════════════════════════════════════ */
+const ONSETS = [
+  ['b','브','ㅂ',['be·d','ba·by']], ['c','크/스','ㅋ',['ca·t','ci·ty']], ['d','드','ㄷ',['do·g','day']],
+  ['f','프','ㅍ',['fi·sh','fi·ve']], ['g','그','ㄱ',['go','ga·me']], ['h','흐','ㅎ',['ha·t','ho·me']],
+  ['j','즈','ㅈ',['jam','jum·p']], ['k','크','ㅋ',['ki·d','ki·te']], ['l','르','ㄹ',['le·g','li·ke']],
+  ['m','므','ㅁ',['man','mil·k']], ['n','느','ㄴ',['ne·t','no·se']], ['p','프','ㅍ',['pen','pi·g']],
+  ['qu','쿠','ㅋw',['queen','qui·ck']], ['r','르','ㄹ',['re·d','run']], ['s','스','ㅅ',['sun','si·t']],
+  ['t','트','ㅌ',['ten','ti·me']], ['v','브','ㅂ',['van','ve·ry']], ['w','우','ㅇw',['we·b','win·dow']],
+  ['y','이','ㅇy',['ye·s','yel·low']], ['z','즈','ㅈ',['zoo','ze·b·ra']],
+  ['ch','치','ㅊ',['chin','lun·ch']], ['sh','쉬','ㅅy',['shi·p','fi·sh']], ['th','쓰','ㄸ',['thin·k','ba·th']],
+  ['ph','프','ㅍ',['pho·ne']], ['wh','우','ㅇw',['whi·te','when']], ['kn','느','ㄴ',['know','knee']], ['wr','르','ㄹ',['wri·te']]
+];
+
+/* ══════════════════════════════════════════════════════════
+   2. 모음 덩어리 ── [철자, 한글 소리, 모음(조합용), 덧소리, 종류, 예시]
+      덧소리 '이'·'우'는 '에이' '아우'처럼 뒤에 한 글자가 더 붙는 소리예요.
+   ══════════════════════════════════════════════════════════ */
+const VOWELS = [
+  ['a','애','ㅐ','','짧게',['ca·t','man']], ['e','에','ㅔ','','짧게',['be·d','ten']], ['i','이','ㅣ','','짧게',['si·t','pi·g']],
+  ['o','아','ㅏ','','짧게',['ho·t','do·g']], ['u','어','ㅓ','','짧게',['sun','run']],
+  ['a','에이','ㅔ','이','길게',['ba·by','ga·me']], ['e','이','ㅣ','','길게',['be','me']], ['i','아이','ㅏ','이','길게',['ni·ce','ti·me']],
+  ['o','오','ㅗ','','길게',['go','no·se']], ['u','유','ㅠ','','길게',['cu·te','mu·sic']],
+  ['ai','에이','ㅔ','이','모음 짝',['rain','pain·t']], ['ay','에이','ㅔ','이','모음 짝',['day','p·lay']],
+  ['ee','이','ㅣ','','모음 짝',['see','t·ree']], ['ea','이','ㅣ','','모음 짝',['ea·t','sea']],
+  ['ie','아이','ㅏ','이','모음 짝',['pie','tie']], ['igh','아이','ㅏ','이','모음 짝',['nigh·t','high']],
+  ['oa','오','ㅗ','','모음 짝',['boa·t','roa·d']], ['ow','오 / 아우','ㅗ','','모음 짝',['s·now','cow']],
+  ['oo','우','ㅜ','','모음 짝',['moon','zoo']], ['ou','아우','ㅏ','우','모음 짝',['hou·se','out']],
+  ['oi','오이','ㅗ','이','모음 짝',['coin','oil']], ['oy','오이','ㅗ','이','모음 짝',['boy','toy']],
+  ['aw','오','ㅗ','','모음 짝',['saw','d·raw']], ['au','오','ㅗ','','모음 짝',['Au·gus·t']], ['ew','유','ㅠ','','모음 짝',['new','few']],
+  ['ar','아','ㅏ','','r 모음',['car','s·tar']], ['or','오','ㅗ','','r 모음',['for','hor·se']],
+  ['er','어','ㅓ','','r 모음',['her','tea·cher']], ['ir','어','ㅓ','','r 모음',['bir·d','fir·s·t']], ['ur','어','ㅓ','','r 모음',['tur·n','pur·p·le']],
+  ['air','에어','ㅔ','어','r 모음',['hair','chair']], ['ear','이어','ㅣ','어','r 모음',['ear','dear']]
+];
+
+/* ══════════════════════════════════════════════════════════
+   3. 끝소리 ── [철자, 한글 소리, 받침(있으면 붙고, 없으면 따로 한 칸), 예시]
+   ══════════════════════════════════════════════════════════ */
+const CODAS = [
+  ['m','ㅁ 받침','ㅁ',['jam','swim']], ['n','ㄴ 받침','ㄴ',['ten','run']], ['ng','ㅇ 받침','ㅇ',['sing','long']], ['l','ㄹ 받침','ㄹ',['mil·k','ball']],
+  ['t','트','',['mee·t','ca·t']], ['d','드','',['be·d','ol·d']], ['s','스 / 즈','',['bu·s','ye·ar·s']], ['p','프','',['jum·p','shi·p']],
+  ['k','크','',['mil·k','thin·k']], ['g','그','',['do·g','pi·g']], ['f','프','',['my·sel·f']], ['b','브','',['we·b']],
+  ['ce','스','',['ni·ce','chan·ce']], ['se','즈','',['no·se','hou·se']], ['ve','브','',['li·ve','fi·ve']], ['ke','크','',['li·ke','ca·ke']],
+  ['te','트','',['ki·te','whi·te']], ['ne','ㄴ 받침','ㄴ',['pho·ne','li·ne']], ['me','ㅁ 받침','ㅁ',['ga·me','ti·me']], ['ge','지','',['pa·ge']],
+  ['ch','치','',['lun·ch']], ['sh','쉬','',['fi·sh']], ['th','쓰','',['ba·th']], ['ck','크','',['ba·ck','qui·ck']], ['x','크스','',['bo·x','si·x']]
+];
+
+/* 4. 끝 덩어리 ── 단어 끝에 자주 붙는 묶음 */
+const ENDINGS = [
+  ['ple','플',['peo·ple','ap·ple']], ['tle','틀',['lit·tle']], ['ble','블',['ta·ble']], ['tion','션',['s·ta·tion']],
+  ['ture','처',['pic·ture']], ['ing','잉',['go·ing','sing']], ['ed','드',['play·ed']], ['er','어',['tea·cher','wa·ter']],
+  ['y','이',['ba·by','ha·ppy']], ['ly','리',['on·ly']], ['ful','풀',['beau·ti·ful']], ['ow','오',['win·dow','yel·low']]
+];
+
+/* 5. 통째로 외우는 단어 */
+const SIGHT = [['the','더'],['a','어'],['of','오브'],['to','투'],['do','두'],['you','유'],['one','원'],['two','투'],['said','세드'],
+  ['was','워즈'],['are','아'],['have','해브'],['give','기브'],['come','컴'],['some','섬'],['love','러브'],['there','데어'],
+  ['where','웨어'],['what','왓'],['who','후'],['could','쿠드'],['would','우드'],['should','슈드'],['friend','프렌드'],
+  ['people','피플'],['eye','아이'],['again','어겐'],['because','비코즈'],['water','워터'],['done','던']];
+
+/* ── 소리 ── */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.8; speechSynthesis.speak(u);
+}
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function word(split){ return split.replace(/·/g,''); }
+
+/* ── 한글 조합 ── */
+const CHO='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', JUNG='ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ', JONG=' ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ';
+const W_MOD={'ㅐ':'ㅙ','ㅔ':'ㅞ','ㅣ':'ㅟ','ㅏ':'ㅘ','ㅓ':'ㅝ','ㅗ':'ㅝ','ㅜ':'ㅜ','ㅠ':'ㅠ'};
+const Y_MOD={'ㅐ':'ㅒ','ㅔ':'ㅖ','ㅣ':'ㅣ','ㅏ':'ㅑ','ㅓ':'ㅕ','ㅗ':'ㅛ','ㅜ':'ㅠ','ㅠ':'ㅠ'};
+function syl(c,v,j){ return String.fromCharCode(0xAC00 + (CHO.indexOf(c)*21 + JUNG.indexOf(v))*28 + Math.max(0,JONG.indexOf(j||' '))); }
+// onset: ONSETS 항목 또는 null(모음으로 시작), vowel: VOWELS 항목, coda: CODAS 항목 또는 null
+function compose(onset, vowel, coda){
+  let c = onset ? onset[2][0] : 'ㅇ', mod = onset ? onset[2].slice(1) : '';
+  let v = vowel[2];
+  if(onset && onset[0]==='c' && /^[eiy]/.test(vowel[0])) c='ㅅ';            // ce, ci → 세, 시
+  if(v==='ㅠ' && onset && /^(r|l|j|ch|sh|y|wr)$/.test(onset[0])) v='ㅜ';     // ru 루, ju 주
+  if(mod==='w') v = W_MOD[v]||v;
+  if(mod==='y') v = Y_MOD[v]||v;
+  const parts=[[c,v]];
+  if(vowel[3]) parts.push(['ㅇ', vowel[3]==='이'?'ㅣ':(vowel[3]==='우'?'ㅜ':'ㅓ')]);
+  let tail='';
+  if(coda){ if(coda[2]) parts[parts.length-1][2]=coda[2]; else tail = coda[1].split(' ')[0]; }
+  return parts.map(function(p){ return syl(p[0],p[1],p[2]); }).join('') + (tail ? '·'+tail : '');
+}
+
+/* ── 모든 예시 단어 모으기 (반절표·조합기에서 찾아 쓰기) ── */
+const BANK = [];
+[ONSETS,VOWELS,CODAS].forEach(function(list){ list.forEach(function(x){ (x[x.length-1]||[]).forEach(function(s){ if(BANK.indexOf(s)<0) BANK.push(s); }); }); });
+ENDINGS.forEach(function(x){ x[2].forEach(function(s){ if(BANK.indexOf(s)<0) BANK.push(s); }); });
+function findWords(pred){ return BANK.filter(function(s){ return s.split('·').some(pred); }); }
+function chipList(box, splits){
+  box.innerHTML='';
+  if(!splits.length){ box.appendChild(el('span','hint','예시 단어가 아직 없어요.')); return; }
+  splits.forEach(function(s){ const c=el('button','chip', esc(s)+' 🔊'); c.onclick=function(){ speak(word(s)); }; box.appendChild(c); });
+}
+
+/* ── 탭 ── */
+document.querySelectorAll('.tab').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on',x===b); });
+    document.querySelectorAll('section.card').forEach(function(s){ s.classList.add('hide'); });
+    document.getElementById('tab-'+b.dataset.tab).classList.remove('hide');
+  };
+});
+
+/* ── 음절 카드 ── */
+(function(){
+  const box=document.getElementById('parts'), det=document.getElementById('p-detail');
+  function group(title, sub, items, cls, getKo, getEx, getNote){
+    box.appendChild(el('div','sec', esc(title)+' <small>'+esc(sub)+' · '+items.length+'개</small>'));
+    const t=el('div','tiles');
+    items.forEach(function(x){
+      const b=el('button','tile '+cls,'<b>'+esc(x[0])+'</b><i>'+esc(getKo(x))+'</i>');
+      b.onclick=function(){
+        box.querySelectorAll('.tile').forEach(function(y){ y.classList.remove('on'); }); b.classList.add('on');
+        det.innerHTML='<span class="big">'+esc(x[0])+'</span><span class="ko">'+esc(getKo(x))+'</span>'+(getNote?'<p>'+esc(getNote(x))+'</p>':'');
+        const ch=el('div','chips'); det.appendChild(ch); chipList(ch, getEx(x));
+        const ex=getEx(x); if(ex.length) speak(word(ex[0]));
+      };
+      t.appendChild(b);
+    });
+    box.appendChild(t);
+  }
+  group('① 첫소리','한글의 ㄱ~ㅎ', ONSETS, 'k1', function(x){return x[1];}, function(x){return x[3];});
+  ['짧게','길게','모음 짝','r 모음'].forEach(function(kind){
+    group('② 모음 — '+kind, kind==='짧게'?'뒤에 자음이 올 때':kind==='길게'?'모음으로 끝나거나 뒤에 e':kind==='모음 짝'?'두 글자가 한 소리':'r이 붙은 모음',
+      VOWELS.filter(function(v){return v[4]===kind;}), '', function(x){return x[1];}, function(x){return x[5];});
+  });
+  group('③ 끝소리','받침으로 붙거나 따로 한 칸', CODAS, 'k3', function(x){return x[1];}, function(x){return x[3];},
+    function(x){ return x[2] ? '앞 덩어리에 받침('+x[2]+')으로 붙어요.' : '앞 덩어리 뒤에 따로 한 칸('+x[1]+')이 돼요.'; });
+  group('④ 끝 덩어리','단어 끝에 자주 붙는 묶음', ENDINGS, 'k3', function(x){return x[1];}, function(x){return x[2];});
+})();
+
+/* ── 반절표 ── */
+const GRID_ONSETS = ONSETS.filter(function(o){ return ['kn','wr','wh','qu','ph'].indexOf(o[0])<0; });
+function buildGrid(tableId, detId, cols){
+  const tb=document.getElementById(tableId), det=document.getElementById(detId);
+  let h='<tr><th class="row"></th>'+cols.map(function(c){ return '<th>'+esc(c.head)+'<small>'+esc(c.sub)+'</small></th>'; }).join('')+'</tr>';
+  tb.innerHTML=h;
+  GRID_ONSETS.forEach(function(o){
+    const tr=el('tr'); tr.appendChild(el('th','row',esc(o[0])));
+    cols.forEach(function(c){
+      const sp=o[0]+c.spell, td=el('td','', '<b>'+esc(sp)+'</b>'+c.ko.map(function(v){ return '<i>'+esc(compose(o,v,null))+'</i>'; }).join(' '));
+      td.onclick=function(){
+        tb.querySelectorAll('td').forEach(function(x){ x.classList.remove('on'); }); td.classList.add('on');
+        det.innerHTML='<span class="big">'+esc(sp)+'</span><span class="ko">'+esc(c.ko.map(function(v){return compose(o,v,null);}).join(' / '))+'</span>';
+        const ch=el('div','chips'); det.appendChild(ch);
+        const ws=findWords(function(p){ return p.toLowerCase().indexOf(sp)===0; });
+        chipList(ch, ws); if(ws.length) speak(word(ws[0]));
+      };
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+}
+function V(sp,kind){ return VOWELS.find(function(v){ return v[0]===sp && (!kind || v[4]===kind); }); }
+buildGrid('grid1','g1-detail', ['a','e','i','o','u'].map(function(s){
+  return { spell:s, head:s, sub:V(s,'짧게')[1]+' / '+V(s,'길게')[1], ko:[V(s,'짧게'), V(s,'길게')] };
+}));
+buildGrid('grid2','g2-detail', ['ay','ee','igh','oa','oo','ou','oy','ew','ar','er','or'].map(function(s){
+  return { spell:s, head:s, sub:V(s)[1], ko:[V(s)] };
+}));
+
+/* ── 조합하기 ── */
+const m1=document.getElementById('m1'), m2=document.getElementById('m2'), m3=document.getElementById('m3');
+m1.appendChild(el('option','','(없음) 모음으로 시작')); m1.lastChild.value='-1';
+ONSETS.forEach(function(o,i){ const op=el('option','',esc(o[0]+'  '+o[1])); op.value=i; m1.appendChild(op); });
+VOWELS.forEach(function(v,i){ const op=el('option','',esc(v[0]+'  '+v[1]+' ('+v[4]+')')); op.value=i; m2.appendChild(op); });
+m3.appendChild(el('option','','(없음)')); m3.lastChild.value='-1';
+CODAS.forEach(function(c,i){ const op=el('option','',esc(c[0]+'  '+c[1])); op.value=i; m3.appendChild(op); });
+m1.value=String(ONSETS.findIndex(function(o){return o[0]==='t';})); m2.value='1'; m3.value=String(CODAS.findIndex(function(c){return c[0]==='n';}));
+function mix(){
+  const o = +m1.value<0 ? null : ONSETS[+m1.value], v = VOWELS[+m2.value], c = +m3.value<0 ? null : CODAS[+m3.value];
+  const s1=o?o[0]:'', s2=v[0], s3=c?c[0]:'';
+  document.getElementById('m-sp').innerHTML='<span>'+esc(s1)+'</span><span>'+esc(s2)+'</span><span>'+esc(s3)+'</span>';
+  document.getElementById('m-kr').textContent = compose(o,v,c);
+  // 같은 덩어리(첫소리+모음)로 시작하고 끝소리가 맞는 예시 단어
+  const head=s1+s2;
+  const ws=BANK.filter(function(sp){
+    const ps=sp.toLowerCase().split('·');
+    for(let i=0;i<ps.length;i++){
+      if(c && ps[i]===head && ps[i+1]===s3) return true;
+      if(ps[i]===head+s3) return true;
+    }
+    return false;
+  });
+  chipList(document.getElementById('m-words'), ws);
+}
+[m1,m2,m3].forEach(function(s){ s.onchange=mix; }); mix();
+
+/* ── 통째로 외우기 ── */
+(function(){
+  const box=document.getElementById('sight');
+  SIGHT.forEach(function(x){ const b=el('button','tile k3','<b>'+esc(x[0])+'</b><i>'+esc(x[1])+'</i>'); b.onclick=function(){ speak(x[0]); }; box.appendChild(b); });
+})();
+
+/* ── 소리 퀴즈 ── */
+const POOL = [].concat(
+  ONSETS.map(function(x){ return {s:x[0], ko:x[1], ex:x[3], kind:'첫소리'}; }),
+  VOWELS.map(function(x){ return {s:x[0], ko:x[1], ex:x[5], kind:'모음 · '+x[4]}; }),
+  CODAS.filter(function(x){ return !x[2]; }).map(function(x){ return {s:x[0], ko:x[1], ex:x[3], kind:'끝소리'}; })
+);
+let qOk=0, qAll=0;
+function quiz(){
+  const ans = POOL[Math.floor(Math.random()*POOL.length)];
+  const kos=[ans.ko]; let guard=0;
+  while(kos.length<4 && guard++<200){ const k=POOL[Math.floor(Math.random()*POOL.length)].ko; if(kos.indexOf(k)<0) kos.push(k); }
+  kos.sort(function(){ return Math.random()-.5; });
+  document.getElementById('qz-q').textContent = ans.s;
+  document.getElementById('qz-h').textContent = ans.kind+' · 어떤 소리일까요?';
+  const box=document.getElementById('qz-opts'); box.innerHTML=''; let done=false;
+  kos.forEach(function(k){
+    const b=el('button','opt',esc(k));
+    b.onclick=function(){
+      if(done) return; done=true; qAll++;
+      if(k===ans.ko){ b.classList.add('ok'); qOk++; } else { b.classList.add('no');
+        box.querySelectorAll('.opt').forEach(function(x){ if(x.textContent===ans.ko) x.classList.add('ok'); }); }
+      document.getElementById('qz-score').textContent = qOk+' / '+qAll+' 맞았어요' + (ans.ex.length ? ' · 예: '+ans.ex[0] : '');
+      if(ans.ex.length) speak(word(ans.ex[0]));
+    };
+    box.appendChild(b);
+  });
+}
+document.getElementById('qz-next').onclick=quiz; quiz();
+</script>
+</body>
+</html>
