@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>음절로 배우는 자기소개</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdf7ea; --ink:#43382c; --muted:#a2937a; --line:#eadfc7;
+    --tile-top:#ffc064; --tile-bot:#f79c1a; --tile-edge:#d17c10;
+    --mint:#4fb8a0; --mint-bg:#dff3ee; --blue:#1560ad; --green:#2e9e5b; --red:#e0533f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;padding:12px 12px 40px;min-height:100vh;background:#7cc6b4;
+    background-image:radial-gradient(circle at 20% 10%,#a8e0d1 0,transparent 40%),
+                     radial-gradient(circle at 85% 90%,#5fae9b 0,transparent 45%);
+    font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;color:var(--ink);
+  }
+  .wrap{max-width:820px;margin:0 auto;}
+  h1{margin:4px 0 10px;color:#fff;font-size:24px;font-weight:400;text-shadow:0 2px 4px rgba(0,0,0,.2);
+     display:flex;align-items:center;gap:8px;}
+  h1 a{color:#fff;text-decoration:none;font-size:20px;}
+
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .tab{flex:1;min-width:92px;border:none;border-radius:14px;padding:10px 6px;font:inherit;font-size:16px;
+       background:rgba(255,255,255,.55);color:#2d6b5c;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.12);}
+  .tab.on{background:#fff;color:var(--ink);}
+
+  .card{background:var(--paper);border-radius:22px;padding:18px 16px;box-shadow:0 14px 30px rgba(0,40,30,.25);}
+  .hint{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 12px;}
+  .sec{font-size:18px;margin:14px 0 8px;color:#2d6b5c;}
+  .sec small{color:var(--muted);font-size:14px;}
+
+  /* 음절 타일 */
+  .tiles{display:flex;flex-wrap:wrap;gap:8px;}
+  .tile{
+    min-width:54px;padding:8px 10px 6px;border:none;border-radius:12px;font:inherit;cursor:pointer;
+    background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;
+    box-shadow:0 4px 0 var(--tile-edge);text-shadow:0 1px 2px rgba(0,0,0,.25);
+    display:flex;flex-direction:column;align-items:center;line-height:1.15;
+  }
+  .tile b{font-weight:400;font-size:22px;}
+  .tile i{font-style:normal;font-size:14px;opacity:.95;}
+  .tile:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tile-edge);}
+  .tile.used{visibility:hidden;}
+  .tile.wrong{animation:shake .35s;}
+  .tile.extra{background:linear-gradient(#ffd98f,#f5b84a);box-shadow:0 4px 0 #cf9530;}
+  .tile.on{outline:3px solid var(--blue);outline-offset:2px;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* 음절 상세 */
+  .detail{margin-top:14px;background:#fff;border-radius:16px;padding:12px 14px;border:2px dashed var(--line);min-height:70px;}
+  .detail .big{font-size:30px;}
+  .detail .ko{color:var(--tile-edge);font-size:22px;margin-left:6px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .chip{border:none;background:var(--mint-bg);color:#24705f;border-radius:99px;padding:6px 12px;font:inherit;font-size:16px;cursor:pointer;}
+
+  /* 조립 영역 */
+  .prompt{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .prompt .ko{font-size:22px;}
+  .say{border:none;background:#fff;border-radius:12px;width:42px;height:42px;font-size:20px;cursor:pointer;
+       box-shadow:0 3px 0 rgba(0,0,0,.12);flex:none;}
+  .slots{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;min-height:64px;background:#fff;border-radius:16px;
+         padding:10px;margin-bottom:14px;border:2px solid var(--line);}
+  .slot{min-width:44px;height:48px;border-bottom:3px solid #d9ccae;display:flex;align-items:flex-end;justify-content:center;
+        font-size:22px;padding:0 4px 2px;color:var(--ink);}
+  .slot.ok{border-color:var(--green);color:var(--green);}
+  .slot small{display:block;font-size:12px;color:var(--muted);text-align:center;}
+  .slot.fixed{color:var(--blue);border-color:#9bc1e6;}
+  .gap{width:12px;}
+  .done{display:none;margin-top:12px;background:var(--mint-bg);border-radius:16px;padding:12px 14px;font-size:18px;color:#24705f;}
+  .done.show{display:block;}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .btn{border:none;border-radius:14px;padding:10px 16px;font:inherit;font-size:17px;cursor:pointer;
+       background:var(--mint);color:#fff;box-shadow:0 3px 0 #368a76;}
+  .btn.gray{background:#cbbfa6;box-shadow:0 3px 0 #a99c80;}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.2);}
+
+  .daybar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .pill{background:var(--mint-bg);color:#24705f;border-radius:99px;padding:5px 12px;font-size:15px;}
+  .dots{display:flex;gap:5px;}
+  .dots i{width:12px;height:12px;border-radius:50%;background:#e3d8bf;}
+  .dots i.ok{background:var(--green);}
+  .dots i.now{background:var(--tile-bot);}
+
+  /* 가지 뻗기 */
+  .q{font-size:20px;margin:0 0 4px;}
+  .q small{display:block;color:var(--muted);font-size:15px;}
+  .branch{list-style:none;padding:0;margin:6px 0;}
+  .branch li{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--line);font-size:16px;line-height:1.45;}
+  .branch li .say{width:34px;height:34px;font-size:16px;}
+  .branch .tag{flex:none;font-size:13px;border-radius:8px;padding:2px 7px;margin-top:3px;background:#f3ead5;color:#8a7a5c;}
+  .branch .tag.ans{background:#ffe2b6;color:#b56a00;}
+  .branch .en{display:block;color:var(--blue);font-family:system-ui,sans-serif;font-size:15px;}
+  textarea{width:100%;min-height:150px;border-radius:14px;border:2px solid var(--line);padding:10px;font:inherit;font-size:16px;
+           background:#fff;color:var(--ink);resize:vertical;}
+  select,input{font:inherit;font-size:16px;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);}
+  label.f{display:block;margin:10px 0 4px;color:#2d6b5c;}
+  .note{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5;}
+  .hide{display:none;}
+  @media (max-width:520px){ .tile b{font-size:19px;} .tile{min-width:48px;padding:7px 8px 5px;} .slot{font-size:19px;min-width:38px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><a href="index.html" aria-label="처음으로">🏠</a> 음절로 배우는 자기소개</h1>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="cards">① 음절 카드</button>
+    <button class="tab" data-tab="words">② 단어 만들기</button>
+    <button class="tab" data-tab="daily">③ 오늘의 문장</button>
+    <button class="tab" data-tab="branch">④ 가지 뻗기</button>
+    <button class="tab" data-tab="me">⚙ 내 정보</button>
+  </div>
+
+  <!-- ① 음절 카드 -->
+  <section class="card" id="tab-cards">
+    <p class="hint">영어 철자를 한글로 읽히는 덩어리(음절)로 나눈 카드예요. 카드를 누르면 그 음절이 들어간 단어가 나와요. 단어를 누르면 소리를 들을 수 있어요.</p>
+    <div class="sec">기본 음절 <small id="cnt-basic"></small></div>
+    <div class="tiles" id="basic-tiles"></div>
+    <div class="sec">더하기 음절 <small id="cnt-extra"></small></div>
+    <div class="tiles" id="extra-tiles"></div>
+    <div class="detail" id="detail"><span class="hint">카드를 눌러 보세요.</span></div>
+  </section>
+
+  <!-- ② 단어 만들기 -->
+  <section class="card hide" id="tab-words">
+    <p class="hint">섞여 있는 음절 카드를 순서대로 눌러 단어를 만들어요.</p>
+    <div class="prompt">
+      <button class="say" id="w-say" aria-label="듣기">🔊</button>
+      <span class="ko" id="w-ko"></span>
+      <span class="pill" id="w-count"></span>
+    </div>
+    <div class="slots" id="w-slots"></div>
+    <div class="tiles" id="w-tiles"></div>
+    <div class="done" id="w-done"></div>
+    <div class="row"><button class="btn" id="w-next">다음 단어 ▶</button></div>
+  </section>
+
+  <!-- ③ 오늘의 문장 -->
+  <section class="card hide" id="tab-daily">
+    <div class="daybar">
+      <span class="pill" id="d-day"></span>
+      <div class="dots" id="d-dots"></div>
+    </div>
+    <p class="hint" id="d-hint"></p>
+    <div class="prompt">
+      <button class="say" id="d-say" aria-label="듣기">🔊</button>
+      <span class="ko" id="d-ko"></span>
+    </div>
+    <div class="slots" id="d-slots"></div>
+    <div class="tiles" id="d-tiles"></div>
+    <div class="done" id="d-done"></div>
+    <div class="row">
+      <button class="btn" id="d-next">다음 문장 ▶</button>
+      <button class="btn gray" id="d-reset">처음부터</button>
+    </div>
+  </section>
+
+  <!-- ④ 가지 뻗기 -->
+  <section class="card hide" id="tab-branch">
+    <p class="hint">질문을 받으면 바로 답하지 않고 <b>앞 가지 → 답 → 뒤 가지</b>로 길게 말해요. 한국어로 먼저 연습한 뒤 영어로 옮겨 보세요.</p>
+    <select id="b-pick"></select>
+    <div style="margin-top:12px">
+      <p class="q" id="b-q"></p>
+      <ul class="branch" id="b-list"></ul>
+      <div class="row"><button class="btn" id="b-all">🔊 전체 듣기</button></div>
+    </div>
+    <div class="sec">내 가지 뻗기 써 보기 <small>(이 기기에만 저장돼요)</small></div>
+    <textarea id="b-mine" placeholder="앞 가지 1~2문장 → 답 → 뒤 가지 1~2문장으로 시작해 보세요."></textarea>
+  </section>
+
+  <!-- 내 정보 -->
+  <section class="card hide" id="tab-me">
+    <p class="hint">문장의 빈칸(이름, 나이, 사는 곳 등)에 들어갈 내 정보예요. 영어로 적어 주세요.</p>
+    <label class="f">이름 (My name is ___)</label><input id="me-name">
+    <label class="f">나이 (I am ___ years old)</label><input id="me-age" inputmode="text">
+    <label class="f">사는 도시 (I live in ___)</label><input id="me-city">
+    <label class="f">아파트 이름 (I live at ___ apartment)</label><input id="me-apt">
+    <label class="f">유치원·학교 이름 (I go to ___ kindergarten)</label><input id="me-school">
+    <div class="row"><button class="btn" id="me-save">저장</button></div>
+    <p class="note">음절 나누기와 한글 소리는 책 『대한민국 영어 혁명! 독서 혁명!』의 '한글 음절 분리' 설명을 참고해 직접 정리한 개인 학습용 자료예요.
+      한글 소리는 기억을 돕는 참고용이에요. 실제 발음은 🔊 소리를 듣고 따라 해 주세요.</p>
+  </section>
+</div>
+
+<script>
+window.onerror = function(msg, src, line){
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#e0533f;color:#fff;font-size:13px;padding:8px 10px';
+  d.textContent = '화면을 그리지 못했어요: ' + msg + ' (' + line + '줄)';
+  document.body.appendChild(d);
+};
+
+/* ══════════════════════════════════════════════════════════
+   1. 단어 ── [음절, 한글 소리] 목록
+      문장에 쓰이는 단어를 여기에 넣으면 카드·단어 연습에 자동으로 들어가요.
+   ══════════════════════════════════════════════════════════ */
+const WORDS = {
+  "nice":["좋은",[["ni","나이"],["ce","스"]]],
+  "to":["~에게/~하러",[["to","투"]]],
+  "meet":["만나다",[["mee","미"],["t","트"]]],
+  "you":["너, 당신",[["you","유"]]],
+  "my":["나의",[["my","마이"]]],
+  "name":["이름",[["na","네이"],["me","임"]]],
+  "is":["~이다",[["is","이즈"]]],
+  "I":["나",[["I","아이"]]],
+  "am":["~이다",[["am","엠"]]],
+  "years":["해, 살",[["ye","이"],["ar","어"],["s","즈"]]],
+  "old":["~살의, 나이 든",[["ol","올"],["d","드"]]],
+  "live":["살다",[["li","리"],["ve","브"]]],
+  "in":["~안에",[["in","인"]]],
+  "at":["~에",[["at","앳"]]],
+  "apartment":["아파트",[["a","어"],["par","파"],["t","트"],["men","먼"],["t","트"]]],
+  "go":["가다",[["go","고"]]],
+  "kindergarten":["유치원",[["kin","킨"],["der","더"],["gar","가"],["ten","튼"]]],
+  "It's":["그것은 ~이다",[["It's","잇츠"]]],
+  "a":["하나의",[["a","어"]]],
+  "pleasure":["기쁨",[["p","프"],["lea","레"],["sure","저"]]],
+  "be":["~이다, 있다",[["be","비"]]],
+  "with":["~와 함께",[["wi","위"],["th","드"]]],
+  "today":["오늘",[["to","투"],["day","데이"]]],
+  "first":["첫째",[["fir","퍼"],["s","스"],["t","트"]]],
+  "of":["~의",[["of","오브"]]],
+  "all":["모두",[["all","올"]]],
+  "thank":["감사하다",[["thank","땡크"]]],
+  "for":["~에 대해",[["for","포"]]],
+  "giving":["주는 것",[["gi","기"],["ving","빙"]]],
+  "me":["나에게",[["me","미"]]],
+  "chance":["기회",[["chan","챈"],["ce","스"]]],
+  "introduce":["소개하다",[["in","인"],["t","트"],["ro","로"],["du","듀"],["ce","쓰"]]],
+  "myself":["나 자신",[["my","마이"],["sel","셀"],["f","프"]]]
+};
+
+/* ══════════════════════════════════════════════════════════
+   2. 문장 ── 하루에 한 문장씩 늘어나요(누적 반복).
+      {name} {age} {city} {apt} {school} 은 '내 정보'로 바뀌어요.
+      extra:true 인 문장의 새 음절은 '더하기 음절'로 분류돼요.
+   ══════════════════════════════════════════════════════════ */
+const SENTENCES = [
+  { en:"Nice to meet you.",                 ko:"만나서 반가워요." },
+  { en:"My name is {name}.",                ko:"제 이름은 ___예요." },
+  { en:"I am {age} years old.",             ko:"저는 ___살이에요." },
+  { en:"I live in {city}.",                 ko:"저는 ___에 살아요." },
+  { en:"I live at {apt} apartment.",        ko:"저는 ___ 아파트에 살아요." },
+  { en:"I go to {school} kindergarten.",    ko:"저는 ___ 유치원에 다녀요." },
+  { en:"It's a pleasure to be with you today.", ko:"오늘 함께하게 되어 기뻐요.", extra:true },
+  { en:"First of all, thank you for giving me a chance to introduce myself.", ko:"먼저, 저를 소개할 기회를 주셔서 감사해요.", extra:true }
+];
+
+/* ══════════════════════════════════════════════════════════
+   3. 가지 뻗기 예시 ── 앞 가지 → 답 → 뒤 가지
+   ══════════════════════════════════════════════════════════ */
+const BRANCHES = [
+  { q:"What is your name?", qk:"이름이 뭐예요?", items:[
+    ["pre","제 이름을 물어봐 주셔서 고마워요.","Thank you for asking my name."],
+    ["ans","제 이름은 ___예요.","My name is {name}."],
+    ["post","제 이름은 부모님이 지어 주셨어요.","My parents gave me my name."],
+    ["post","저는 제 이름이 좋아요.","I like my name."] ]},
+  { q:"How old are you?", qk:"몇 살이에요?", items:[
+    ["pre","저는 우리 반에서 키가 큰 편이에요.","I am tall in my class."],
+    ["ans","저는 ___살이에요.","I am {age} years old."],
+    ["post","내년에는 학교에 가고 싶어요.","I want to go to school next year."],
+    ["post","생일이 정말 기다려져요.","I can't wait for my birthday."] ]},
+  { q:"How many are there in your family?", qk:"가족이 몇 명이에요?", items:[
+    ["pre","저는 좋은 가족이 있어요.","I have a nice family."],
+    ["ans","우리 가족은 4명이에요. 아빠, 엄마, 누나, 그리고 저예요.","There are 4 people in my family: my father, my mother, my sister and me."],
+    ["post","주말마다 함께 공원에 가요.","We go to the park together every weekend."],
+    ["post","언젠가 동생이 한 명 더 있으면 좋겠어요.","Someday I would like to have one more brother or sister."] ]},
+  { q:"What do you like?", qk:"무엇을 좋아해요?", items:[
+    ["pre","저는 좋아하는 게 많아요.","I like many things."],
+    ["pre","그림 그리기와 노래 부르기를 좋아해요.","I like drawing and singing."],
+    ["ans","하지만 제일 좋아하는 건 바다 동물이에요.","But I like sea animals the most."],
+    ["post","돌고래는 정말 똑똑해요.","Dolphins are very smart."],
+    ["post","언젠가 바다에 가서 돌고래를 보고 싶어요.","Someday I want to see dolphins in the sea."] ]}
+];
+
+/* ── 저장 ── */
+const STORE = 'syllable-study-v1';
+let mem = {};
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || {}; }catch(e){ return mem; } }
+function save(s){ try{ localStorage.setItem(STORE, JSON.stringify(s)); }catch(e){ mem = s; } }
+let state = Object.assign({ day:1, step:0, me:{name:"Jun",age:"seven",city:"Changwon",apt:"Hanbit",school:"Sunny"}, mine:"" }, load());
+
+/* ── 소리 ── */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=0.8;
+  speechSynthesis.speak(u);
+}
+function speakList(list){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  list.forEach(function(t){ const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=0.8; speechSynthesis.speak(u); });
+}
+
+/* ── 공통 도구 ── */
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function fill(t){ const m=state.me; return t.replace(/\{(\w+)\}/g,function(_,k){ return m[k]||'___'; }); }
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function wordKey(w){ return WORDS[w] ? w : (WORDS[w.toLowerCase()] ? w.toLowerCase() : null); }
+
+/* 문장 → 단어 목록 [{w, syl:[[s,k]...] | null(빈칸 등)}] */
+function parseSentence(en){
+  return en.split(' ').map(function(tok){
+    const slot = tok.match(/\{(\w+)\}/);
+    if(slot){ return { fixed: fill(tok.replace(/[.,]/g,'')), punct: (tok.match(/[.,]$/)||[''])[0] }; }
+    const punct = (tok.match(/[.,]$/)||[''])[0];
+    const w = tok.replace(/[.,]$/,'');
+    const k = wordKey(w);
+    return { w:w, syl: k ? WORDS[k][1] : [[w,'']], punct:punct };
+  });
+}
+
+/* ── 음절 목록 만들기 (기본 / 더하기) ── */
+const SYL = {};            // 음절 → {ko, words:Set, extra}
+SENTENCES.forEach(function(s){
+  parseSentence(s.en).forEach(function(t){
+    if(!t.syl) return;
+    t.syl.forEach(function(p){
+      if(!SYL[p[0]]) SYL[p[0]] = { ko:new Set(), words:new Set(), extra:!!s.extra };
+      SYL[p[0]].ko.add(p[1]); SYL[p[0]].words.add(t.w);
+    });
+  });
+});
+const basicSyl = Object.keys(SYL).filter(function(k){ return !SYL[k].extra; });
+const extraSyl = Object.keys(SYL).filter(function(k){ return SYL[k].extra; });
+
+/* ── 탭 ── */
+document.querySelectorAll('.tab').forEach(function(b){
+  b.onclick = function(){
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x===b); });
+    document.querySelectorAll('section.card').forEach(function(s){ s.classList.add('hide'); });
+    document.getElementById('tab-'+b.dataset.tab).classList.remove('hide');
+    if(b.dataset.tab==='daily') renderDaily();
+    if(b.dataset.tab==='branch') renderBranch();
+  };
+});
+
+/* ① 음절 카드 */
+function syllTile(s, extra){
+  const b = el('button','tile'+(extra?' extra':''),'<b>'+esc(s)+'</b><i>'+esc([...SYL[s].ko].join('/'))+'</i>');
+  b.onclick = function(){
+    document.querySelectorAll('#tab-cards .tile').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); showDetail(s);
+  };
+  return b;
+}
+function showDetail(s){
+  const d = document.getElementById('detail'); d.innerHTML='';
+  d.appendChild(el('div','', '<span class="big">'+esc(s)+'</span><span class="ko">'+esc([...SYL[s].ko].join(' / '))+'</span>'));
+  d.appendChild(el('div','hint','이 음절이 들어간 단어'));
+  const chips = el('div','chips');
+  SYL[s].words.forEach(function(w){
+    const k = wordKey(w);
+    const split = WORDS[k][1].map(function(p){ return p[0]===s ? '<u>'+esc(p[0])+'</u>' : esc(p[0]); }).join('·');
+    const c = el('button','chip', split+' <small>('+esc(WORDS[k][0])+')</small> 🔊');
+    c.onclick = function(){ speak(w); };
+    chips.appendChild(c);
+  });
+  d.appendChild(chips);
+}
+(function renderCards(){
+  const bt=document.getElementById('basic-tiles'), et=document.getElementById('extra-tiles');
+  basicSyl.forEach(function(s){ bt.appendChild(syllTile(s,false)); });
+  extraSyl.forEach(function(s){ et.appendChild(syllTile(s,true)); });
+  document.getElementById('cnt-basic').textContent = '— 짧은 자기소개 문장 ('+basicSyl.length+'개)';
+  document.getElementById('cnt-extra').textContent = '— 긴 인사 문장에 새로 나오는 음절 (+'+extraSyl.length+'개, 모두 '+(basicSyl.length+extraSyl.length)+'개)';
+})();
+
+/* ── 조립 게임 (단어·문장 공용) ── */
+function makeBuilder(o){
+  // o.tokens: parseSentence 결과, o.slots/o.tiles/o.done 요소, o.onDone
+  const slots=o.slots, tiles=o.tiles; slots.innerHTML=''; tiles.innerHTML=''; o.done.classList.remove('show');
+  const order=[]; // 맞춰야 할 음절 순서
+  o.tokens.forEach(function(t,ti){
+    if(ti>0) slots.appendChild(el('span','gap'));
+    if(t.fixed){ slots.appendChild(el('span','slot fixed ok', esc(t.fixed+t.punct))); return; }
+    t.syl.forEach(function(p,pi){
+      const s = el('span','slot','');
+      s.dataset.p = (pi===t.syl.length-1) ? t.punct : '';
+      slots.appendChild(s); order.push({syl:p[0], ko:p[1], slot:s});
+    });
+  });
+  let pos=0;
+  shuffle(order).forEach(function(item){
+    const b = el('button','tile','<b>'+esc(item.syl)+'</b><i>'+esc(item.ko)+'</i>');
+    b.onclick = function(){
+      const need = order[pos];
+      if(need && need.syl===item.syl){
+        need.slot.innerHTML = esc(item.syl)+esc(need.slot.dataset.p)+'<small>'+esc(item.ko)+'</small>';
+        need.slot.classList.add('ok'); b.classList.add('used'); pos++;
+        if(pos===order.length){ o.done.classList.add('show'); o.onDone(); }
+      }else{ b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); }
+    };
+    tiles.appendChild(b);
+  });
+}
+
+/* ② 단어 만들기 */
+const wordList = Object.keys(WORDS).filter(function(w){ return WORDS[w][1].length>1; });
+let wIdx = -1, wOrder = shuffle(wordList);
+function nextWord(){
+  wIdx = (wIdx+1) % wOrder.length;
+  const w = wOrder[wIdx];
+  document.getElementById('w-ko').textContent = WORDS[w][0];
+  document.getElementById('w-count').textContent = WORDS[w][1].length+'음절';
+  document.getElementById('w-say').onclick = function(){ speak(w); };
+  makeBuilder({ tokens:[{w:w, syl:WORDS[w][1], punct:''}],
+    slots:document.getElementById('w-slots'), tiles:document.getElementById('w-tiles'), done:document.getElementById('w-done'),
+    onDone:function(){
+      document.getElementById('w-done').textContent = '🎉 '+w+' = '+WORDS[w][1].map(function(p){return p[0];}).join(' · ')+'  ('+WORDS[w][1].map(function(p){return p[1];}).join('·')+')';
+      speak(w);
+    }});
+}
+document.getElementById('w-next').onclick = nextWord;
+nextWord();
+
+/* ③ 오늘의 문장 (누적 반복) */
+function renderDaily(){
+  const day = Math.min(state.day, SENTENCES.length);
+  const todays = SENTENCES.slice(0, day);           // 1일차: 1문장, 2일차: 1~2문장 …
+  if(state.step >= todays.length) state.step = 0;
+  const cur = todays[state.step];
+  document.getElementById('d-day').textContent = day+'일차 · '+(state.step+1)+' / '+todays.length;
+  const dots = document.getElementById('d-dots'); dots.innerHTML='';
+  todays.forEach(function(_,i){ dots.appendChild(el('i', i<state.step?'ok':(i===state.step?'now':''))); });
+  document.getElementById('d-hint').textContent = state.step < todays.length-1
+    ? '어제까지 배운 문장부터 차례로 복습해요. 마지막이 오늘의 새 문장이에요.'
+    : (day===1 ? '첫날이에요! 음절 카드를 순서대로 눌러 문장을 만들어요.' : '오늘의 새 문장이에요!');
+  document.getElementById('d-ko').textContent = cur.ko;
+  const full = fill(cur.en);
+  document.getElementById('d-say').onclick = function(){ speak(full); };
+  const nextBtn = document.getElementById('d-next');
+  nextBtn.textContent = state.step < todays.length-1 ? '다음 문장 ▶' : (day < SENTENCES.length ? '오늘 끝! 내일 문장 열기 ▶' : '다시 처음 문장부터 ▶');
+  makeBuilder({ tokens:parseSentence(cur.en),
+    slots:document.getElementById('d-slots'), tiles:document.getElementById('d-tiles'), done:document.getElementById('d-done'),
+    onDone:function(){ document.getElementById('d-done').textContent = '🎉 '+full; speak(full); }});
+}
+document.getElementById('d-next').onclick = function(){
+  const day = Math.min(state.day, SENTENCES.length);
+  if(state.step < day-1){ state.step++; }
+  else { state.step = 0; if(state.day < SENTENCES.length) state.day++; }
+  save(state); renderDaily();
+};
+document.getElementById('d-reset').onclick = function(){
+  if(!confirm('1일차부터 다시 시작할까요?')) return;
+  state.day=1; state.step=0; save(state); renderDaily();
+};
+
+/* ④ 가지 뻗기 */
+const pick = document.getElementById('b-pick');
+BRANCHES.forEach(function(b,i){ const o=el('option','',esc(b.qk+'  '+b.q)); o.value=i; pick.appendChild(o); });
+pick.onchange = renderBranch;
+function renderBranch(){
+  const b = BRANCHES[+pick.value||0];
+  document.getElementById('b-q').innerHTML = 'Q. '+esc(b.q)+'<small>'+esc(b.qk)+'</small>';
+  const ul = document.getElementById('b-list'); ul.innerHTML='';
+  const tagName = {pre:'앞 가지', ans:'답', post:'뒤 가지'};
+  b.items.forEach(function(it){
+    const en = fill(it[2]);
+    const li = el('li','');
+    const sb = el('button','say','🔊'); sb.onclick=function(){ speak(en); };
+    li.appendChild(el('span','tag'+(it[0]==='ans'?' ans':''), tagName[it[0]]));
+    li.appendChild(el('span','', esc(it[1])+'<span class="en">'+esc(en)+'</span>'));
+    li.appendChild(sb); ul.appendChild(li);
+  });
+  document.getElementById('b-all').onclick = function(){ speakList(b.items.map(function(it){ return fill(it[2]); })); };
+}
+const mine = document.getElementById('b-mine');
+mine.value = state.mine || '';
+mine.oninput = function(){ state.mine = mine.value; save(state); };
+
+/* 내 정보 */
+['name','age','city','apt','school'].forEach(function(k){ document.getElementById('me-'+k).value = state.me[k]||''; });
+document.getElementById('me-save').onclick = function(){
+  ['name','age','city','apt','school'].forEach(function(k){ state.me[k] = document.getElementById('me-'+k).value.trim(); });
+  save(state); alert('저장했어요!');
+};
+</script>
+</body>
+</html>
