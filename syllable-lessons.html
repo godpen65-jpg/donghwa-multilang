@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>음절 공부방</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdf7ea; --ink:#43382c; --muted:#a2937a; --line:#eadfc7;
+    --tile-top:#ffc064; --tile-bot:#f79c1a; --tile-edge:#d17c10;
+    --mint:#4fb8a0; --mint-e:#368a76; --mint-bg:#dff3ee;
+    --blue:#1560ad; --green:#2e9e5b; --red:#e0533f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;padding:12px 12px 40px;min-height:100vh;background:#7cc6b4;
+    background-image:radial-gradient(circle at 20% 10%,#a8e0d1 0,transparent 40%),
+                     radial-gradient(circle at 85% 90%,#5fae9b 0,transparent 45%);
+    font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;color:var(--ink);
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+  .top{display:flex;align-items:center;gap:8px;margin:2px 0 12px;}
+  .top h1{flex:1;margin:0;color:#fff;font-size:24px;font-weight:400;text-shadow:0 2px 4px rgba(0,0,0,.2);}
+  .icon-btn{background:rgba(255,255,255,.92);border:none;border-radius:14px;min-width:44px;height:44px;font:inherit;font-size:18px;
+            cursor:pointer;color:#2d6b5c;box-shadow:0 3px 0 rgba(0,0,0,.14);text-decoration:none;display:flex;align-items:center;justify-content:center;padding:0 10px;}
+  .stars-total{color:#fff;font-size:18px;text-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .card{background:var(--paper);border-radius:24px;padding:18px 16px;box-shadow:0 14px 30px rgba(0,40,30,.25);}
+  .hide{display:none!important;}
+
+  /* 단계 지도 */
+  .map{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  .lv{border:none;border-radius:18px;padding:12px 10px;font:inherit;cursor:pointer;text-align:left;background:#fff;color:var(--ink);
+      box-shadow:0 4px 0 #e2d6bb;display:flex;flex-direction:column;gap:3px;min-height:108px;position:relative;}
+  .lv .em{font-size:30px;line-height:1;}
+  .lv .no{font-size:13px;color:var(--muted);}
+  .lv .tt{font-size:17px;line-height:1.25;}
+  .lv .st{font-size:16px;letter-spacing:1px;margin-top:auto;}
+  .lv.locked{background:#efe8d8;color:#b3a78f;box-shadow:0 4px 0 #ddd2b8;cursor:default;}
+  .lv.locked .em{filter:grayscale(1);opacity:.5;}
+  .lv.locked::after{content:'🔒';position:absolute;right:10px;top:10px;font-size:18px;}
+  .lv.next{outline:3px solid var(--tile-bot);}
+  .parent{margin-top:16px;font-size:13px;color:var(--muted);text-align:center;}
+  .parent button{border:none;background:none;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;}
+
+  /* 배우기 */
+  .lesson-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .lesson-head .em{font-size:34px;}
+  .lesson-head h2{margin:0;font-size:22px;font-weight:400;}
+  .lesson-head p{margin:2px 0 0;color:var(--muted);font-size:15px;}
+  .bar{height:12px;border-radius:99px;background:#efe6d0;overflow:hidden;margin:6px 0 14px;}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd166,#f79c1a);border-radius:99px;transition:width .3s;}
+  .flash{text-align:center;padding:10px 0 4px;}
+  .flash .chunk{display:inline-block;min-width:150px;padding:18px 26px 12px;border-radius:24px;
+                background:linear-gradient(var(--tile-top),var(--tile-bot));box-shadow:0 7px 0 var(--tile-edge);
+                color:#fff;text-shadow:0 2px 3px rgba(0,0,0,.25);cursor:pointer;}
+  .flash .chunk b{display:block;font-weight:400;font-size:64px;line-height:1.05;}
+  .flash .chunk i{display:block;font-style:normal;font-size:28px;}
+  .flash .tip{margin:16px 0 6px;color:#6d6150;font-size:16px;}
+  .example{display:inline-flex;align-items:center;gap:10px;margin-top:8px;background:#fff;border-radius:18px;padding:10px 16px;
+           border:2px solid var(--line);cursor:pointer;font:inherit;color:var(--ink);}
+  .example .w{font-size:28px;}
+  .example .w u{text-decoration:none;color:var(--tile-edge);border-bottom:3px solid var(--tile-bot);}
+  .example .k{font-size:18px;color:var(--muted);}
+  .btns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+  .btn{border:none;border-radius:16px;padding:12px 20px;font:inherit;font-size:19px;cursor:pointer;background:var(--mint);color:#fff;box-shadow:0 4px 0 var(--mint-e);}
+  .btn.gray{background:#cbbfa6;box-shadow:0 4px 0 #a99c80;}
+  .btn.big{font-size:22px;padding:14px 26px;}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2);}
+
+  /* 문제 */
+  .qtype{display:inline-block;background:var(--mint-bg);color:#24705f;border-radius:99px;padding:4px 12px;font-size:15px;}
+  .qtext{font-size:21px;margin:10px 0 12px;text-align:center;}
+  .qbig{font-size:60px;text-align:center;margin:6px 0 14px;line-height:1.1;}
+  .listen{display:block;margin:6px auto 16px;border:none;border-radius:50%;width:96px;height:96px;font-size:42px;cursor:pointer;
+          background:#fff;box-shadow:0 5px 0 #e2d6bb;}
+  .listen:active{transform:translateY(3px);box-shadow:0 2px 0 #e2d6bb;}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt{border:none;border-radius:18px;padding:16px 8px;font:inherit;font-size:26px;background:#fff;color:var(--ink);box-shadow:0 4px 0 #e2d6bb;cursor:pointer;}
+  .opt.ok{background:#d6f2df;color:var(--green);box-shadow:0 4px 0 #a9d9b8;}
+  .opt.no{background:#fbdcd6;color:var(--red);box-shadow:0 4px 0 #efb3a8;}
+  .slots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;min-height:70px;background:#fff;border-radius:18px;padding:10px;margin-bottom:14px;border:2px solid var(--line);}
+  .slot{min-width:52px;height:54px;border-bottom:3px solid #d9ccae;display:flex;align-items:flex-end;justify-content:center;font-size:28px;padding:0 4px 2px;}
+  .slot.ok{border-color:var(--green);color:var(--green);}
+  .tiles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+  .tile{min-width:64px;padding:10px 14px;border:none;border-radius:14px;font:inherit;font-size:28px;cursor:pointer;color:#fff;
+        background:linear-gradient(var(--tile-top),var(--tile-bot));box-shadow:0 5px 0 var(--tile-edge);text-shadow:0 1px 2px rgba(0,0,0,.25);}
+  .tile:active{transform:translateY(3px);box-shadow:0 2px 0 var(--tile-edge);}
+  .tile.used{visibility:hidden;}
+  .tile.wrong{animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+  .feedback{text-align:center;font-size:22px;min-height:34px;margin-top:12px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--red);}
+  .feedback small{display:block;font-size:16px;color:#6d6150;}
+
+  /* 결과 */
+  .result{text-align:center;padding:10px 0;}
+  .result .big{font-size:80px;line-height:1.1;}
+  .result .stars{font-size:52px;letter-spacing:6px;margin:6px 0;}
+  .result p{font-size:20px;margin:6px 0;}
+  .result .wrong{margin-top:12px;font-size:16px;color:#6d6150;}
+  .pop{animation:pop .5s;}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+  @media (max-width:520px){ .flash .chunk b{font-size:54px;} .opt{font-size:22px;} .tile{font-size:24px;min-width:56px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="icon-btn" id="home-btn" href="syllable.html" aria-label="뒤로">◀</a>
+    <h1 id="title">음절 공부방</h1>
+    <span class="stars-total" id="star-total"></span>
+  </div>
+
+  <!-- 단계 지도 -->
+  <section class="card" id="v-map">
+    <div class="map" id="map"></div>
+    <div class="parent">별을 1개 이상 받으면 다음 단계가 열려요 ·
+      <button id="unlock-all">보호자: 모든 단계 열기</button> · <button id="reset">기록 지우기</button></div>
+  </section>
+
+  <!-- 배우기 -->
+  <section class="card hide" id="v-learn">
+    <div class="lesson-head"><span class="em" id="l-em"></span><div><h2 id="l-title"></h2><p id="l-intro"></p></div></div>
+    <div class="bar"><i id="l-bar"></i></div>
+    <div class="flash">
+      <div class="chunk" id="l-chunk"><b></b><i></i></div>
+      <div class="tip" id="l-tip"></div>
+      <button class="example" id="l-ex"><span class="w"></span><span class="k"></span><span>🔊</span></button>
+    </div>
+    <div class="btns">
+      <button class="btn gray" id="l-prev">◀ 이전</button>
+      <button class="btn" id="l-next">다음 ▶</button>
+    </div>
+  </section>
+
+  <!-- 문제 -->
+  <section class="card hide" id="v-quiz">
+    <div class="lesson-head"><span class="em" id="q-em"></span><div><h2 id="q-title"></h2><p id="q-count"></p></div></div>
+    <div class="bar"><i id="q-bar"></i></div>
+    <div id="q-body"></div>
+    <div class="feedback" id="q-fb"></div>
+    <div class="btns"><button class="btn big hide" id="q-next">다음 문제 ▶</button></div>
+  </section>
+
+  <!-- 결과 -->
+  <section class="card hide" id="v-result">
+    <div class="result">
+      <div class="big pop" id="r-big"></div>
+      <div class="stars pop" id="r-stars"></div>
+      <p id="r-msg"></p>
+      <div class="wrong" id="r-wrong"></div>
+      <div class="btns">
+        <button class="btn gray" id="r-again">다시 풀기</button>
+        <button class="btn" id="r-review">다시 배우기</button>
+        <button class="btn big" id="r-map">단계 지도로 ▶</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+window.onerror = function(msg, src, line){
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#e0533f;color:#fff;font-size:13px;padding:8px 10px';
+  d.textContent = '화면을 그리지 못했어요: ' + msg + ' (' + line + '줄)';
+  document.body.appendChild(d);
+};
+
+/* ══════════════════════════════════════════════════════════
+   단계 ── 한글을 ㅏ·ㅓ → ㄱ·ㄴ → 받침 순서로 배우듯 쉬운 것부터.
+     items : 배울 음절 [음절, 한글 소리, 예시(·로 음절 구분), 예시 한글 소리, 한마디]
+     words : 문제에 쓰는 단어 "음절·음절=한글·한글"
+     sight : true 이면 끊지 않고 통째로 외우는 단계
+   ══════════════════════════════════════════════════════════ */
+const LESSONS = [
+  { em:'🍎', title:'짧은 모음 a e i o u', intro:'한글의 ㅏ·ㅓ처럼 가장 먼저 배우는 소리예요.',
+    items:[['a','애','ca·t','캐·트','뒤에 자음이 오면 짧게 "애"'],['e','에','be·d','베·드','짧게 "에"'],['i','이','pi·g','피·그','짧게 "이"'],
+           ['o','아','ho·t','하·트','짧게 "아"'],['u','어','sun','선','짧게 "어"']],
+    words:['ca·t=캐·트','be·d=베·드','pi·g=피·그','ho·t=하·트','sun=선','ten=텐','man=맨','run=런'] },
+  { em:'🐻', title:'첫소리 ① b d m n p t', intro:'한글의 ㄱ·ㄴ처럼 덩어리 맨 앞에 오는 소리예요.',
+    items:[['b','브','ba·t','배·트','입술을 붙였다 터뜨려요'],['d','드','do·g','다·그',''],['m','므','man','맨','입을 다물고 음~'],
+           ['n','느','ne·t','네·트',''],['p','프','pen','펜','입술로 "프"'],['t','트','ten','텐','']],
+    words:['ba·t=배·트','do·g=다·그','man=맨','ne·t=네·트','pen=펜','ten=텐','ma·p=매·프','mom=맘'] },
+  { em:'🐱', title:'첫소리 ② c f g h l r s', intro:'첫소리를 더 배워요. c는 보통 "크"예요.',
+    items:[['c','크','ca·t','캐·트','a·o·u 앞에서는 "크"'],['f','프','fan','팬','윗니로 아랫입술을 살짝'],['g','그','gum','검',''],
+           ['h','흐','ha·t','해·트',''],['l','르','le·g','레·그','혀끝을 윗니 뒤에'],['r','르','re·d','레·드','혀를 둥글게 말아요'],['s','스','sun','선','']],
+    words:['ca·t=캐·트','fan=팬','gum=검','ha·t=해·트','le·g=레·그','re·d=레·드','si·t=시·트','sun=선'] },
+  { em:'🦓', title:'첫소리 ③ j k v w y z qu', intro:'남은 첫소리예요. qu는 늘 붙어 다니며 "쿠"예요.',
+    items:[['j','즈','jam','잼',''],['k','크','ki·d','키·드',''],['v','브','van','밴','f처럼 하되 목을 울려요'],['w','우','we·b','웨·브','입술을 동그랗게'],
+           ['y','이','ye·s','예·스',''],['z','즈','zi·p','지·프','벌처럼 "즈~"'],['qu','쿠','qui·z','퀴·즈','q 뒤에는 늘 u']],
+    words:['jam=잼','ki·d=키·드','van=밴','we·b=웨·브','ye·s=예·스','zi·p=지·프','qui·z=퀴·즈','je·t=제·트'] },
+  { em:'🔔', title:'받침이 되는 끝소리 m n ng l', intro:'이 네 소리는 한글 받침처럼 앞 덩어리에 붙어요.',
+    items:[['m','ㅁ 받침','jam','잼','앞 글자에 ㅁ 받침'],['n','ㄴ 받침','ten','텐','앞 글자에 ㄴ 받침'],['ng','ㅇ 받침','sing','싱','두 글자가 ㅇ 받침 하나'],
+           ['l','ㄹ 받침','bell','벨','앞 글자에 ㄹ 받침']],
+    words:['jam=잼','ten=텐','sing=싱','long=롱','bell=벨','king=킹','mil·k=밀·크','swim=스윔'] },
+  { em:'🧩', title:'따로 한 칸 끝소리 t d s p k g x', intro:'이 소리들은 받침이 되지 않고 따로 한 칸이 돼요. "ㅡ"를 붙여 짧게!',
+    items:[['t','트','ca·t','캐·트','따로 한 칸 "트"'],['d','드','be·d','베·드','따로 한 칸 "드"'],['s','스','bu·s','버·스',''],
+           ['p','프','cu·p','커·프',''],['k','크','mil·k','밀·크',''],['g','그','do·g','다·그',''],['x','크스','bo·x','바·크스','x는 "크스" 두 소리']],
+    words:['ca·t=캐·트','be·d=베·드','bu·s=버·스','cu·p=커·프','do·g=다·그','bo·x=바·크스','jum·p=점·프','hel·p=헬·프'] },
+  { em:'🌟', title:'긴 모음 — 모음으로 끝나면 길게', intro:'덩어리가 모음으로 끝나면 알파벳 이름처럼 길게 읽어요.',
+    items:[['a','에이','ba·by','베이·비','모음으로 끝나면 "에이"'],['e','이','me','미','"이"'],['i','아이','hi','하이','"아이"'],
+           ['o','오','go','고','"오"'],['u','유','cu·te','큐·트','"유"']],
+    words:['go=고','no=노','me=미','we=위','hi=하이','ba·by=베이·비','ze·ro=지·로','pa·per=페이·퍼'] },
+  { em:'🪄', title:'e가 붙은 끝소리 ce se ve ke te me ne', intro:'끝의 e는 소리가 없어요. 대신 앞 모음을 길게 만들어요.',
+    items:[['ce','스','ni·ce','나이·스','e는 소리 없음'],['se','즈','no·se','노·즈',''],['ve','브','fi·ve','파이·브',''],['ke','크','ca·ke','케이·크',''],
+           ['te','트','ki·te','카이·트',''],['me','ㅁ 받침','ga·me','게임','ㅁ 받침처럼 붙어요'],['ne','ㄴ 받침','li·ne','라인','ㄴ 받침처럼 붙어요']],
+    words:['ni·ce=나이·스','no·se=노·즈','fi·ve=파이·브','ca·ke=케이·크','ki·te=카이·트','ga·me=게임','ti·me=타임','ho·me=홈'] },
+  { em:'🐟', title:'두 글자가 한 소리 ch sh th ph wh ck', intro:'두 글자가 모여 소리 하나를 내요. 한 칸으로 봐요.',
+    items:[['ch','치','chin','친',''],['sh','쉬','fi·sh','피·쉬','"쉿!" 할 때 소리'],['th','쓰','ba·th','배·쓰','혀를 이 사이에 살짝'],['ph','프','pho·ne','폰','f와 같은 소리'],
+           ['wh','우','when','웬','w와 같은 소리'],['ck','크','du·ck','더·크','k와 같은 소리']],
+    words:['chin=친','shi·p=쉬·프','fi·sh=피·쉬','ba·th=배·쓰','pho·ne=폰','when=웬','du·ck=더·크','lun·ch=런·치'] },
+  { em:'🌧️', title:'모음 짝 ① ai ay ee ea oa', intro:'모음 두 개가 만나 소리 하나가 돼요.',
+    items:[['ai','에이','rain','레인',''],['ay','에이','day','데이','단어 끝에서는 ay'],['ee','이','see','시','길게 "이~"'],['ea','이','ea·t','이·트',''],['oa','오','boa·t','보·트','']],
+    words:['rain=레인','day=데이','see=시','ea·t=이·트','boa·t=보·트','p·lay=프·레이','t·ree=트·리','roa·d=로·드'] },
+  { em:'🌙', title:'모음 짝 ② oo ou ow oi oy aw ew', intro:'모음 짝을 더 배워요. ow는 "아우"도 되고 "오"도 돼요.',
+    items:[['oo','우','moon','문',''],['ou','아우','hou·se','하우·스',''],['ow','아우','cow','카우','"오"로 읽을 때도 있어요(snow)'],['oi','오이','coin','코인',''],
+           ['oy','오이','boy','보이','단어 끝에서는 oy'],['aw','오','saw','소',''],['ew','유','new','뉴','']],
+    words:['moon=문','zoo=주','hou·se=하우·스','cow=카우','coin=코인','boy=보이','saw=소','new=뉴'] },
+  { em:'🚗', title:'r이 붙은 모음 ar or er ir ur', intro:'모음 뒤에 r이 오면 소리가 바뀌어요. er·ir·ur은 모두 "어"예요.',
+    items:[['ar','아','car','카',''],['or','오','for','포',''],['er','어','her','허',''],['ir','어','bir·d','버·드','er과 같은 소리'],['ur','어','turn','턴','er과 같은 소리']],
+    words:['car=카','s·tar=스·타','for=포','her=허','bir·d=버·드','turn=턴','hor·se=호·스','tea·cher=티·처'] },
+  { em:'✂️', title:'자음이 붙으면 앞은 따로', intro:'자음 두 개가 붙어 있으면 앞 자음을 떼어 "ㅡ"를 붙여요.',
+    items:[['s·tar','스·타','s·tar','스·타','s를 떼어 "스"'],['t·ree','트·리','t·ree','트·리','t를 떼어 "트"'],['p·lay','프·레이','p·lay','프·레이',''],
+           ['b·lue','브·루','b·lue','브·루',''],['g·reen','그·린','g·reen','그·린',''],['s·now','스·노','s·now','스·노','']],
+    words:['s·tar=스·타','t·ree=트·리','p·lay=프·레이','b·lue=브·루','g·reen=그·린','s·now=스·노','s·wim=스·윔','f·ro·g=프·라·그'] },
+  { em:'🏁', title:'끝 덩어리 ple tion ture ing y', intro:'단어 끝에 자주 붙는 묶음은 통째로 기억해요.',
+    items:[['ple','플','peo·ple','피·플',''],['tion','션','s·ta·tion','스·테이·션',''],['ture','처','pic·ture','픽·처',''],['ing','잉','go·ing','고·잉',''],['y','이','ha·ppy','해·피','끝의 y는 "이"']],
+    words:['peo·ple=피·플','ap·ple=애·플','s·ta·tion=스·테이·션','pic·ture=픽·처','go·ing=고·잉','ha·ppy=해·피','ba·by=베이·비','sing·ing=싱·잉'] },
+  { em:'👀', title:'통째로 외우기 ①', intro:'규칙대로 안 읽히는 단어는 그림처럼 통째로 외워요.', sight:true,
+    items:[['the','더','the','더',''],['of','오브','of','오브',''],['to','투','to','투',''],['do','두','do','두',''],['you','유','you','유',''],
+           ['one','원','one','원',''],['two','투','two','투',''],['said','세드','said','세드',''],['was','워즈','was','워즈','']],
+    words:['the=더','of=오브','to=투','do=두','you=유','one=원','two=투','said=세드','was=워즈'] },
+  { em:'💛', title:'통째로 외우기 ②', intro:'자주 쓰는 단어를 더 외워요.', sight:true,
+    items:[['are','아','are','아',''],['have','해브','have','해브',''],['give','기브','give','기브',''],['come','컴','come','컴',''],['some','섬','some','섬',''],
+           ['love','러브','love','러브',''],['there','데어','there','데어',''],['where','웨어','where','웨어',''],['what','왓','what','왓','']],
+    words:['are=아','have=해브','give=기브','come=컴','some=섬','love=러브','there=데어','where=웨어','what=왓'] }
+];
+
+/* ── 저장 ── */
+const STORE='syllable-lessons-v1';
+let mem=null;
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || {}; }catch(e){ return mem || {}; } }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(st)); }catch(e){ mem = st; } }
+let st = Object.assign({ stars:{}, all:false }, load());
+
+/* ── 도구 ── */
+function speak(text, rate){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=rate||0.75; speechSynthesis.speak(u);
+}
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function W(str){ const p=str.split('='); return { split:p[0], parts:p[0].split('·'), word:p[0].replace(/·/g,''), ko:p[1] }; }
+function show(id){ ['v-map','v-learn','v-quiz','v-result'].forEach(function(v){ document.getElementById(v).classList.toggle('hide', v!==id); }); window.scrollTo(0,0); }
+function starStr(n){ return '⭐'.repeat(n) + '☆'.repeat(3-n); }
+function unlocked(i){ return st.all || i===0 || (st.stars[i-1]||0) > 0; }
+
+/* ── 단계 지도 ── */
+function renderMap(){
+  document.getElementById('title').textContent='음절 공부방';
+  const total = Object.keys(st.stars).reduce(function(s,k){ return s+(st.stars[k]||0); },0);
+  document.getElementById('star-total').textContent = '⭐ '+total+' / '+(LESSONS.length*3);
+  const m=document.getElementById('map'); m.innerHTML='';
+  let nextMarked=false;
+  LESSONS.forEach(function(L,i){
+    const open=unlocked(i), s=st.stars[i]||0;
+    const b=el('button','lv'+(open?'':' locked'),
+      '<span class="em">'+L.em+'</span><span class="no">'+(i+1)+'단계</span><span class="tt">'+esc(L.title)+'</span><span class="st">'+(open?starStr(s):'')+'</span>');
+    if(open && !s && !nextMarked){ b.classList.add('next'); nextMarked=true; }
+    if(open) b.onclick=function(){ startLearn(i); };
+    m.appendChild(b);
+  });
+  show('v-map');
+}
+document.getElementById('unlock-all').onclick=function(){
+  if(!confirm('모든 단계를 열까요? (보호자용)')) return; st.all=true; save(); renderMap();
+};
+document.getElementById('reset').onclick=function(){
+  if(!confirm('별과 진도 기록을 모두 지울까요?')) return; st={stars:{},all:false}; save(); renderMap();
+};
+
+/* ── 배우기 ── */
+let cur=0, li=0;
+function startLearn(i){ cur=i; li=0; renderLearn(); show('v-learn'); }
+function renderLearn(){
+  const L=LESSONS[cur], it=L.items[li];
+  document.getElementById('title').textContent=(cur+1)+'단계 배우기';
+  document.getElementById('l-em').textContent=L.em;
+  document.getElementById('l-title').textContent=L.title;
+  document.getElementById('l-intro').textContent=L.intro;
+  document.getElementById('l-bar').style.width=((li+1)/L.items.length*100)+'%';
+  const ch=document.getElementById('l-chunk');
+  ch.querySelector('b').textContent=it[0]; ch.querySelector('i').textContent=it[1];
+  document.getElementById('l-tip').textContent = it[4] || ' ';
+  const parts=it[2].split('·'), target=it[0];
+  const ex=document.getElementById('l-ex');
+  // 배우는 음절이 들어간 칸에 밑줄 (똑같은 칸이 없으면 그 글자가 들어간 칸)
+  let hit = parts.indexOf(target);
+  if(hit<0) hit = parts.findIndex(function(p){ return p.indexOf(target)>=0; });
+  ex.querySelector('.w').innerHTML = L.sight ? esc(it[2]) : parts.map(function(p,i){ return (i===hit || target.indexOf('·')>0) ? '<u>'+esc(p)+'</u>' : esc(p); }).join('·');
+  ex.querySelector('.k').textContent = it[3];
+  const w=it[2].replace(/·/g,'');
+  ex.onclick=function(){ speak(w); };
+  ch.onclick=function(){ speak(w); };
+  document.getElementById('l-prev').style.visibility = li? 'visible':'hidden';
+  document.getElementById('l-next').textContent = li<L.items.length-1 ? '다음 ▶' : '문제 풀러 가기 ✏️';
+  speak(w);
+}
+document.getElementById('l-prev').onclick=function(){ if(li>0){ li--; renderLearn(); } };
+document.getElementById('l-next').onclick=function(){
+  if(li<LESSONS[cur].items.length-1){ li++; renderLearn(); } else startQuiz();
+};
+
+/* ── 문제 만들기 ── */
+let Q=[], qi=0, score=0, wrongs=[];
+function otherKos(L, ans){
+  // 같은 단계의 다른 소리 → 모자라면 다른 단계에서
+  let pool = L.items.map(function(x){return x[1];});
+  LESSONS.forEach(function(o){ o.items.forEach(function(x){ pool.push(x[1]); }); });
+  pool = pool.filter(function(k,i){ return k!==ans && pool.indexOf(k)===i; });
+  const mine = shuffle(L.items.map(function(x){return x[1];}).filter(function(k){return k!==ans;}));
+  const rest = shuffle(pool.filter(function(k){ return mine.indexOf(k)<0; }));
+  return mine.concat(rest).slice(0,3);
+}
+function buildQuiz(L){
+  const qs=[];
+  // ① 소리 고르기: 음절을 보고 한글 소리 고르기
+  shuffle(L.items).slice(0,3).forEach(function(it){
+    qs.push({ type:'sound', label:'소리 고르기', it:it, opts:shuffle([it[1]].concat(otherKos(L,it[1]))) });
+  });
+  // ② 듣고 고르기: 단어를 듣고 맞는 글자 고르기
+  const words=L.words.map(W);
+  shuffle(words).slice(0,3).forEach(function(w){
+    const others=shuffle(words.filter(function(x){return x.word!==w.word;})).slice(0,3).map(function(x){return x.word;});
+    qs.push({ type:'listen', label:'듣고 고르기', w:w, opts:shuffle([w.word].concat(others)) });
+  });
+  // ③ 단어 만들기: 음절 카드를 순서대로 (통째로 외우기 단계는 '뜻 없이 소리로 고르기'로 대신)
+  const multi=shuffle(words.filter(function(w){ return w.parts.length>1; }));
+  multi.slice(0,2).forEach(function(w){ qs.push({ type:'build', label:'단어 만들기', w:w }); });
+  if(L.sight){
+    shuffle(L.items).slice(0,2).forEach(function(it){
+      const others=shuffle(L.items.filter(function(x){return x[0]!==it[0];})).slice(0,3).map(function(x){return x[0];});
+      qs.push({ type:'which', label:'글자 고르기', it:it, opts:shuffle([it[0]].concat(others)) });
+    });
+  }
+  return shuffle(qs);
+}
+function startQuiz(){
+  Q=buildQuiz(LESSONS[cur]); qi=0; score=0; wrongs=[];
+  show('v-quiz'); renderQ();
+}
+function renderQ(){
+  const L=LESSONS[cur], q=Q[qi];
+  document.getElementById('title').textContent=(cur+1)+'단계 문제';
+  document.getElementById('q-em').textContent=L.em;
+  document.getElementById('q-title').textContent=L.title;
+  document.getElementById('q-count').textContent=(qi+1)+' / '+Q.length+' 문제';
+  document.getElementById('q-bar').style.width=(qi/Q.length*100)+'%';
+  const fb=document.getElementById('q-fb'); fb.className='feedback'; fb.innerHTML='';
+  document.getElementById('q-next').classList.add('hide');
+  const body=document.getElementById('q-body'); body.innerHTML='';
+  body.appendChild(el('span','qtype',q.label));
+
+  if(q.type==='sound'){
+    body.appendChild(el('div','qtext', L.sight ? '이 단어는 어떻게 읽을까요?' : '이 덩어리는 어떤 소리일까요?'));
+    body.appendChild(el('div','qbig',esc(q.it[0])));
+    choices(body, q.opts, q.it[1], function(){ speak(q.it[2].replace(/·/g,'')); }, q.it[0]+' = '+q.it[1], q.it[2]+' ('+q.it[3]+')');
+  }
+  if(q.type==='which'){
+    body.appendChild(el('div','qtext','"'+esc(q.it[1])+'" 하고 읽는 단어는?'));
+    const lb=el('button','listen','🔊'); lb.onclick=function(){ speak(q.it[0]); }; body.appendChild(lb);
+    choices(body, q.opts, q.it[0], function(){ speak(q.it[0]); }, q.it[0]+' = '+q.it[1], '');
+    speak(q.it[0]);
+  }
+  if(q.type==='listen'){
+    body.appendChild(el('div','qtext','잘 듣고 맞는 단어를 골라요'));
+    const lb=el('button','listen','🔊'); lb.onclick=function(){ speak(q.w.word, 0.7); }; body.appendChild(lb);
+    choices(body, q.opts, q.w.word, function(){ speak(q.w.word); }, q.w.split+' = '+q.w.ko, '');
+    setTimeout(function(){ speak(q.w.word, 0.7); }, 250);
+  }
+  if(q.type==='build'){
+    body.appendChild(el('div','qtext','"'+esc(q.w.ko)+'" — 음절 카드를 순서대로 눌러요'));
+    const lb=el('button','listen','🔊'); lb.style.width='70px'; lb.style.height='70px'; lb.style.fontSize='30px';
+    lb.onclick=function(){ speak(q.w.word, 0.7); }; body.appendChild(lb);
+    const slots=el('div','slots'), tiles=el('div','tiles'); body.appendChild(slots); body.appendChild(tiles);
+    const sl=q.w.parts.map(function(){ const s=el('span','slot',''); slots.appendChild(s); return s; });
+    let pos=0, missed=false;
+    shuffle(q.w.parts.map(function(p,i){ return {p:p,i:i}; })).forEach(function(t){
+      const b=el('button','tile',esc(t.p));
+      b.onclick=function(){
+        if(t.p===q.w.parts[pos]){
+          sl[pos].textContent=t.p; sl[pos].classList.add('ok'); b.classList.add('used'); pos++;
+          if(pos===q.w.parts.length) answered(!missed, q.w.split+' = '+q.w.ko, '', function(){ speak(q.w.word); });
+        }else{ missed=true; b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); }
+      };
+      tiles.appendChild(b);
+    });
+  }
+}
+function choices(body, opts, ans, onDone, line1, line2){
+  const box=el('div','opts'); body.appendChild(box); let done=false;
+  opts.forEach(function(o){
+    const b=el('button','opt',esc(o));
+    b.onclick=function(){
+      if(done) return; done=true;
+      const ok = o===ans;
+      b.classList.add(ok?'ok':'no');
+      if(!ok) box.querySelectorAll('.opt').forEach(function(x){ if(x.textContent===ans) x.classList.add('ok'); });
+      answered(ok, line1, line2, onDone);
+    };
+    box.appendChild(b);
+  });
+}
+const PRAISE=['참 잘했어요! 🎉','정답이에요! 👏','최고예요! 🌟','맞았어요! 😄'];
+function answered(ok, line1, line2, onDone){
+  const fb=document.getElementById('q-fb');
+  if(ok){ score++; fb.className='feedback ok'; fb.innerHTML=PRAISE[Math.floor(Math.random()*PRAISE.length)]+'<small>'+esc(line1)+(line2?' · '+esc(line2):'')+'</small>'; }
+  else { wrongs.push(line1); fb.className='feedback no'; fb.innerHTML='괜찮아요, 다시 보면 돼요 💪<small>'+esc(line1)+(line2?' · '+esc(line2):'')+'</small>'; }
+  if(onDone) onDone();
+  const nb=document.getElementById('q-next');
+  nb.textContent = qi<Q.length-1 ? '다음 문제 ▶' : '결과 보기 🏆';
+  nb.classList.remove('hide');
+}
+document.getElementById('q-next').onclick=function(){
+  if(qi<Q.length-1){ qi++; renderQ(); } else finish();
+};
+
+/* ── 결과 ── */
+function finish(){
+  const n=Q.length, r=score/n;
+  const stars = r>=0.95 ? 3 : r>=0.75 ? 2 : r>=0.5 ? 1 : 0;
+  if(stars > (st.stars[cur]||0)){ st.stars[cur]=stars; save(); }
+  document.getElementById('title').textContent=(cur+1)+'단계 결과';
+  document.getElementById('r-big').textContent = stars===3?'🏆':stars===2?'🎉':stars===1?'😊':'💪';
+  document.getElementById('r-stars').textContent = starStr(stars);
+  document.getElementById('r-msg').textContent = n+'문제 중 '+score+'문제 맞았어요! ' +
+    (stars===0 ? '한 번 더 배워 보고 다시 풀어 봐요.' : (cur<LESSONS.length-1 ? '다음 단계가 열렸어요!' : '모든 단계를 마쳤어요!'));
+  document.getElementById('r-wrong').innerHTML = wrongs.length ? '다시 볼 것: '+wrongs.map(esc).join(' · ') : '';
+  document.getElementById('r-map').textContent = (stars>0 && cur<LESSONS.length-1) ? '다음 단계로 ▶' : '단계 지도로 ▶';
+  show('v-result');
+  if(stars>0) speak(stars===3 ? 'Perfect! Great job!' : 'Good job!', 0.9);
+}
+document.getElementById('r-again').onclick=startQuiz;
+document.getElementById('r-review').onclick=function(){ startLearn(cur); };
+document.getElementById('r-map').onclick=function(){
+  if((st.stars[cur]||0)>0 && cur<LESSONS.length-1) startLearn(cur+1); else renderMap();
+};
+document.getElementById('home-btn').onclick=function(e){
+  if(!document.getElementById('v-map').classList.contains('hide')) return; // 지도에서는 원래 링크로
+  e.preventDefault(); if(window.speechSynthesis) speechSynthesis.cancel(); renderMap();
+};
+
+renderMap();
+</script>
+</body>
+</html>
