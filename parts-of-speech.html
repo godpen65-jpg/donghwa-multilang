@@ -33,11 +33,6 @@
   .card{background:var(--paper);border-radius:24px;padding:18px 16px;box-shadow:0 14px 30px rgba(30,20,60,.25);}
   .hide{display:none!important;}
 
-  /* 언어 고르기 */
-  .langs{display:flex;background:rgba(255,255,255,.35);border-radius:16px;padding:4px;gap:4px;margin-bottom:12px;}
-  .langs button{flex:1;border:none;border-radius:12px;padding:9px 4px;font:inherit;font-size:17px;cursor:pointer;background:transparent;color:#fff;}
-  .langs button.on{background:#fff;color:#5a4ea0;box-shadow:0 3px 0 rgba(0,0,0,.12);}
-
   /* 처음 화면 */
   .hello{text-align:center;margin:0 0 14px;}
   .hello h2{margin:0 0 4px;font-weight:400;font-size:24px;}
@@ -48,11 +43,14 @@
   .fam b{display:block;font-weight:400;font-size:17px;}
   .fam i{display:block;font-style:normal;font-size:13px;opacity:.75;}
   .menu{display:grid;gap:10px;}
-  .menu button{border:none;border-radius:20px;padding:16px;font:inherit;font-size:22px;cursor:pointer;background:#fff;color:var(--ink);
+  .menu button{border:none;border-radius:20px;padding:14px 16px;font:inherit;font-size:22px;cursor:pointer;background:#fff;color:var(--ink);
                box-shadow:0 5px 0 #e2d6bb;display:flex;align-items:center;gap:14px;text-align:left;}
-  .menu button .em{font-size:38px;}
+  .menu button .em{font-size:36px;}
   .menu button small{display:block;font-size:15px;color:var(--muted);}
+  .menu button.hot{outline:3px solid var(--v);}
   .menu button:active{transform:translateY(3px);box-shadow:0 2px 0 #e2d6bb;}
+  .focus{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:2px;font-size:15px;color:var(--muted);}
+  .focus button{border:none;border-radius:12px;padding:6px 10px;font:inherit;font-size:15px;cursor:pointer;}
   .parent{margin-top:16px;font-size:13px;color:var(--muted);text-align:center;}
   .parent button{border:none;background:none;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;}
 
@@ -66,36 +64,41 @@
   .friend{border-radius:22px;padding:16px;text-align:center;}
   .friend .em{font-size:60px;line-height:1.1;}
   .friend h2{margin:4px 0 0;font-weight:400;font-size:30px;}
-  .friend h2 small{font-size:20px;opacity:.8;}
   .friend .kid{font-size:20px;margin-top:2px;}
   .friend .desc{font-size:19px;margin:10px 0 0;line-height:1.5;color:var(--ink);}
+  .friend .desc-en{font-size:16px;margin:2px 0 0;color:var(--muted);}
   .magic{display:inline-block;margin-top:12px;background:#fff;border-radius:99px;padding:8px 18px;font-size:20px;}
-  .magic span{font-size:15px;color:var(--muted);}
+  .magic span{font-size:16px;color:var(--muted);}
   .tip{margin-top:10px;font-size:16px;color:#6d6150;}
+  .secret{background:#fff;border-radius:18px;padding:12px 14px;margin-top:12px;font-size:18px;line-height:1.6;border:3px dashed currentColor;}
+  .secret div{margin-top:2px;}
+  .secret .ok{color:var(--green);} .secret .no{color:var(--red);}
+  .secret .en{color:var(--muted);font-size:16px;}
   .ex-title{margin:16px 0 8px;font-size:17px;color:var(--muted);text-align:center;}
   .examples{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
   .ex{border:2px solid var(--line);background:#fff;border-radius:16px;padding:8px 4px;font:inherit;cursor:pointer;color:var(--ink);text-align:center;}
   .ex .em{font-size:30px;display:block;}
   .ex b{display:block;font-weight:400;font-size:19px;}
-  .ex i{display:block;font-style:normal;font-size:15px;color:var(--muted);}
+  .ex s{display:block;text-decoration:none;font-size:14px;color:var(--muted);}
+  .ex i{display:block;font-style:normal;font-size:17px;color:#5a4ea0;}
   .ex:active{transform:scale(.96);}
   .demo{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 4px;}
-  .demo .tok{cursor:default;}
-  .note{background:#fff;border-radius:16px;padding:12px 14px;font-size:17px;line-height:1.6;margin-top:12px;border:2px dashed var(--line);}
 
   .btns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
   .btn{border:none;border-radius:16px;padding:12px 20px;font:inherit;font-size:19px;cursor:pointer;background:var(--mint);color:#fff;box-shadow:0 4px 0 var(--mint-e);}
   .btn.gray{background:#cbbfa6;box-shadow:0 4px 0 #a99c80;}
+  .btn.red{background:var(--v);box-shadow:0 4px 0 #b13d2c;}
   .btn.big{font-size:22px;padding:14px 26px;}
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2);}
 
-  /* 바구니 놀이 */
+  /* 낱말 카드 (바구니·같이 하자) */
   .qtext{font-size:20px;margin:4px 0 10px;text-align:center;}
   .word{display:block;margin:0 auto 16px;border:none;background:#fff;border-radius:24px;padding:14px 30px;box-shadow:0 6px 0 #e2d6bb;
-        font:inherit;cursor:pointer;color:var(--ink);text-align:center;min-width:200px;}
+        font:inherit;cursor:pointer;color:var(--ink);text-align:center;min-width:220px;}
   .word .em{font-size:56px;display:block;line-height:1.1;}
-  .word b{display:block;font-weight:400;font-size:42px;line-height:1.2;}
-  .word i{display:block;font-style:normal;font-size:20px;color:var(--muted);}
+  .word b{display:block;font-weight:400;font-size:40px;line-height:1.2;}
+  .word i{display:block;font-style:normal;font-size:30px;color:#5a4ea0;line-height:1.2;}
+  .word small{display:block;font-size:14px;color:var(--muted);margin-top:4px;}
   .baskets{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .basket{border:none;border-radius:18px;padding:12px 6px;font:inherit;cursor:pointer;color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.1);}
   .basket .em{font-size:30px;display:block;}
@@ -103,37 +106,56 @@
   .basket i{display:block;font-style:normal;font-size:14px;opacity:.75;}
   .basket.no{background:#e9e2d4!important;opacity:.55;}
   .basket.ok{outline:4px solid var(--green);}
+  .ox{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .ox button{border:none;border-radius:18px;padding:14px 6px;font:inherit;font-size:21px;cursor:pointer;background:#fff;color:var(--ink);box-shadow:0 4px 0 #e2d6bb;}
+  .ox button span{display:block;font-size:40px;}
+  .ox button.ok{background:#d6f2df;outline:4px solid var(--green);}
+  .ox button.no{background:#e9e2d4;opacity:.55;}
   .feedback{min-height:56px;text-align:center;font-size:19px;margin-top:12px;line-height:1.45;}
   .feedback .good{color:var(--green);}
   .feedback .hint{color:#8a5a00;}
+  .feedback .en{color:var(--muted);font-size:16px;}
   .shake{animation:shake .4s;}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
   /* 문장 탐정 */
-  .sent-em{font-size:58px;text-align:center;line-height:1.1;}
-  .sentence{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 6px;}
+  .sent-em{font-size:52px;text-align:center;line-height:1.1;}
+  .find{text-align:center;font-size:21px;margin:6px 0 4px;}
+  .find .pill{display:inline-block;border-radius:99px;padding:3px 14px;}
+  .row{border-radius:18px;padding:8px 6px 10px;margin-top:8px;border:3px solid transparent;transition:opacity .2s;}
+  .row.now{border-color:#7d70c2;background:#fff;}
+  .row.wait{opacity:.45;}
+  .row-h{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;color:var(--muted);}
+  .row-h button{border:none;background:#efe8ff;border-radius:99px;padding:3px 10px;font:inherit;font-size:15px;cursor:pointer;color:#5a4ea0;}
+  .sentence{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 0;}
   .tok{border:none;border-radius:14px;padding:10px 12px 6px;font:inherit;font-size:27px;cursor:pointer;background:#fff;color:var(--ink);
        box-shadow:0 4px 0 #e2d6bb;display:flex;flex-direction:column;align-items:center;min-width:52px;}
+  .row.now .tok{background:#fdf7ea;}
   .tok .tail{color:var(--muted);font-size:21px;}
   .tok .lab{font-size:13px;min-height:16px;margin-top:2px;}
-  .tok.x{background:#f1ebde;color:#9c917d;}
+  .tok.x{background:#f1ebde!important;color:#9c917d;}
   .tok.no{animation:shake .4s;}
+  .tok.glow{animation:glow 1s infinite;}
+  @keyframes glow{0%,100%{box-shadow:0 4px 0 #e2d6bb,0 0 0 0 rgba(224,83,63,.0)}50%{box-shadow:0 4px 0 #e2d6bb,0 0 0 7px rgba(255,190,60,.8)}}
   .tok.c-n{box-shadow:0 4px 0 var(--n);} .tok.c-v{box-shadow:0 4px 0 var(--v);}
   .tok.c-a{box-shadow:0 4px 0 var(--a);} .tok.c-d{box-shadow:0 4px 0 var(--d);}
-  .say-other{text-align:center;color:var(--muted);font-size:17px;margin-top:4px;}
-  .find{text-align:center;font-size:21px;margin:6px 0 2px;}
-  .find .pill{display:inline-block;border-radius:99px;padding:3px 14px;}
 
   .result{text-align:center;padding:10px 0;}
   .result .big{font-size:80px;line-height:1.1;}
-  .result .stars{font-size:46px;letter-spacing:4px;margin:6px 0;}
+  .result .stars{font-size:40px;letter-spacing:3px;margin:6px 0;word-break:break-all;}
   .result p{font-size:20px;margin:6px 0;}
-  .result .wrong{margin-top:12px;font-size:16px;color:#6d6150;}
+  .stats{display:grid;gap:8px;margin:14px auto 0;max-width:420px;text-align:left;}
+  .stat{display:flex;align-items:center;gap:8px;font-size:17px;}
+  .stat .nm{width:120px;}
+  .stat .sb{flex:1;height:14px;background:#efe6d0;border-radius:99px;overflow:hidden;}
+  .stat .sb i{display:block;height:100%;border-radius:99px;}
+  .stat .sc{width:44px;text-align:right;color:var(--muted);}
   .pop{animation:pop .5s;}
   @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
   @media (max-width:520px){
     .family{grid-template-columns:repeat(2,1fr);}
-    .word b{font-size:36px;} .tok{font-size:23px;padding:8px 9px 5px;} .tok .tail{font-size:18px;}
+    .word b{font-size:34px;} .word i{font-size:26px;}
+    .tok{font-size:22px;padding:8px 8px 5px;min-width:44px;} .tok .tail{font-size:17px;}
     .examples{grid-template-columns:repeat(2,1fr);}
   }
 </style>
@@ -146,24 +168,20 @@
     <span class="stars-total" id="star-total"></span>
   </div>
 
-  <div class="langs" id="langs">
-    <button data-l="ko">🇰🇷 한국어</button>
-    <button data-l="en">🇺🇸 English</button>
-    <button data-l="both">둘 다</button>
-  </div>
-
   <!-- 처음 화면 -->
   <section class="card" id="v-home">
     <div class="hello">
       <h2>낱말에도 가족이 있어요!</h2>
-      <p>낱말 친구 넷을 만나 볼까요? 누르면 소리가 나요.</p>
+      <p>Words have families! 누르면 소리가 나요.</p>
     </div>
     <div class="family" id="family"></div>
     <div class="menu">
-      <button id="go-learn"><span class="em">📚</span><span>배우기<small>낱말 친구 넷을 하나씩 만나요</small></span></button>
-      <button id="go-sort"><span class="em">🧺</span><span>바구니에 넣기<small>낱말을 알맞은 바구니에 쏙!</small></span></button>
-      <button id="go-sent"><span class="em">🔍</span><span>문장 탐정<small>문장 속에 숨은 친구를 찾아요</small></span></button>
+      <button id="go-learn"><span class="em">📚</span><span>배우기 · Learn<small>낱말 가족 넷을 하나씩 만나요</small></span></button>
+      <button id="go-lets" class="hot"><span class="em">🙌</span><span>같이 하자! · Let's!<small>움직임 말(동사)을 찾는 비법 놀이</small></span></button>
+      <button id="go-sort"><span class="em">🧺</span><span>바구니에 넣기 · Sort<small>낱말을 알맞은 바구니에 쏙!</small></span></button>
+      <button id="go-sent"><span class="em">🔍</span><span>문장 탐정 · Find<small>한국어·영어 문장 속에 숨은 친구 찾기</small></span></button>
     </div>
+    <div class="focus" id="focus"></div>
     <div class="parent"><button id="reset">보호자: 별 기록 지우기</button></div>
   </section>
 
@@ -177,10 +195,23 @@
     </div>
   </section>
 
+  <!-- 같이 하자! -->
+  <section class="card hide" id="v-lets">
+    <div class="bar"><i id="g-bar"></i></div>
+    <div class="qtext">이 말, 말이 되나요? 🤔</div>
+    <button class="word" id="g-word"></button>
+    <div class="ox">
+      <button id="g-o"><span>⭕</span>말이 돼요!</button>
+      <button id="g-x"><span>❌</span>이상해요!</button>
+    </div>
+    <div class="feedback" id="g-fb"></div>
+    <div class="btns hide" id="g-nextwrap"><button class="btn big" id="g-next">다음 ▶</button></div>
+  </section>
+
   <!-- 바구니에 넣기 -->
   <section class="card hide" id="v-sort">
     <div class="bar"><i id="s-bar"></i></div>
-    <div class="qtext">이 낱말은 어느 바구니에 들어갈까요?</div>
+    <div class="qtext">어느 바구니에 들어갈까요? <span style="color:var(--muted);font-size:16px">Which basket?</span></div>
     <button class="word" id="s-word"></button>
     <div class="baskets" id="baskets"></div>
     <div class="feedback" id="s-fb"></div>
@@ -192,8 +223,14 @@
     <div class="bar"><i id="t-bar"></i></div>
     <div class="sent-em" id="t-em"></div>
     <div class="find" id="t-find"></div>
-    <div class="sentence" id="t-sent"></div>
-    <div class="say-other" id="t-other"></div>
+    <div class="row" id="row-ko">
+      <div class="row-h">🇰🇷 한국어 <button data-l="ko">🔊 듣기</button></div>
+      <div class="sentence" id="t-ko"></div>
+    </div>
+    <div class="row" id="row-en">
+      <div class="row-h">🇺🇸 English <button data-l="en">🔊 Listen</button></div>
+      <div class="sentence" id="t-en"></div>
+    </div>
     <div class="feedback" id="t-fb"></div>
     <div class="btns hide" id="t-nextwrap"><button class="btn big" id="t-next">다음 ▶</button></div>
   </section>
@@ -204,11 +241,8 @@
       <div class="big pop" id="r-big"></div>
       <div class="stars" id="r-stars"></div>
       <p id="r-msg"></p>
-      <div class="wrong" id="r-wrong"></div>
-      <div class="btns">
-        <button class="btn" id="r-again">한 번 더 하기</button>
-        <button class="btn gray" id="r-home">처음으로</button>
-      </div>
+      <div class="stats" id="r-stats"></div>
+      <div class="btns" id="r-btns"></div>
     </div>
   </section>
 </div>
@@ -217,35 +251,45 @@
 // ── 낱말 가족 넷 ──────────────────────────────
 const P = {
   n:{ko:'명사', en:'Noun',      kid:'이름 말',   old:'이름씨', em:'🏷️',
-     desc:'사람, 동물, 물건, 장소의 <b>이름</b>이에요.',
+     desc:'사람, 동물, 물건, 장소의 <b>이름</b>이에요.', descEn:'A noun is a name of a person, animal, thing or place.',
      q:'무엇? 누구?', qen:'What? Who?',
      tip:'"이게 뭐야?" 하고 물었을 때 대답이 되는 말이에요.'},
   v:{ko:'동사', en:'Verb',      kid:'움직임 말', old:'움직씨', em:'🏃',
-     desc:'몸을 움직이거나 <b>무엇을 하는지</b> 알려줘요.',
+     desc:'몸을 움직이거나 <b>무엇을 하는지</b> 알려줘요.', descEn:'A verb is an action word.',
      q:'무엇을 해요?', qen:'What does it do?',
-     tip:'몸으로 흉내 낼 수 있으면 움직임 말이에요!'},
+     tip:'"같이 ○○자!" 가 말이 되면 움직임 말이에요!'},
   a:{ko:'형용사', en:'Adjective', kid:'어떤지 말', old:'그림씨', em:'🎨',
-     desc:'모양, 색깔, 크기, 맛, 기분이 <b>어떤지</b> 알려줘요.',
+     desc:'모양, 색깔, 크기, 맛, 기분이 <b>어떤지</b> 알려줘요.', descEn:'An adjective tells what something is like.',
      q:'어때요? 어떤?', qen:'What is it like?',
-     tip:'흉내는 못 내지만 "어때?"에 대답할 수 있어요.'},
+     tip:'"어때?"에 대답하는 말. "같이 ○○자!"는 이상해요.'},
   d:{ko:'부사', en:'Adverb',    kid:'어떻게 말', old:'어찌씨', em:'💨',
-     desc:'움직임 말 앞에서 <b>어떻게, 얼마나</b> 하는지 알려줘요.',
-     q:'어떻게? 얼마나?', qen:'How? How much?',
+     desc:'움직임 말 앞에서 <b>어떻게, 얼마나</b> 하는지 알려줘요.', descEn:'An adverb tells how we do something.',
+     q:'어떻게? 얼마나?', qen:'How?',
      tip:'"어떻게 달려?" → "빨리!" 처럼 대답하는 말이에요.'}
 };
 const ORDER = ['n','v','a','d'];
 
-// ── 낱말 바구니 [그림, 한국어, 영어] ─────────────
+// 문장 속 위치 힌트 (아이가 막혔을 때)
+const WHERE = {
+  n:{ko:'"가, 이, 을, 를" 꼬리가 붙은 말을 찾아 봐요.', en:'the, a, my 바로 뒤에 있을 때가 많아요. (the → dog)'},
+  v:{ko:'한국어 움직임 말은 문장 <b>맨 끝</b>에 있어요! "-요"로 끝나요.', en:'영어 움직임 말은 이름 말 <b>바로 뒤</b>에 와요. (dog → runs)'},
+  a:{ko:'이름 말 <b>바로 앞</b>에서 "어떤?"을 알려줘요. (귀여운 → 고양이)', en:'이름 말 <b>바로 앞</b>에 와요. (cute → cat)'},
+  d:{ko:'움직임 말 <b>바로 앞</b>에 있어요. (빨리 → 달려요)', en:'영어에서는 문장 <b>맨 끝</b>에 올 때가 많아요. (runs → quickly)'}
+};
+
+// ── 낱말 바구니 [그림, 한국어, 영어, 문장 속 모양] ──
 const WORDS = {
   n:[['🐶','강아지','dog'],['🐱','고양이','cat'],['🍎','사과','apple'],['🏫','학교','school'],['👩','엄마','mom'],
      ['🌸','꽃','flower'],['📖','책','book'],['⚽','공','ball'],['🌳','나무','tree'],['💧','물','water'],
      ['🚗','자동차','car'],['☀️','해','sun'],['🐰','토끼','rabbit'],['🏠','집','house']],
-  v:[['🏃','달리다','run'],['🍽️','먹다','eat'],['😴','자다','sleep'],['📚','읽다','read'],['🎤','노래하다','sing'],
-     ['😄','웃다','laugh'],['😭','울다','cry'],['🤸','뛰다','jump'],['🏊','수영하다','swim'],['✏️','쓰다','write'],
-     ['🥤','마시다','drink'],['💃','춤추다','dance'],['🚶','걷다','walk'],['🎨','그리다','draw']],
-  a:[['🐘','크다','big'],['🐜','작다','small'],['🌷','예쁘다','pretty'],['🔴','빨갛다','red'],['😊','기쁘다','happy'],
-     ['🥵','덥다','hot'],['🥶','춥다','cold'],['🐍','길다','long'],['😋','맛있다','yummy'],['🐣','귀엽다','cute'],
-     ['😢','슬프다','sad'],['🪶','가볍다','light'],['🧊','차갑다','icy'],['🌙','어둡다','dark']],
+  v:[['🏃','달리다','run','달려요'],['🍽️','먹다','eat','먹어요'],['😴','자다','sleep','자요'],['📚','읽다','read','읽어요'],
+     ['🎤','노래하다','sing','노래해요'],['😄','웃다','laugh','웃어요'],['😭','울다','cry','울어요'],['🤸','뛰다','jump','뛰어요'],
+     ['🏊','수영하다','swim','수영해요'],['✏️','쓰다','write','써요'],['🥤','마시다','drink','마셔요'],['💃','춤추다','dance','춤춰요'],
+     ['🚶','걷다','walk','걸어요'],['🖍️','그리다','draw','그려요']],
+  a:[['🐘','크다','big','커요'],['🐜','작다','small','작아요'],['🌷','예쁘다','pretty','예뻐요'],['🔴','빨갛다','red','빨개요'],
+     ['😊','기쁘다','happy','기뻐요'],['🥵','덥다','hot','더워요'],['🥶','춥다','cold','추워요'],['🐍','길다','long','길어요'],
+     ['😋','맛있다','yummy','맛있어요'],['🐣','귀엽다','cute','귀여워요'],['😢','슬프다','sad','슬퍼요'],['🪶','가볍다','light','가벼워요'],
+     ['🧊','차갑다','icy','차가워요'],['🌙','어둡다','dark','어두워요']],
   d:[['💨','빨리','quickly'],['🐢','천천히','slowly'],['❗','아주','very'],['📢','크게','loudly'],['🤫','조용히','quietly'],
      ['👍','잘','well'],['🤝','함께','together'],['🔁','다시','again'],['🌅','일찍','early'],['🌃','늦게','late'],
      ['🦶','살금살금','softly'],['🍪','많이','a lot']]
@@ -264,7 +308,9 @@ const SENTS = [
   {em:'🐰', ko:'a:하얀 n:토끼|가 d:높이 v:뛰어요',      en:'x:The a:white n:rabbit v:jumps d:high'},
   {em:'👶', ko:'n:아기|가 d:또 v:울어요',              en:'x:The n:baby v:cries d:again'},
   {em:'🎨', ko:'n:누나|가 a:예쁜 n:꽃|을 v:그려요',     en:'x:My n:sister v:draws x:a a:pretty n:flower'},
-  {em:'🤫', ko:'a:작은 n:생쥐|가 d:조용히 v:걸어요',    en:'x:The a:small n:mouse v:walks d:quietly'}
+  {em:'🐭', ko:'a:작은 n:생쥐|가 d:조용히 v:걸어요',    en:'x:The a:small n:mouse v:walks d:quietly'},
+  {em:'📚', ko:'n:형|이 n:책|을 v:읽어요',             en:'x:My n:brother v:reads x:a n:book'},
+  {em:'🐟', ko:'n:물고기|가 d:잘 v:헤엄쳐요',           en:'x:The n:fish v:swims d:well'}
 ];
 function parse(s){
   return s.split(' ').map(function(t){
@@ -280,9 +326,8 @@ function load(){ try{ return JSON.parse(localStorage.getItem(STORE)) || {}; }cat
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify(st)); }catch(e){ mem = st; } }
 let st = load();
 st.stars = st.stars || 0;
-st.lang = st.lang || 'both';
 
-// ── 소리 ──────────────────────────────────────
+// ── 소리: [[문장, 'ko'|'en'], ...] 차례로 읽기 ──
 function speak(list){
   if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
@@ -293,41 +338,28 @@ function speak(list){
     speechSynthesis.speak(u);
   });
 }
-function sayWord(w){ // w = [그림, 한국어, 영어]
-  if(st.lang==='ko') speak([[w[1],'ko']]);
-  else if(st.lang==='en') speak([[w[2],'en']]);
-  else speak([[w[1],'ko'],[w[2],'en']]);
-}
+function sayWord(w){ speak([[w[1],'ko'],[w[2],'en']]); }
 
 // ── 공통 ──────────────────────────────────────
 const $ = function(id){ return document.getElementById(id); };
-const VIEWS=['v-home','v-learn','v-sort','v-sent','v-result'];
+const VIEWS=['v-home','v-learn','v-lets','v-sort','v-sent','v-result'];
 function show(id){ VIEWS.forEach(function(v){ $(v).classList.toggle('hide', v!==id); }); window.scrollTo(0,0); }
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-function nameOf(p){ // 언어에 맞춘 품사 이름
-  const x=P[p];
-  return st.lang==='en' ? x.en+'('+x.kid+')' : x.kid+'('+x.ko+')';
-}
+function nameOf(p){ const x=P[p]; return x.kid+'('+x.ko+') · '+x.en; }
 function eunNeun(w){ // 받침 따라 은/는
   const c=w.charCodeAt(w.length-1);
   if(c<0xAC00||c>0xD7A3) return w+'은(는)';
   return w+((c-0xAC00)%28 ? '은' : '는');
 }
-function renderStars(){ $('star-total').textContent = '⭐ '+st.stars; }
-function renderLangs(){
-  document.querySelectorAll('#langs button').forEach(function(b){ b.classList.toggle('on', b.dataset.l===st.lang); });
+function letsKo(w){ return '같이 '+(w[3] ? w[1].slice(0,-1) : w[1])+'자!'; }   // 달리다 → 같이 달리자!, 고양이 → 같이 고양이자!
+function letsEn(w){ return "Let's "+w[2]+'!'; }
+function wordHtml(w){
+  return '<span class="em">'+w[0]+'</span><b>'+esc(w[1])+'</b><i>'+esc(w[2])+'</i>';
 }
-document.querySelectorAll('#langs button').forEach(function(b){
-  b.onclick=function(){
-    st.lang=b.dataset.l; save(); renderLangs();
-    // 지금 화면을 새 언어로 다시 그리기
-    if(!$('v-home').classList.contains('hide')) renderHome();
-    if(!$('v-learn').classList.contains('hide')) renderLearn();
-    if(!$('v-sort').classList.contains('hide')) renderSort();
-    if(!$('v-sent').classList.contains('hide')) startSent();
-  };
-});
+function renderStars(){ $('star-total').textContent = '⭐ '+st.stars; }
+function addStar(){ st.stars++; save(); renderStars(); }
+function newStats(){ const s={}; ORDER.forEach(function(p){ s[p]=[0,0]; }); return s; }
 
 // ── 처음 화면 ─────────────────────────────────
 function renderHome(){
@@ -339,115 +371,166 @@ function renderHome(){
   document.querySelectorAll('#family .fam').forEach(function(b){
     b.onclick=function(){ const x=P[b.dataset.p]; speak([[x.kid+', '+x.ko,'ko'],[x.en,'en']]); };
   });
+  $('focus').innerHTML = '문장 탐정 하나만 연습: '+ORDER.map(function(p){
+    return '<button class="c-'+p+' t-'+p+'" data-p="'+p+'">'+P[p].em+' '+P[p].kid+'</button>';
+  }).join('');
+  document.querySelectorAll('#focus button').forEach(function(b){ b.onclick=function(){ startSent(b.dataset.p); }; });
   show('v-home');
 }
 $('go-learn').onclick=function(){ learnIdx=0; renderLearn(); show('v-learn'); };
+$('go-lets').onclick=startLets;
 $('go-sort').onclick=startSort;
-$('go-sent').onclick=function(){ tRound=0; tScore=0; tWrong=[]; startSent(); };
+$('go-sent').onclick=function(){ startSent(null); };
 $('reset').onclick=function(){ if(confirm('모은 별을 모두 지울까요?')){ st.stars=0; save(); renderStars(); } };
 
-// ── 배우기 ────────────────────────────────────
-// 0: 소개, 1~4: 친구 넷, 5: 정리
+// ── 배우기: 0 소개, 1~4 친구 넷, 5 정리 ─────────
 let learnIdx=0;
 const LEARN_N=6;
-function tokHtml(t, showLab){
+function tokHtml(t){
   const cls = t.p==='x' ? 'x' : 'c-'+t.p;
-  const lab = t.p==='x' ? '도우미' : (showLab ? (st.lang==='en' ? P[t.p].en : P[t.p].kid) : '');
+  const lab = t.p==='x' ? '도우미' : P[t.p].kid;
   return '<span class="tok '+cls+'"><span>'+esc(t.w)+(t.tail?'<span class="tail">'+esc(t.tail)+'</span>':'')+'</span>'+
          '<span class="lab t-'+t.p+'">'+lab+'</span></span>';
 }
-function demoHtml(lang){
-  const s = lang==='en' ? 'x:The a:cute n:dog v:runs d:quickly' : 'a:귀여운 n:강아지|가 d:빨리 v:달려요';
-  return '<div class="demo">'+parse(s).map(function(t){ return tokHtml(t,true); }).join('')+'</div>';
+function demoHtml(s){ return '<div class="demo">'+parse(s).map(tokHtml).join('')+'</div>'; }
+function secretHtml(p){
+  if(p==='v') return '<div class="secret t-v">🔑 <b>비법!</b> "같이 ○○자!" 하고 말해 봐요.'+
+    '<div><span class="ok">⭕ 같이 달리자!</span> <span class="en">Let\'s run!</span></div>'+
+    '<div><span class="no">❌ 같이 크자?</span> <span class="en">Let\'s big?</span></div>'+
+    '<div style="color:var(--ink);font-size:16px">말이 되면 움직임 말! 문장에서는 모양이 바뀌어요:<br>달리다 → 달<b>려요</b> · run → run<b>s</b></div></div>';
+  if(p==='a') return '<div class="secret t-a">🔑 "같이 ○○자!"가 <b>이상하면</b> 어떤지 말일 수 있어요.<br>'+
+    '<span class="no">❌ 같이 예쁘자?</span> <span class="en">Let\'s pretty?</span><br>'+
+    '<span style="color:var(--ink);font-size:16px">문장에서는: 크다 → <b>큰</b> 코끼리 · <b>big</b> elephant</span></div>';
+  if(p==='n') return '<div class="secret t-n">🔑 이름 말 뒤에는 꼬리가 붙어요: 강아지<b>가</b>, 사과<b>를</b><br>'+
+    '<span class="en">영어는 앞에 the, a 가 와요: <b>the</b> dog, <b>an</b> apple</span></div>';
+  return '<div class="secret t-d">🔑 움직임 말 앞에 붙여 봐요: <b>빨리</b> 달려요, <b>천천히</b> 걸어요<br>'+
+    '<span class="en">영어는 뒤에 와요: runs <b>quickly</b>, walks <b>slowly</b></span></div>';
 }
 function renderLearn(){
-  $('title').textContent='배우기';
+  $('title').textContent='배우기 · Learn';
   $('l-bar').style.width = ((learnIdx+1)/LEARN_N*100)+'%';
   let h='';
   if(learnIdx===0){
     h = '<div class="friend" style="background:#fff"><div class="em">👨‍👩‍👧‍👦</div><h2>낱말 가족을 소개해요</h2>'+
         '<p class="desc">낱말은 하는 일에 따라 가족이 나뉘어요.<br>이 가족 이름을 <b>품사</b>라고 해요.</p>'+
-        (st.lang!=='en' ? demoHtml('ko') : '')+(st.lang!=='ko' ? demoHtml('en') : '')+
+        '<p class="desc-en">In English, we call them <b>parts of speech</b>.</p>'+
+        demoHtml('a:귀여운 n:강아지|가 d:빨리 v:달려요')+demoHtml('x:The a:cute n:dog v:runs d:quickly')+
         '<p class="tip">색깔이 같으면 같은 가족이에요. 하나씩 만나 볼까요?</p></div>';
   } else if(learnIdx<=4){
     const p=ORDER[learnIdx-1], x=P[p];
-    const title = st.lang==='en' ? x.en+' <small>('+x.ko+')</small>'
-                : st.lang==='ko' ? x.ko+' <small>('+x.old+')</small>'
-                : x.ko+' <small>· '+x.en+'</small>';
     h = '<div class="friend c-'+p+'"><div class="em">'+x.em+'</div>'+
-        '<h2 class="t-'+p+'">'+title+'</h2><div class="kid t-'+p+'">"'+x.kid+'"</div>'+
-        '<p class="desc">'+x.desc+'</p>'+
-        '<div class="magic">🔮 마법 질문: <b class="t-'+p+'">'+x.q+'</b>'+(st.lang!=='ko'?' <span>'+x.qen+'</span>':'')+'</div>'+
-        '<p class="tip">'+x.tip+'</p></div>'+
-        '<div class="ex-title">눌러서 들어 보세요 👇</div>'+
+        '<h2 class="t-'+p+'">'+x.ko+' · '+x.en+'</h2><div class="kid t-'+p+'">"'+x.kid+'"</div>'+
+        '<p class="desc">'+x.desc+'</p><p class="desc-en">'+x.descEn+'</p>'+
+        '<div class="magic">🔮 <b class="t-'+p+'">'+x.q+'</b> <span>'+x.qen+'</span></div>'+
+        secretHtml(p)+'</div>'+
+        '<div class="ex-title">눌러서 들어 보세요 👇 Tap to listen</div>'+
         '<div class="examples">'+WORDS[p].slice(0,6).map(function(w,i){
           return '<button class="ex" data-p="'+p+'" data-i="'+i+'"><span class="em">'+w[0]+'</span>'+
-                 (st.lang!=='en'?'<b>'+esc(w[1])+'</b>':'')+(st.lang!=='ko'?(st.lang==='en'?'<b>'+esc(w[2])+'</b>':'<i>'+esc(w[2])+'</i>'):'')+'</button>';
+                 '<b>'+esc(w[1])+'</b>'+(w[3]?'<s>→ '+esc(w[3])+'</s>':'')+'<i>'+esc(w[2])+'</i></button>';
         }).join('')+'</div>';
   } else {
     h = '<div class="friend" style="background:#fff"><div class="em">🎉</div><h2>네 친구를 다 만났어요!</h2>'+
         '<div class="family" style="margin-top:14px">'+ORDER.map(function(p){
           const x=P[p];
-          return '<div class="fam c-'+p+'"><span class="em">'+x.em+'</span><b class="t-'+p+'">'+x.kid+'</b><i>'+x.q+'</i></div>';
+          return '<div class="fam c-'+p+'"><span class="em">'+x.em+'</span><b class="t-'+p+'">'+x.kid+'</b><i>'+x.ko+' · '+x.en+'<br>'+x.q+'</i></div>';
         }).join('')+'</div>'+
-        '<p class="desc">헷갈리면 <b>마법 질문</b>을 해 보세요!</p></div>'+
-        '<div class="btns"><button class="btn" id="l-sort">🧺 바구니 놀이 하러 가기</button></div>';
+        '<p class="desc">헷갈리면 <b>마법 질문</b>과 <b>"같이 ○○자!"</b> 비법을 써 봐요!</p></div>'+
+        '<div class="btns"><button class="btn red" id="l-lets">🙌 같이 하자! 놀이 하러 가기</button></div>';
   }
   $('l-body').innerHTML=h;
   document.querySelectorAll('#l-body .ex').forEach(function(b){
-    b.onclick=function(){ sayWord(WORDS[b.dataset.p][+b.dataset.i]); };
+    b.onclick=function(){
+      const w=WORDS[b.dataset.p][+b.dataset.i];
+      speak(w[3] ? [[w[1]+', '+w[3],'ko'],[w[2],'en']] : [[w[1],'ko'],[w[2],'en']]);
+    };
   });
-  if($('l-sort')) $('l-sort').onclick=startSort;
+  if($('l-lets')) $('l-lets').onclick=startLets;
   $('l-prev').style.visibility = learnIdx===0 ? 'hidden' : 'visible';
   $('l-next').classList.toggle('hide', learnIdx===LEARN_N-1);
-  if(learnIdx>=1 && learnIdx<=4){
-    const x=P[ORDER[learnIdx-1]];
-    if(st.lang==='en') speak([[x.en,'en']]); else speak([[x.ko+', '+x.kid,'ko']]);
-  }
+  if(learnIdx>=1 && learnIdx<=4){ const x=P[ORDER[learnIdx-1]]; speak([[x.ko+', '+x.kid,'ko'],[x.en,'en']]); }
 }
 $('l-prev').onclick=function(){ if(learnIdx>0){ learnIdx--; renderLearn(); } };
 $('l-next').onclick=function(){ if(learnIdx<LEARN_N-1){ learnIdx++; renderLearn(); } };
 
+// ── 같이 하자!: 동사인지 "같이 ○○자 / Let's ○○" 로 알아보기 ──
+const LETS_N=10;
+let gQ=[], gIdx=0, gScore=0, gDone=false, gStats=null;
+function startLets(){
+  // 움직임 말 5개 + 다른 말 5개 (이름 말·어떤지 말)
+  const verbs=shuffle(WORDS.v).slice(0,5).map(function(w){ return {p:'v',w:w}; });
+  const others=shuffle(WORDS.n.map(function(w){return {p:'n',w:w};}).concat(WORDS.a.map(function(w){return {p:'a',w:w};}))).slice(0,5);
+  gQ=shuffle(verbs.concat(others)); gIdx=0; gScore=0; gStats=newStats();
+  $('title').textContent='같이 하자! · Let\'s!';
+  newLetsQ(); show('v-lets');
+}
+function newLetsQ(){
+  const q=gQ[gIdx]; gDone=false;
+  $('g-bar').style.width=(gIdx/LETS_N*100)+'%';
+  $('g-word').innerHTML='<span class="em">'+q.w[0]+'</span><b>'+esc(letsKo(q.w))+'</b><i>'+esc(letsEn(q.w))+'</i><small>('+esc(q.w[1])+' · '+esc(q.w[2])+')</small>';
+  ['g-o','g-x'].forEach(function(id){ $(id).classList.remove('ok','no'); $(id).disabled=false; });
+  $('g-fb').innerHTML=''; $('g-nextwrap').classList.add('hide');
+  speak([[letsKo(q.w),'ko'],[letsEn(q.w),'en']]);
+}
+$('g-word').onclick=function(){ const q=gQ[gIdx]; speak([[letsKo(q.w),'ko'],[letsEn(q.w),'en']]); };
+function pickLets(sayYes){
+  if(gDone) return;
+  gDone=true;
+  const q=gQ[gIdx], isVerb=q.p==='v', right=(sayYes===isVerb);
+  gStats[q.p][1]++;
+  if(right){ gScore++; gStats[q.p][0]++; addStar(); }
+  $(isVerb?'g-o':'g-x').classList.add('ok');
+  $(isVerb?'g-x':'g-o').classList.add('no');
+  const head = right ? '<span class="good">딩동댕! 🎉</span> ' : '<span class="hint">아쉬워요! 다시 들어 봐요.</span><br>';
+  const body = isVerb
+    ? '"'+esc(letsKo(q.w))+'"는 말이 돼요. 같이 할 수 있으니까 <b class="t-v">'+esc(eunNeun(q.w[1]))+' 움직임 말(동사) · Verb</b>!'
+    : '"'+esc(letsKo(q.w))+'"는 이상하죠? <b class="t-'+q.p+'">'+esc(eunNeun(q.w[1]))+' '+esc(nameOf(q.p))+'</b>이라서 같이 할 수 없어요.';
+  $('g-fb').innerHTML = head+body;
+  $('g-nextwrap').classList.remove('hide');
+  if(right) speak([['딩동댕!','ko']]);
+  else speak([[letsKo(q.w),'ko'],[letsEn(q.w),'en']]);
+}
+$('g-o').onclick=function(){ pickLets(true); };
+$('g-x').onclick=function(){ pickLets(false); };
+$('g-next').onclick=function(){
+  gIdx++;
+  if(gIdx>=LETS_N) return showResult('lets', gScore, LETS_N, gStats);
+  newLetsQ();
+};
+
 // ── 바구니에 넣기 ─────────────────────────────
-const SORT_N=10;
-let sQ=[], sIdx=0, sScore=0, sTries=0, sWrong=[], sDone=false;
+const SORT_N=12;
+let sQ=[], sIdx=0, sScore=0, sTries=0, sDone=false, sStats=null;
 function startSort(){
-  // 가족마다 고르게 섞어서 10문제
   let pool=[];
   ORDER.forEach(function(p){ shuffle(WORDS[p]).slice(0,3).forEach(function(w){ pool.push({p:p,w:w}); }); });
-  sQ=shuffle(pool).slice(0,SORT_N); sIdx=0; sScore=0; sWrong=[];
+  sQ=shuffle(pool); sIdx=0; sScore=0; sStats=newStats();
   $('baskets').innerHTML = ORDER.map(function(p){
-    return '<button class="basket c-'+p+'" data-p="'+p+'"><span class="em">'+P[p].em+'</span><b class="t-'+p+'"></b><i></i></button>';
+    const x=P[p];
+    return '<button class="basket c-'+p+'" data-p="'+p+'"><span class="em">'+x.em+'</span><b class="t-'+p+'">'+x.kid+'</b><i>'+x.ko+' · '+x.en+'</i></button>';
   }).join('');
   document.querySelectorAll('#baskets .basket').forEach(function(b){ b.onclick=function(){ pickBasket(b); }; });
-  newSortQ();
-  show('v-sort');
+  $('title').textContent='바구니에 넣기 · Sort';
+  newSortQ(); show('v-sort');
 }
-function newSortQ(){ sTries=0; sDone=false; renderSort(); const q=sQ[sIdx]; sayWord(q.w); }
-function renderSort(){
-  $('title').textContent='바구니에 넣기';
-  const q=sQ[sIdx]; if(!q) return;
+function newSortQ(){
+  const q=sQ[sIdx]; sTries=0; sDone=false;
   $('s-bar').style.width = (sIdx/SORT_N*100)+'%';
-  const w=q.w;
-  $('s-word').innerHTML = '<span class="em">'+w[0]+'</span>'+
-    (st.lang==='en' ? '<b>'+esc(w[2])+'</b>' : '<b>'+esc(w[1])+'</b>'+(st.lang==='both'?'<i>'+esc(w[2])+'</i>':''));
-  document.querySelectorAll('#baskets .basket').forEach(function(b){
-    const x=P[b.dataset.p];
-    b.querySelector('b').textContent = st.lang==='en' ? x.en : x.kid;
-    b.querySelector('i').textContent = st.lang==='en' ? x.qen : (st.lang==='ko' ? x.ko+' · '+x.q : x.ko+' · '+x.en);
-    if(!sDone && sTries===0){ b.classList.remove('no','ok'); b.disabled=false; }
-  });
-  if(!sDone && sTries===0){ $('s-fb').innerHTML=''; $('s-nextwrap').classList.add('hide'); }
+  $('s-word').innerHTML = wordHtml(q.w);
+  document.querySelectorAll('#baskets .basket').forEach(function(b){ b.classList.remove('no','ok'); b.disabled=false; });
+  $('s-fb').innerHTML=''; $('s-nextwrap').classList.add('hide');
+  sayWord(q.w);
 }
 $('s-word').onclick=function(){ sayWord(sQ[sIdx].w); };
 function pickBasket(b){
   if(sDone) return;
-  const q=sQ[sIdx], p=b.dataset.p, word = st.lang==='en' ? q.w[2] : q.w[1];
+  const q=sQ[sIdx], p=b.dataset.p;
   if(p===q.p){
     sDone=true;
-    if(sTries===0){ sScore++; st.stars++; save(); renderStars(); } else { sWrong.push(word); }
+    sStats[q.p][1]++;
+    if(sTries===0){ sScore++; sStats[q.p][0]++; addStar(); }
     b.classList.add('ok');
-    $('s-fb').innerHTML = '<span class="good">딩동댕! 🎉 <b>'+esc(eunNeun(word))+'</b> '+esc(nameOf(p))+' 가족이에요.</span>';
+    $('s-fb').innerHTML = '<span class="good">딩동댕! 🎉 <b>'+esc(eunNeun(q.w[1]))+'</b> '+esc(nameOf(p))+' 가족이에요.</span>'+
+                          '<br><span class="en">"'+esc(q.w[2])+'" is a '+P[p].en.toLowerCase()+'.</span>';
     $('s-nextwrap').classList.remove('hide');
     speak([['딩동댕!','ko']]);
   } else {
@@ -455,101 +538,140 @@ function pickBasket(b){
     b.classList.add('no'); b.disabled=true;
     $('s-word').classList.remove('shake'); void $('s-word').offsetWidth; $('s-word').classList.add('shake');
     const x=P[q.p];
-    $('s-fb').innerHTML = '<span class="hint">앗, 다시 해 봐요! 힌트 💡 '+esc(x.tip)+'</span>';
+    $('s-fb').innerHTML = '<span class="hint">앗, 다시 해 봐요! 💡 '+esc(x.tip)+'</span>';
   }
 }
 $('s-next').onclick=function(){
   sIdx++;
-  if(sIdx>=SORT_N) return showResult('sort', sScore, SORT_N, sWrong);
+  if(sIdx>=SORT_N) return showResult('sort', sScore, SORT_N, sStats);
   newSortQ();
 };
 
-// ── 문장 탐정 ─────────────────────────────────
+// ── 문장 탐정: 한국어 문장에서 찾고 → 영어 문장에서 찾기 ──
 const SENT_N=6;
-let tOrder=[], tRound=0, tScore=0, tWrong=[], tCur=null, tLang='ko', tTarget='n', tTries=0, tDone=false;
-function startSent(){
-  if(tRound===0) tOrder=shuffle(SENTS.map(function(_,i){return i;}));
-  $('title').textContent='문장 탐정';
-  const s=SENTS[tOrder[tRound % tOrder.length]];
-  tLang = st.lang==='both' ? (tRound%2 ? 'en' : 'ko') : st.lang;
-  tCur = {em:s.em, toks:parse(s[tLang]), other:parse(s[tLang==='ko'?'en':'ko'])};
-  // 찾을 품사: 이 문장에 있는 것 중 하나, 라운드마다 돌아가며
-  const have = ORDER.filter(function(p){ return tCur.toks.some(function(t){ return t.p===p; }); });
-  tTarget = have[tRound % have.length];
-  tTries=0; tDone=false;
+const SENT_CYCLE=['v','n','v','a','v','d'];   // 움직임 말을 더 자주
+let tFocus=null, tPool=[], tRound=0, tScore=0, tTotal=0, tStats=null;
+let tCur=null, tTarget='v', tStep='ko', tTries=0;
+function startSent(focus){
+  tFocus=focus; tPool=shuffle(SENTS); tRound=0; tScore=0; tTotal=0; tStats=newStats();
+  $('title').textContent = focus ? P[focus].kid+' 찾기' : '문장 탐정 · Find';
+  newSent(); show('v-sent');
+}
+function hasPart(toks,p){ return toks.some(function(t){ return t.p===p; }); }
+function newSent(){
+  tTarget = tFocus || SENT_CYCLE[tRound % SENT_CYCLE.length];
+  // 찾을 품사가 한국어·영어 문장 모두에 있는 문장 고르기
+  let i=tPool.findIndex(function(s){ return hasPart(parse(s.ko),tTarget) && hasPart(parse(s.en),tTarget); });
+  if(i<0){ tPool=shuffle(SENTS); i=tPool.findIndex(function(s){ return hasPart(parse(s.ko),tTarget) && hasPart(parse(s.en),tTarget); }); }
+  const s=tPool.splice(i,1)[0];
+  tCur={em:s.em, ko:parse(s.ko), en:parse(s.en), done:{ko:false,en:false}};
   $('t-bar').style.width = (tRound/SENT_N*100)+'%';
   $('t-em').textContent = s.em;
   const x=P[tTarget];
-  const label = tLang==='en' ? x.en+' ('+x.kid+')' : x.kid+' ('+x.ko+')';
-  $('t-find').innerHTML = '<span class="pill c-'+tTarget+' t-'+tTarget+'">'+x.em+' '+esc(label)+'</span> 을(를) 찾아 눌러요!';
-  drawSent(false);
-  $('t-other').textContent='';
-  $('t-fb').innerHTML = '<span style="color:var(--muted)">마법 질문: '+esc(x.q)+(tLang==='en'?' · '+esc(x.qen):'')+'</span>';
+  $('t-find').innerHTML = '<span class="pill c-'+tTarget+' t-'+tTarget+'">'+x.em+' '+x.kid+' · '+x.en+'</span> 을(를) 찾아요!';
   $('t-nextwrap').classList.add('hide');
-  show('v-sent');
-  speakSent();
+  setStep('ko');
 }
 function sentText(toks){ return toks.map(function(t){ return t.w+t.tail; }).join(' ')+'.'; }
-function speakSent(){ speak([[sentText(tCur.toks), tLang]]); }
-function drawSent(reveal){
-  $('t-sent').innerHTML = tCur.toks.map(function(t,i){
-    const cls = reveal ? (t.p==='x'?'x':'c-'+t.p) : '';
-    const lab = reveal ? (t.p==='x' ? '도우미' : (tLang==='en'?P[t.p].en:P[t.p].kid)) : '';
-    return '<button class="tok '+cls+'" data-i="'+i+'"><span>'+esc(t.w)+(t.tail?'<span class="tail">'+esc(t.tail)+'</span>':'')+
-           (i===tCur.toks.length-1?'.':'')+'</span><span class="lab t-'+t.p+'">'+lab+'</span></button>';
+function setStep(step){
+  tStep=step; tTries=0;
+  drawRow('ko'); drawRow('en');
+  $('row-ko').className='row '+(step==='ko'?'now':'');
+  $('row-en').className='row '+(step==='en'?'now':(step==='ko'?'wait':''));
+  if(step==='done') return;
+  const x=P[tTarget];
+  $('t-fb').innerHTML = step==='ko'
+    ? '<span style="color:var(--muted)">1단계 🇰🇷 한국어 문장에서 찾아요. 마법 질문: '+esc(x.q)+'</span>'
+    : '<span style="color:var(--muted)">2단계 🇺🇸 이번엔 영어 문장! '+esc(x.qen)+'</span>';
+  speak([[sentText(tCur[step]), step]]);
+}
+function drawRow(lang){
+  const toks=tCur[lang], reveal=tCur.done[lang];
+  $('t-'+lang).innerHTML = toks.map(function(t,i){
+    const cls = reveal ? (t.p==='x'?'x':'c-'+t.p) : (t.p==='x'?'x':'');
+    const lab = reveal ? (t.p==='x' ? '도우미' : P[t.p].kid) : '';
+    return '<button class="tok '+cls+'" data-l="'+lang+'" data-i="'+i+'"><span>'+esc(t.w)+(t.tail?'<span class="tail">'+esc(t.tail)+'</span>':'')+
+           (i===toks.length-1?'.':'')+'</span><span class="lab t-'+t.p+'">'+lab+'</span></button>';
   }).join('');
-  document.querySelectorAll('#t-sent .tok').forEach(function(b){ b.onclick=function(){ pickTok(b); }; });
+  document.querySelectorAll('#t-'+lang+' .tok').forEach(function(b){ b.onclick=function(){ pickTok(b); }; });
 }
 function pickTok(b){
-  const t=tCur.toks[+b.dataset.i];
-  if(tDone){ speak([[t.w+t.tail, tLang]]); return; }
+  const lang=b.dataset.l, t=tCur[lang][+b.dataset.i];
+  if(lang!==tStep){ speak([[t.w+t.tail, lang]]); return; }   // 지금 차례가 아닌 줄은 소리만
   if(t.p===tTarget){
-    tDone=true;
-    if(tTries===0){ tScore++; st.stars++; save(); renderStars(); } else { tWrong.push(sentText(tCur.toks)); }
-    drawSent(true);
-    $('t-other').textContent = (tLang==='ko'?'🇺🇸 ':'🇰🇷 ')+sentText(tCur.other);
-    $('t-fb').innerHTML = '<span class="good">찾았다! 🎉 <b>'+esc(eunNeun(t.w))+'</b> '+esc(nameOf(t.p))+' 가족이에요.<br>모든 낱말에 색을 칠했어요. 눌러서 들어 봐요.</span>';
-    $('t-nextwrap').classList.remove('hide');
-    speak([['찾았다!','ko'],[sentText(tCur.toks), tLang]]);
+    tStats[tTarget][1]++; tTotal++;
+    if(tTries===0){ tScore++; tStats[tTarget][0]++; addStar(); }
+    tCur.done[lang]=true;
+    const msg='<span class="good">찾았다! 🎉 <b>'+esc(lang==='ko'?eunNeun(t.w):t.w+'은(는)')+'</b> '+esc(nameOf(t.p))+' 가족이에요.</span>';
+    if(lang==='ko'){
+      setStep('en');
+      $('t-fb').innerHTML = msg+'<br><span style="color:var(--muted)">2단계 🇺🇸 이번엔 영어 문장에서 찾아요! '+esc(P[tTarget].qen)+'</span>';
+    } else {
+      setStep('done');
+      $('t-fb').innerHTML = msg+'<br>두 문장에 모두 색을 칠했어요. 같은 색끼리 짝이에요! 🌈';
+      $('t-nextwrap').classList.remove('hide');
+      speak([['찾았다!','ko'],[sentText(tCur.ko),'ko'],[sentText(tCur.en),'en']]);
+    }
   } else {
     tTries++;
     b.classList.remove('no'); void b.offsetWidth; b.classList.add('no');
     let msg;
-    if(t.p==='x') msg = '"'+esc(t.w)+'"은(는) 낱말 앞에 붙는 <b>도우미 말</b>이에요. 다른 걸 찾아 봐요!';
-    else msg = esc(eunNeun(t.w))+' <b class="t-'+t.p+'">'+esc(nameOf(t.p))+'</b> 가족이에요. 다시 찾아 봐요! 💡 '+esc(P[tTarget].tip);
+    if(t.p==='x') msg = '"'+esc(t.w)+'"은(는) 낱말 앞에 붙는 <b>도우미 말</b>이에요.';
+    else msg = esc(lang==='ko'?eunNeun(t.w):t.w+'은(는)')+' <b class="t-'+t.p+'">'+esc(P[t.p].kid)+'</b> 가족이에요.';
+    msg += '<br>💡 '+WHERE[tTarget][lang];
+    if(tTarget==='v' && lang==='ko') msg += ' "같이 ○○자!"가 되는 말!';
+    if(tTries>=2){
+      msg += '<br>✨ 반짝이는 낱말을 눌러 봐요!';
+      document.querySelectorAll('#t-'+lang+' .tok').forEach(function(el){
+        if(tCur[lang][+el.dataset.i].p===tTarget) el.classList.add('glow');
+      });
+    }
     $('t-fb').innerHTML = '<span class="hint">'+msg+'</span>';
   }
 }
+document.querySelectorAll('.row-h button').forEach(function(b){
+  b.onclick=function(){ speak([[sentText(tCur[b.dataset.l]), b.dataset.l]]); };
+});
 $('t-next').onclick=function(){
   tRound++;
-  if(tRound>=SENT_N) return showResult('sent', tScore, SENT_N, tWrong);
-  startSent();
+  if(tRound>=SENT_N) return showResult('sent', tScore, tTotal, tStats);
+  newSent();
 };
 
 // ── 결과 ──────────────────────────────────────
-let lastGame='sort';
-function showResult(game, score, n, wrongs){
-  lastGame=game;
-  $('title').textContent='잘했어요!';
-  const r=score/n;
+function showResult(game, score, n, stats){
+  $('title').textContent='잘했어요! Good job!';
+  const r=n ? score/n : 0;
   $('r-big').textContent = r===1 ? '🏆' : r>=0.7 ? '🥳' : '💪';
   $('r-stars').textContent = '⭐'.repeat(score) || '🌱';
   $('r-msg').textContent = n+'문제 중 '+score+'개를 한 번에 맞혔어요! '+(r===1?'최고예요!':r>=0.7?'아주 잘했어요!':'한 번 더 하면 더 잘할 수 있어요!');
-  $('r-wrong').innerHTML = wrongs.length ? '다시 볼 것: '+wrongs.map(esc).join(' · ') : '';
+  // 가족별 점수
+  let weak=null;
+  $('r-stats').innerHTML = ORDER.filter(function(p){ return stats[p][1]>0; }).map(function(p){
+    const s=stats[p], pct=Math.round(s[0]/s[1]*100);
+    if(pct<70 && (!weak || pct < stats[weak][0]/stats[weak][1]*100)) weak=p;
+    return '<div class="stat"><span class="nm t-'+p+'">'+P[p].em+' '+P[p].kid+'</span><span class="sb"><i style="width:'+pct+'%;background:var(--'+p+')"></i></span><span class="sc">'+s[0]+'/'+s[1]+'</span></div>';
+  }).join('');
+  // 다음에 할 것 고르기
+  const btns=[];
+  btns.push(['한 번 더 하기','btn',function(){
+    if(game==='lets') startLets(); else if(game==='sort') startSort(); else startSent(tFocus);
+  }]);
+  if(game==='lets' && r>=0.7) btns.push(['🔍 문장에서 움직임 말 찾기','btn red',function(){ startSent('v'); }]);
+  else if(weak==='v' && game!=='lets') btns.push(['🙌 같이 하자! 비법 연습','btn red',startLets]);
+  else if(weak && game==='sent') btns.push([P[weak].em+' '+P[weak].kid+'만 연습','btn red',function(){ startSent(weak); }]);
+  btns.push(['처음으로','btn gray',renderHome]);
+  $('r-btns').innerHTML = btns.map(function(b,i){ return '<button class="'+b[1]+'" data-i="'+i+'">'+b[0]+'</button>'; }).join('');
+  document.querySelectorAll('#r-btns button').forEach(function(el){ el.onclick=btns[+el.dataset.i][2]; });
   show('v-result');
-  speak([[r===1?'최고예요!':'잘했어요!','ko']]);
+  speak([[r===1?'최고예요!':'잘했어요!','ko'],[r===1?'Perfect!':'Good job!','en']]);
 }
-$('r-again').onclick=function(){
-  if(lastGame==='sort') startSort();
-  else { tRound=0; tScore=0; tWrong=[]; startSent(); }
-};
-$('r-home').onclick=renderHome;
 $('home-btn').onclick=function(e){
   if(!$('v-home').classList.contains('hide')) return; // 처음 화면에서는 동화 모음으로
   e.preventDefault(); if(window.speechSynthesis) speechSynthesis.cancel(); renderHome();
 };
 
-renderLangs(); renderStars(); renderHome();
+renderStars(); renderHome();
 </script>
 
 <!--HELP_MODAL_START-->
@@ -581,32 +703,33 @@ renderLangs(); renderStars(); renderHome();
 <div class="hlp-ov" id="hlpOv"><div class="hlp-box">
 <button class="hlp-x" type="button" onclick="hlpClose()" aria-label="닫기">✕</button>
 <h2>🧺 품사 놀이터 (보호자용)</h2>
-<p>초등 1학년이 <b>명사·동사·형용사·부사</b>를 한국어와 영어로 함께 익히는 놀이예요.</p>
+<p>초등 1학년이 <b>명사·동사·형용사·부사</b>를 한국어와 영어로 <b>함께</b> 익히는 놀이예요. 모든 카드에 한국어와 영어가 같이 나와요.</p>
 
-<h3>1. 순서</h3>
+<h3>1. 추천 순서</h3>
 <ul>
   <li><b>배우기</b> → 네 가족을 그림과 소리로 만나요.</li>
-  <li><b>바구니에 넣기</b> → 낱말 10개를 알맞은 바구니에 넣어요.</li>
-  <li><b>문장 탐정</b> → 문장 6개 속에서 찾으라는 낱말을 눌러요. 맞히면 문장 전체에 색이 칠해져요.</li>
+  <li><b>같이 하자!</b> → 동사를 구분하는 비법 놀이. “같이 달리자! / Let’s run!”은 말이 되고 “같이 크자? / Let’s big?”은 이상하죠. 말이 되면 동사예요.</li>
+  <li><b>바구니에 넣기</b> → 낱말 12개를 알맞은 바구니에 넣어요.</li>
+  <li><b>문장 탐정</b> → 한 문장을 한국어로 먼저 찾고, 같은 뜻 영어 문장에서 또 찾아요. 맞히면 두 문장에 같은 색이 칠해져 짝이 보여요.</li>
 </ul>
-<p>위쪽에서 <b>한국어 / English / 둘 다</b>를 고를 수 있어요. ‘둘 다’에서는 문장 탐정이 한국어·영어 문장을 번갈아 내요.</p>
 
-<h3>2. 아이 눈높이 이름</h3>
+<h3>2. 동사를 어려워하면</h3>
+<ul>
+  <li>사전에서 본 <b>달리다</b>가 문장에서는 <b>달려요</b>로 바뀌어서 못 알아보는 경우가 많아요. 배우기 카드에 ‘달리다 → 달려요’를 같이 보여 줘요.</li>
+  <li>한국어 동사는 보통 <b>문장 맨 끝</b>, 영어 동사는 <b>이름 말 바로 뒤</b>(dog → runs)에 와요. 틀리면 이 힌트가 나오고, 두 번 틀리면 정답이 반짝여요.</li>
+  <li>처음 화면 아래 <b>“문장 탐정 하나만 연습”</b>에서 움직임 말만 골라 연습할 수 있어요.</li>
+  <li>결과 화면에 <b>가족별 점수</b>가 나와요. 약한 가족이 있으면 그 연습 버튼이 생겨요.</li>
+</ul>
+
+<h3>3. 아이 눈높이 이름</h3>
 <table>
 <tr><th>품사</th><th>아이용 이름</th><th>마법 질문</th></tr>
 <tr><td>명사 Noun</td><td>이름 말</td><td>무엇? 누구?</td></tr>
-<tr><td>동사 Verb</td><td>움직임 말</td><td>무엇을 해요?</td></tr>
+<tr><td>동사 Verb</td><td>움직임 말</td><td>무엇을 해요? / 같이 ○○자!</td></tr>
 <tr><td>형용사 Adjective</td><td>어떤지 말</td><td>어때요?</td></tr>
 <tr><td>부사 Adverb</td><td>어떻게 말</td><td>어떻게? 얼마나?</td></tr>
 </table>
-
-<h3>3. 알아두면 좋아요</h3>
-<ul>
-  <li>한국어 형용사는 <b>예쁘다·크다</b>처럼 ‘-다’로 끝나서 동사와 헷갈려요. “몸으로 흉내 낼 수 있나?”로 구분하게 해 주세요.</li>
-  <li>‘강아지<b>가</b>’의 ‘가’ 같은 조사는 흐리게 보여요. 이름 말에 붙는 꼬리라고 알려 주면 돼요.</li>
-  <li>영어의 the, a, my는 ‘도우미 말’로 회색 표시돼요.</li>
-  <li>처음 맞힌 문제마다 별 ⭐이 쌓여요. 기록은 이 기기에만 저장돼요.</li>
-</ul>
+<p>‘강아지<b>가</b>’의 ‘가’ 같은 조사는 흐리게, 영어의 the·a·my는 회색 ‘도우미 말’로 보여요. 별 기록은 이 기기에만 저장돼요.</p>
 </div></div>
 <script>
 function hlpOpen(){document.getElementById('hlpOv').classList.add('on');}
