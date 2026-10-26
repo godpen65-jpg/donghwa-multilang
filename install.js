@@ -6,6 +6,8 @@
    - 작은 ✕를 누르면 이 앱에서는 7일 동안 안 보인다
    - 아이폰·아이패드는 누르면 '공유 → 홈 화면에 추가' 안내를 띄운다
    - 설치할 수 있을 때만 보이고, 이미 설치했거나 앱으로 열었으면 안 보인다
+   - 단, 설치한 다른 앱(예: 엄마표놀이터) 안에서 이 앱을 열었으면 '이 앱만 따로 홈 화면에 추가' 버튼을 띄운다.
+     누르면 크롬에서 이 페이지가 열리고(?hs-install=1), 거기서 바로 설치 버튼이 뜬다
    ※ 모든 앱이 같은 파일을 쓴다. 고치면 mom-apps 안 앱 폴더들 + 다른 저장소 앱들에 똑같이 복사 */
 (function () {
   var saved = null;
@@ -15,13 +17,17 @@
   st.textContent = '@media (display-mode: standalone){' +
     'body{box-sizing:border-box;padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important}}';
   (document.head || document.documentElement).appendChild(st);
+  // 이 앱의 폴더 (manifest.json이 있는 곳)
+  var ml = document.querySelector('link[rel="manifest"]');
+  var myDir = ml ? new URL('.', ml.href).pathname : location.pathname.replace(/[^\/]*$/, '');
+  var inOtherApp = false;          // 설치한 다른 앱의 창 안에서 열렸나
   if ((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone) {
     // 화면 아래에 붙어 떠 있는 버튼(사용법 등)도 작업표시줄 위로 올리기
     var lift = function () {
       var all = document.body.getElementsByTagName('*');
       for (var i = 0; i < all.length; i++) {
         var el = all[i];
-        if (el.dataset.hsLifted) continue;
+        if (el.dataset.hsLifted || el.id === 'hs-add') continue;
         var cs = getComputedStyle(el);
         if (cs.position !== 'fixed') continue;
         var r = el.getBoundingClientRect();
@@ -34,8 +40,21 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lift); else lift();
     window.addEventListener('load', lift);
     setTimeout(lift, 1000);
-    return;
+    // 이 창을 처음 연 앱 기억하기. 다른 앱 폴더에서 넘어왔으면 '따로 설치' 버튼
+    try {
+      var first = sessionStorage.getItem('hs-launch');
+      if (!first) {
+        var ref = document.referrer ? new URL(document.referrer) : null;
+        first = (ref && ref.host === location.host) ? ref.pathname.replace(/[^\/]*$/, '') : myDir;
+        sessionStorage.setItem('hs-launch', first);
+      }
+      inOtherApp = first !== myDir;
+    } catch (e) {}
+    if (!inOtherApp) return;
   }
+  // '따로 설치'를 눌러 크롬에서 열렸을 때: 크롬 설치 팝업이 아직 준비 안 됐어도 버튼을 바로 보여준다
+  var fromApp = /[?&]hs-install=1/.test(location.search);
+  if (fromApp) try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
 
   // ✕로 닫았으면 7일 동안 안 보이기 (앱마다 따로)
   var HIDE_KEY = 'hs-hide:' + location.pathname.replace(/index\.html$/, '');
@@ -67,15 +86,23 @@
       '#hs-add .hs-x{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;border:none;padding:0;' +
       'background:#fff;color:#9a8aa0;font-size:12px;line-height:22px;text-align:center;cursor:pointer;' +
       'box-shadow:0 1px 4px rgba(0,0,0,.2);font-family:inherit}' +
-      '#hs-add.hs-mini .hs-x{top:-9px;right:-9px}';
+      '#hs-add.hs-mini .hs-x{top:-9px;right:-9px}' +
+      '#hs-guide b{color:#7a63b0}';
     document.head.appendChild(css);
     box = document.createElement('div');
     box.id = 'hs-add';
     box.innerHTML = '<button type="button" class="hs-go" aria-label="홈 화면에 추가">' +
-      '<img src="icon-192.png" alt=""><span>홈 화면에 추가<br>앱처럼 열려요</span></button>' +
+      '<img src="icon-192.png" alt=""><span>' + (inOtherApp ? '이 앱만 따로<br>홈 화면에 추가' : '홈 화면에 추가<br>앱처럼 열려요') +
+      '</span></button>' +
       '<button type="button" class="hs-x" aria-label="홈 화면 추가 버튼 닫기">✕</button>';
     box.firstChild.onclick = function () {
-      if (!saved) { if (isIOS) iosGuide(); return; }
+      if (inOtherApp) return openInBrowser();
+      if (!saved) {
+        if (isIOS) guide('① 화면 아래(또는 주소창 옆) <b>공유 버튼 □↑</b>을 누르고<br>② <b>홈 화면에 추가</b>를 누르세요<br>' +
+          '<span style="font-size:14px;color:#9a92a8">크롬이면 주소창 오른쪽 공유 버튼이에요</span>');
+        else guide('크롬 오른쪽 위 <b>⋮</b> 를 누르고<br><b>홈 화면에 추가</b> (또는 <b>앱 설치</b>)를 누르세요');
+        return;
+      }
       saved.prompt();
       saved.userChoice.then(function (r) { if (r.outcome === 'accepted') hide(); saved = null; });
     };
@@ -96,9 +123,11 @@
   }
 
   // 구석 후보: 오른쪽 아래, 왼쪽 아래, 오른쪽 위, 왼쪽 위 (위는 머리줄 아래·맨 위 두 가지)
+  // 앱 창 안이면 아래는 갤럭시탭 작업표시줄 위로
+  var BOT = inOtherApp ? '96px' : '12px';
   var SPOTS = [
-    { right: '12px', bottom: '12px' },
-    { left: '12px', bottom: '12px' },
+    { right: '12px', bottom: BOT },
+    { left: '12px', bottom: BOT },
     { right: '12px', top: '70px' },
     { left: '12px', top: '70px' },
     { right: '12px', top: '10px' },
@@ -179,19 +208,31 @@
   }
   // 아래 구석에 있으면, 페이지 맨 아래 내용이 버튼 밑에 깔리지 않게 아래 여백 주기
   function pad(reset) {
-    var body = document.body;
-    if (padded === null) padded = body.style.paddingBottom;
-    body.style.paddingBottom = padded;
+    var bs = document.body.style;
+    if (padded === null) padded = [bs.getPropertyValue('padding-bottom'), bs.getPropertyPriority('padding-bottom')];
+    bs.setProperty('padding-bottom', padded[0], padded[1]);
     if (reset || box.style.bottom === 'auto') return;
-    var need = box.offsetHeight + 24;
-    if (parseFloat(getComputedStyle(body).paddingBottom) < need) body.style.paddingBottom = need + 'px';
+    var need = box.offsetHeight + parseFloat(box.style.bottom) + 12;
+    if (parseFloat(getComputedStyle(document.body).paddingBottom) < need) bs.setProperty('padding-bottom', need + 'px', 'important');
   }
   function hide() {
     if (!box) return;
     box.remove(); box = null;
-    if (padded !== null) document.body.style.paddingBottom = padded;
+    if (padded !== null) document.body.style.setProperty('padding-bottom', padded[0], padded[1]);
   }
-  function iosGuide() {
+  // 앱 창 밖(크롬·사파리)에서 이 페이지 열기
+  function openInBrowser() {
+    var url = location.origin + location.pathname + '?hs-install=1';
+    if (isIOS) {
+      guide('<b>사파리</b>에서 아래 주소를 열고<br>공유 버튼 □↑ → <b>홈 화면에 추가</b>를 누르세요<br>' +
+        '<span style="font-size:14px;color:#9a92a8;word-break:break-all">' + location.origin + location.pathname + '</span>');
+      return;
+    }
+    // 안드로이드: 크롬으로 열기 (크롬이 없으면 그냥 주소 열기)
+    location.href = 'intent://' + location.host + location.pathname + '?hs-install=1#Intent;scheme=https;' +
+      'package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+  }
+  function guide(html) {
     if (document.getElementById('hs-guide')) return;
     var g = document.createElement('div');
     g.id = 'hs-guide';
@@ -199,14 +240,11 @@
       'align-items:flex-end;justify-content:center;padding:16px';
     g.innerHTML = '<div style="background:#fff;border-radius:20px;padding:18px 20px;max-width:360px;width:100%;' +
       'font-size:16px;line-height:1.6;color:#4a4458;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.2)">' +
-      '<div style="font-size:18px;font-weight:bold;margin-bottom:8px">홈 화면에 추가하기</div>' +
-      '① 화면 아래(또는 주소창 옆) <b>공유 버튼 □↑</b>을 누르고<br>' +
-      '② <b>홈 화면에 추가</b>를 누르세요<br>' +
-      '<span style="font-size:14px;color:#9a92a8">크롬이면 주소창 오른쪽 공유 버튼이에요</span>' +
+      '<div style="font-size:18px;font-weight:bold;margin-bottom:8px">홈 화면에 추가하기</div>' + html +
       '<div style="margin-top:12px;font-size:15px;color:#7a63b0">닫기</div></div>';
     g.onclick = function () { g.remove(); };
     document.body.appendChild(g);
   }
 
-  if (isIOS) show();               // 위의 값들(SPOTS 등)이 다 준비된 뒤에 부르기
+  if (isIOS || inOtherApp || fromApp) show();   // 위의 값들(SPOTS 등)이 다 준비된 뒤에 부르기
 })();
