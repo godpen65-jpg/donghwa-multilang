@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>달리기 경주 빈칸 채우기 · The Big Race</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdf7ea; --ink:#43382c; --muted:#a2937a;
+    --tile-top:#ffc064; --tile-bot:#f79c1a; --tile-edge:#d17c10;
+    --blue:#6b43b8; --green:#2e9e5b; --red:#e0533f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;padding:10px;min-height:100%;background:#f3a63a;
+    font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+    color:var(--ink);overflow-x:hidden;
+  }
+
+  /* ── 사막 경주장 배경 ── */
+  .sky{position:fixed;inset:0;z-index:-2;width:100%;height:100%;}
+  .dust{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
+  .dust i{
+    position:absolute;bottom:-30px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,250,225,.9),rgba(255,236,170,.25) 60%,rgba(255,236,170,0));
+    animation:drift linear infinite;
+  }
+  @keyframes drift{0%{transform:translate(0,0);opacity:0}15%{opacity:.85}100%{transform:translate(70px,-100vh);opacity:0}}
+  .sun{animation:glow 6s ease-in-out infinite;transform-origin:1010px 130px;}
+  @keyframes glow{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .cactus{animation:wiggle 8s ease-in-out infinite;transform-origin:bottom center;transform-box:fill-box;}
+  .cactus.b{animation-duration:10s;animation-delay:-3s;}
+  .cactus.c{animation-duration:9s;animation-delay:-5s;}
+  @keyframes wiggle{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+  .flag{animation:flap 1.6s ease-in-out infinite;transform-origin:0 0;transform-box:fill-box;}
+  @keyframes flap{0%,100%{transform:skewY(0)}50%{transform:skewY(-7deg)}}
+  @media (prefers-reduced-motion:reduce){
+    .sun,.cactus,.flag,.dust i{animation:none;}
+  }
+
+  /* ── 상단 바 ── */
+  .topbar{max-width:980px;margin:0 auto 10px;display:flex;align-items:center;gap:8px;}
+  .icon-btn{
+    background:rgba(255,255,255,.92);border:none;border-radius:14px;
+    width:42px;height:42px;font-size:19px;cursor:pointer;color:#8a4a12;
+    box-shadow:0 3px 0 rgba(0,0,0,.16);text-decoration:none;flex:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.16);}
+  .bar{flex:1;height:12px;border-radius:99px;background:rgba(255,255,255,.4);overflow:hidden;}
+  .bar i{display:block;height:100%;width:0;border-radius:99px;
+         background:linear-gradient(90deg,#ffd166,#f79c1a);transition:width .35s;}
+  .count{color:#fff;font-size:15px;min-width:52px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.3);}
+
+  /* ── 책 ── */
+  .book{
+    max-width:980px;margin:0 auto;display:flex;
+    background:#d2452f;border-radius:24px;padding:11px;
+    box-shadow:0 20px 44px rgba(90,40,0,.35);
+  }
+  .side{
+    width:34%;background:var(--paper);border-radius:18px 0 0 18px;
+    border-right:2px dashed #e7dcc3;padding:16px 12px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .main{flex:1;background:var(--paper);border-radius:0 18px 18px 0;padding:18px 16px;
+        display:flex;flex-direction:column;}
+
+  .art{position:relative;width:150px;height:150px;flex:none;}
+  .art svg{position:absolute;inset:0;width:100%;height:100%;}
+  .art span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+            font-size:68px;line-height:1;filter:drop-shadow(0 5px 6px rgba(0,0,0,.18));}
+  .label{background:#fff;color:var(--blue);border-radius:99px;padding:6px 16px;font-size:16px;
+         box-shadow:0 2px 6px rgba(0,0,0,.14);}
+  .pagenum{color:var(--muted);font-size:14px;}
+
+  /* 단어 타일 */
+  .tiles{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:6px;}
+  .tile{
+    background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;border:none;
+    border-radius:13px;box-shadow:0 5px 0 var(--tile-edge);padding:11px 20px;font-size:21px;
+    font-family:'Trebuchet MS',system-ui,sans-serif;font-weight:700;cursor:pointer;
+    transition:transform .1s,box-shadow .1s,opacity .25s;
+  }
+  .tile:active{transform:translateY(3px);box-shadow:0 2px 0 var(--tile-edge);}
+  .tile.used{opacity:0;pointer-events:none;transform:scale(.6);}
+  .tile.bad{animation:shake .4s;background:linear-gradient(#ff9c8c,#e0533f);box-shadow:0 5px 0 #b13a29;}
+  .tile.hint{box-shadow:0 5px 0 var(--tile-edge),0 0 0 4px #fff0a8;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+  /* 본문 */
+  .txt{flex:1;}
+  .ln{padding:9px 2px;border-bottom:1px dashed #eadfc6;
+      display:flex;gap:9px;align-items:flex-start;}
+  .ln:last-child{border-bottom:none;}
+  .ln .body{flex:1;min-width:0;}
+  .ln p{margin:0;font-size:20px;line-height:1.85;
+        font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;}
+  .spk{
+    background:#fff1d6;border:none;border-radius:50%;width:36px;height:36px;
+    font-size:15px;cursor:pointer;flex:none;margin-top:5px;color:#8a4a12;
+    box-shadow:0 3px 0 #f0cf8f;
+  }
+  .spk:active{transform:translateY(2px);box-shadow:0 1px 0 #f0cf8f;}
+  .spk.on{background:#fff0c9;box-shadow:0 3px 0 var(--tile-bot);}
+  .ln.now p{color:var(--blue);}
+  .ln .kohint{display:none;margin:3px 0 0;font-size:14px;color:var(--muted);}
+  .ln .kohint.show{display:block;}
+  .blank{
+    display:inline-block;min-width:56px;text-align:center;padding:0 5px;margin:0 3px;
+    border-bottom:3px solid #cbbb9c;color:transparent;font-weight:700;line-height:1.2;
+  }
+  .blank.now{border-bottom-color:var(--blue);animation:blink 1.2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+  .blank.done{color:var(--blue);border-bottom-color:var(--green);}
+  .blank.done.key{background:#ffe94f;border-radius:4px;}
+  .blank.bad{animation:shake .4s;border-bottom-color:var(--red);}
+
+  /* 버튼 줄 */
+  .actions{display:flex;gap:9px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+  .btn{border:none;border-radius:15px;padding:12px 22px;font-size:19px;font-family:inherit;
+       cursor:pointer;background:#fff1d6;color:#8a4a12;box-shadow:0 4px 0 #f0cf8f;}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #f0cf8f;}
+  .btn.go{background:linear-gradient(var(--tile-top),var(--tile-bot));color:#fff;box-shadow:0 4px 0 var(--tile-edge);}
+  .btn.go:active{box-shadow:0 2px 0 var(--tile-edge);}
+  .btn[hidden]{display:none;}
+
+  .stamp{max-width:980px;margin:10px auto 4px;text-align:center;font-size:13px;
+         color:#fff;opacity:.85;text-shadow:0 1px 3px rgba(0,0,0,.35);}
+
+  /* 덮개 */
+  .ov{position:fixed;inset:0;z-index:500;background:rgba(80,35,10,.6);display:none;
+      align-items:center;justify-content:center;padding:18px;}
+  .ov.on{display:flex;}
+  .ov-box{background:#fff;border-radius:26px;padding:26px 22px;max-width:420px;width:100%;
+          text-align:center;box-shadow:0 22px 50px rgba(0,0,0,.35);}
+  .ov-box h2{font-size:25px;margin:0 0 10px;color:#f2683c;}
+  .ov-box p{font-size:16px;color:#7d6f5c;margin:0 0 16px;line-height:1.7;}
+  .help{text-align:left;}
+  .help h2{text-align:center;}
+  .help ul{padding-left:20px;margin:8px 0;}
+  .help li{font-size:16px;line-height:1.75;color:#5d5040;margin-bottom:4px;}
+  .help .note{font-size:14px;color:#a2937a;margin-top:14px;}
+
+  @media (max-width:820px){
+    body{padding:8px;}
+    .book{flex-direction:column;padding:8px;}
+    .side{width:100%;border-radius:16px 16px 0 0;border-right:none;
+          border-bottom:2px dashed #e7dcc3;flex-direction:row;padding:12px;gap:14px;
+          align-items:center;justify-content:flex-start;}
+    .side .who{display:flex;flex-direction:column;gap:5px;align-items:flex-start;}
+    .side .tiles{display:none;}
+    .main{border-radius:0 0 16px 16px;padding:14px 12px 16px;}
+    .art{width:96px;height:96px;}
+    .art span{font-size:44px;}
+    .ln p{font-size:19px;line-height:1.85;}
+    .main .tiles{display:flex;}
+    .tile{font-size:19px;padding:10px 16px;}
+  }
+  @media (min-width:821px){ .main .tiles{display:none;} }
+</style>
+</head>
+<body>
+
+<svg class="sky" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="air" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe9a8"/><stop offset=".55" stop-color="#fbc65a"/><stop offset="1" stop-color="#f3a63a"/>
+    </linearGradient>
+    <linearGradient id="dune" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6b44c"/><stop offset="1" stop-color="#e48a2a"/>
+    </linearGradient>
+    <radialGradient id="sunG"><stop offset="0" stop-color="#fffbe6"/><stop offset=".55" stop-color="#fff2a8"/><stop offset="1" stop-color="#fff2a8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#air)"/>
+  <g class="sun"><circle cx="1010" cy="130" r="150" fill="url(#sunG)" opacity=".8"/><circle cx="1010" cy="130" r="62" fill="#fff6c4"/></g>
+  <path d="M0,560 C200,500 380,580 600,540 C820,500 1000,570 1200,530 L1200,800 L0,800 Z" fill="#f5b957" opacity=".8"/>
+  <g transform="translate(1080,600) scale(0.9)"><g class="cactus">
+    <rect x="-22" y="-220" width="44" height="220" rx="22" fill="#9dbb3a"/>
+    <path d="M-22,-110 h-30 a18,18 0 0 1 -18,-18 v-52 a14,14 0 0 1 28,0 v42 h20 Z" fill="#9dbb3a"/>
+    <path d="M22,-140 h30 a18,18 0 0 0 18,-18 v-40 a14,14 0 0 0 -28,0 v30 h-20 Z" fill="#9dbb3a"/>
+    <g stroke="#6f8a22" stroke-width="3" stroke-linecap="round" opacity=".55">
+      <path d="M-8,-200 v170 M8,-200 v170"/></g>
+    <g stroke="#fff6c8" stroke-width="3" stroke-linecap="round">
+      <path d="M-22,-180 l-10,-6 M22,-160 l10,-6 M-22,-80 l-10,4 M22,-60 l10,4 M-56,-170 l-8,-6 M56,-185 l8,-6"/></g>
+  </g></g>
+  <g transform="translate(150,640) scale(1.1)"><g class="cactus b">
+    <rect x="-22" y="-220" width="44" height="220" rx="22" fill="#a9c63f"/>
+    <path d="M-22,-110 h-30 a18,18 0 0 1 -18,-18 v-52 a14,14 0 0 1 28,0 v42 h20 Z" fill="#a9c63f"/>
+    <path d="M22,-140 h30 a18,18 0 0 0 18,-18 v-40 a14,14 0 0 0 -28,0 v30 h-20 Z" fill="#a9c63f"/>
+    <g stroke="#6f8a22" stroke-width="3" stroke-linecap="round" opacity=".55">
+      <path d="M-8,-200 v170 M8,-200 v170"/></g>
+    <g stroke="#fff6c8" stroke-width="3" stroke-linecap="round">
+      <path d="M-22,-180 l-10,-6 M22,-160 l10,-6 M-22,-80 l-10,4 M22,-60 l10,4 M-56,-170 l-8,-6 M56,-185 l8,-6"/></g>
+  </g></g>
+  <path d="M0,640 C240,600 460,680 700,640 C900,606 1060,664 1200,630 L1200,800 L0,800 Z" fill="url(#dune)"/>
+  <g stroke="#fff" stroke-width="5" fill="none" opacity=".75">
+    <path d="M-20,720 C300,680 860,690 1220,700"/>
+    <path d="M-20,760 C300,724 860,734 1220,744"/>
+  </g>
+  <g transform="translate(1150,560)">
+    <rect x="-4" y="0" width="8" height="160" rx="4" fill="#7a4a14"/>
+    <g class="flag"><path d="M4,6 h70 v44 h-70 Z" fill="#fff"/>
+      <g fill="#2b2b2b"><rect x="4" y="6" width="14" height="11"/><rect x="32" y="6" width="14" height="11"/><rect x="60" y="6" width="14" height="11"/>
+        <rect x="18" y="17" width="14" height="11"/><rect x="46" y="17" width="14" height="11"/>
+        <rect x="4" y="28" width="14" height="11"/><rect x="32" y="28" width="14" height="11"/><rect x="60" y="28" width="14" height="11"/>
+        <rect x="18" y="39" width="14" height="11"/><rect x="46" y="39" width="14" height="11"/></g></g>
+  </g>
+  <g fill="#ffd77a" opacity=".9"><ellipse cx="420" cy="690" rx="22" ry="9"/><ellipse cx="450" cy="698" rx="12" ry="6"/><ellipse cx="860" cy="676" rx="18" ry="8"/></g>
+</svg>
+<div class="dust" id="dust"></div>
+
+<div class="topbar">
+  <a class="icon-btn" href="index.html" title="동화 모음으로">←</a>
+  <div class="bar"><i id="barFill"></i></div>
+  <div class="count" id="count">–</div>
+  <button class="icon-btn" id="btnRestart" type="button" title="처음부터">↻</button>
+  <button class="icon-btn" id="btnHelp" type="button" title="사용법">?</button>
+</div>
+
+<div class="book">
+  <div class="side">
+    <div class="art" id="art"></div>
+    <div class="who">
+      <div class="label" id="label"></div>
+      <div class="pagenum" id="pagenum"></div>
+    </div>
+    <div class="tiles" id="tilesWide"></div>
+  </div>
+  <div class="main">
+    <div class="txt" id="txt"></div>
+    <div class="tiles" id="tilesNarrow"></div>
+    <div class="actions">
+      <button class="btn" id="btnListen" type="button">🔊 전체 듣기</button>
+      <button class="btn go" id="btnNext" type="button" hidden>다음 ▶</button>
+    </div>
+  </div>
+</div>
+
+<div class="stamp">v1 · The Big Race · 빈칸 채우기 + 문장별 듣기</div>
+
+<div class="ov" id="ovEnd"><div class="ov-box">
+  <h2>🎉 다 읽었어요!</h2>
+  <p>빨간 도마뱀의 달리기 경주 이야기를 끝까지 채웠어요.<br>Hip, Hip, Hooray! 🦎🎂</p>
+  <button class="btn go" id="btnAgain" type="button">처음부터 다시</button>
+</div></div>
+
+<div class="ov" id="ovHelp"><div class="ov-box help">
+  <h2>🏁 어떻게 하나요?</h2>
+  <ul>
+    <li>글을 읽다가 <b>빈칸</b>이 나오면, 아래 단어 중 <b>알맞은 것을 눌러요</b>.</li>
+    <li>지금 채울 빈칸은 <b>파란 줄</b>로 깜빡여요.</li>
+    <li>틀리면 단어가 흔들려요. 세 번 틀리면 <b>정답 단어</b>가 반짝여요.</li>
+    <li>문장 옆 <b>🔊</b> 를 누르면 <b>그 문장만</b> 들려줘요.</li>
+    <li>아래 <b>전체 듣기</b>를 누르면 그 쪽을 처음부터 들려줘요.</li>
+    <li>다 채우면 <b>한국어 뜻</b>이 아래에 나와요.</li>
+  </ul>
+  <p class="note">
+    책 『The Big Race』 (Pam Muñoz Ryan 글, Viviana Garofoli 그림) 126~143쪽이에요.<br>노란 형광펜 단어는 책에 칠해져 있던 꼭 알아야 할 단어예요.<br>
+    음원 파일을 넣으면 사람 목소리로 들려주고, 없으면 브라우저 읽어주기로 들려줘요.
+  </p>
+  <button class="btn" id="btnHelpClose" type="button">닫기</button>
+</div></div>
+
+<script>
+window.onerror = function(msg, src, line){
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#e0533f;'
+                  + 'color:#fff;font-size:13px;padding:8px 10px;line-height:1.5';
+  d.textContent = '화면을 그리지 못했어요: ' + msg + ' (' + line + '줄)';
+  document.body.appendChild(d);
+};
+
+/* ══════════════════════════════════════════════════════════
+   1. 음원 설정 ── 여기에 오디오북 음원을 넣으세요
+      src 를 비워두면 브라우저 읽어주기로 대신합니다.
+      각 쪽의 t:[시작초, 끝초] 구간만 재생됩니다.
+   ══════════════════════════════════════════════════════════ */
+const AUDIO = { src: "" };
+
+/* ══════════════════════════════════════════════════════════
+   2. 본문 ── 다른 책으로 바꾸려면 여기만 고치면 됩니다.
+      {단어} 가 빈칸이 됩니다. 한 문장에 한 칸이면 알맞아요.
+      key : 책에 형광펜으로 칠해져 있던 단어
+   ══════════════════════════════════════════════════════════ */
+const PAGES = [
+  { page:126, art:"🎂", label:"the big race", key:[], lines:[
+    { en:"{Today} is the big {race}.", ko:"오늘은 큰 달리기 경주 날이에요." }
+  ]},
+  { page:127, art:"🦎", label:"Red Lizard", key:[], lines:[
+    { en:"\u201cI like {cake}!\u201d said Red Lizard.", ko:"\u201c난 케이크가 좋아!\u201d 빨간 도마뱀이 말했어요." },
+    { en:"\u201cI will {run} in that race.\u201d", ko:"\u201c나도 저 경주에서 달릴 거야.\u201d" }
+  ]},
+  { page:128, art:"🏁", label:"the race", key:["Four"], lines:[
+    { en:"Red Lizard gets to the {race}.", ko:"빨간 도마뱀이 경주하는 곳에 도착해요." },
+    { en:"{Four} animals will run with him.", ko:"동물 네 마리가 도마뱀과 함께 달릴 거예요." }
+  ]},
+  { page:129, art:"🐇", label:"Cottontail · 1", key:[], lines:[
+    { en:"Cottontail is not {late}.", ko:"솜꼬리토끼는 늦지 않았어요." },
+    { en:"She will run in lane {one}.", ko:"토끼는 1번 레인에서 달릴 거예요." }
+  ]},
+  { page:130, art:"🐭", label:"Rat · 2", key:["two"], lines:[
+    { en:"Rat {naps} in the {shade}.", ko:"쥐는 그늘에서 낮잠을 자요." },
+    { en:"She will run in lane {two}.", ko:"쥐는 2번 레인에서 달릴 거예요." }
+  ]},
+  { page:131, art:"🐍", label:"Snake · 3  Roadrunner · 4", key:["three"], lines:[
+    { en:"Snake takes his spot in lane {three}.", ko:"뱀은 3번 레인에 자리를 잡아요." },
+    { en:"Roadrunner stands in lane {four}.", ko:"로드러너는 4번 레인에 서 있어요." },
+    { en:"He {waves} to his pals.", ko:"로드러너는 친구들에게 손을 흔들어요." }
+  ]},
+  { page:132, art:"🦎", label:"Red Lizard · 5", key:["five"], lines:[
+    { en:"Red Lizard is in lane {five}.", ko:"빨간 도마뱀은 5번 레인에 있어요." },
+    { en:"The animals bend and {hop}.", ko:"동물들이 몸을 굽혔다가 깡충 뛰어요." }
+  ]},
+  { page:133, art:"🚩", label:"Get set. Go!", key:["starts","watch"], lines:[
+    { en:"The flag is down, and the race {starts}!", ko:"깃발이 내려가고, 경주가 시작돼요!" },
+    { en:"Many animals {watch} and clap.", ko:"많은 동물들이 구경하며 박수를 쳐요." }
+  ]},
+  { page:134, art:"🐇", label:"Cottontail", key:[], lines:[
+    { en:"Cottontail {does} not get {far}.", ko:"솜꼬리토끼는 멀리 가지 못해요." }
+  ]},
+  { page:135, art:"🐭", label:"Rat", key:["into"], lines:[
+    { en:"Rat falls {into} the {hay}.", ko:"쥐는 건초 더미 속으로 넘어져요." }
+  ]},
+  { page:136, art:"🐍", label:"Snake", key:[], lines:[
+    { en:"Snake {stops} and chases {bugs}.", ko:"뱀은 멈춰서 벌레를 쫓아가요." }
+  ]},
+  { page:137, art:"🐦", label:"Roadrunner", key:["over"], lines:[
+    { en:"Roadrunner trips {over} a {rake}.", ko:"로드러너는 갈퀴에 걸려 넘어져요." },
+    { en:"Who will {win}?", ko:"누가 이길까요?" }
+  ]},
+  { page:138, art:"🏆", label:"Hip, Hip, Hooray!", key:[], lines:[
+    { en:"It\u2019s Red {Lizard} who {wins}!", ko:"이긴 건 바로 빨간 도마뱀이에요!" }
+  ]},
+  { page:139, art:"🎂", label:"his big cake", key:["Watch"], lines:[
+    { en:"\u201c{Watch} me eat this {cake},\u201d he yells.", ko:"\u201c내가 이 케이크 먹는 거 봐!\u201d 도마뱀이 소리쳐요." },
+    { en:"Red Lizard looks at his {big} cake.", ko:"빨간 도마뱀이 자기의 커다란 케이크를 바라봐요." }
+  ]},
+  { page:140, art:"🦎", label:"Red Lizard", key:[], lines:[
+    { en:"Red Lizard {looks} at his {pals}.", ko:"빨간 도마뱀이 친구들을 바라봐요." }
+  ]},
+  { page:141, art:"🐇🐍", label:"his pals", key:[], lines:[
+    { en:"His pals {like} cake, too.", ko:"친구들도 케이크를 좋아해요." },
+    { en:"What will Red Lizard do {now}?", ko:"빨간 도마뱀은 이제 어떻게 할까요?" }
+  ]},
+  { page:143, art:"🍰", label:"five plates", key:["five"], lines:[
+    { en:"Red Lizard gets {five} {plates}.", ko:"빨간 도마뱀은 접시 다섯 개를 가져와요." },
+    { en:"He gets cake for his pals, too.", ko:"친구들에게도 케이크를 나눠 줘요." },
+    { en:"Hip, Hip, Hooray for Red Lizard!", ko:"빨간 도마뱀 만세, 만세, 만만세!" }
+  ]}
+];
+
+const $ = function(id){ return document.getElementById(id); };
+const artEl=$('art'), labelEl=$('label'), pageEl=$('pagenum'), txtEl=$('txt');
+const tilesWide=$('tilesWide'), tilesNarrow=$('tilesNarrow');
+const btnNext=$('btnNext'), barFill=$('barFill'), countEl=$('count');
+
+const STORE = 'bigrace-progress-v1';
+let idx = 0, cursor = 0, answers = [], misses = 0, touched = false;
+
+/* 저장이 막힌 곳에서도 멈추지 않도록 */
+let memSave = null;
+function saveIdx(i){ try{ localStorage.setItem(STORE, String(i)); }catch(e){ memSave = String(i); } }
+function loadIdx(){ try{ return localStorage.getItem(STORE); }catch(e){ return memSave; } }
+function clearIdx(){ try{ localStorage.removeItem(STORE); }catch(e){ memSave = null; } }
+
+/* 책 그림처럼 물결 모양 사진틀 */
+function scallop(w,h,r){
+  const nx = Math.max(2, Math.round(w/(2*r))), ny = Math.max(2, Math.round(h/(2*r)));
+  const sx = w/nx, sy = h/ny;
+  let d = 'M0,0';
+  for(let i=0;i<nx;i++) d += ' a'+(sx/2)+','+(sx/2)+' 0 0,1 '+sx+',0';
+  for(let i=0;i<ny;i++) d += ' a'+(sy/2)+','+(sy/2)+' 0 0,1 0,'+sy;
+  for(let i=0;i<nx;i++) d += ' a'+(sx/2)+','+(sx/2)+' 0 0,1 '+(-sx)+',0';
+  for(let i=0;i<ny;i++) d += ' a'+(sy/2)+','+(sy/2)+' 0 0,1 0,'+(-sy);
+  return d + ' Z';
+}
+function drawArt(emoji){
+  const w=124,h=124,r=13;
+  artEl.innerHTML =
+    '<svg viewBox="'+(-r-6)+' '+(-r-6)+' '+(w+2*r+12)+' '+(h+2*r+12)+'">' +
+      '<path d="'+scallop(w,h,r)+'" fill="#fff4d0" stroke="#f6d58a" stroke-width="7"/>' +
+      '<path d="'+scallop(w,h,r)+'" fill="none" stroke="#fff" stroke-width="3"/>' +
+    '</svg><span>'+emoji+'</span>';
+}
+
+(function makeDust(){
+  const box = $('dust');
+  for(let i=0;i<14;i++){
+    const b=document.createElement('i');
+    const s=4+Math.random()*10;
+    b.style.width=s+'px'; b.style.height=s+'px';
+    b.style.left=Math.random()*100+'%';
+    b.style.animationDuration=(11+Math.random()*12)+'s';
+    b.style.animationDelay=(-Math.random()*18)+'s';
+    box.appendChild(b);
+  }
+})();
+
+/* 소리 */
+const audioEl = new Audio();
+let stopAt = null;
+if(AUDIO.src) audioEl.src = AUDIO.src;
+audioEl.addEventListener('timeupdate', function(){
+  if(stopAt !== null && audioEl.currentTime >= stopAt){ audioEl.pause(); stopAt = null; }
+});
+function pageText(){
+  return PAGES[idx].lines.map(function(l){ return l.en.replace(/[{}]/g,''); }).join(' ');
+}
+function speak(text, t){
+  if(AUDIO.src && t){
+    try{
+      stopAt = t[1];
+      audioEl.currentTime = t[0];
+      audioEl.play();
+      return;
+    }catch(e){ /* 음원을 못 읽으면 읽어주기로 */ }
+  }
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=0.82;
+  speechSynthesis.speak(u);
+}
+
+function playPage(){
+  const p = PAGES[idx];
+  if(AUDIO.src){
+    try{
+      stopAt = p.t ? p.t[1] : null;
+      audioEl.currentTime = p.t ? p.t[0] : 0;
+      audioEl.play();
+      return;
+    }catch(e){ /* 음원을 못 읽으면 읽어주기로 */ }
+  }
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(pageText());
+  u.lang='en-US'; u.rate=0.82;
+  speechSynthesis.speak(u);
+}
+
+function norm(w){ return w.replace(/[^A-Za-z']/g,'').toLowerCase(); }
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+
+function renderPage(){
+  const p = PAGES[idx];
+  cursor = 0; misses = 0; answers = [];
+
+  drawArt(p.art);
+  labelEl.textContent = p.label;
+  pageEl.textContent = p.page + '쪽';
+  btnNext.hidden = true;
+
+  txtEl.innerHTML = '';
+  p.lines.forEach(function(line, li){
+    const row = document.createElement('div');
+    row.className = 'ln'; row.dataset.li = li;
+
+    const spk = document.createElement('button');
+    spk.type = 'button'; spk.className = 'spk'; spk.textContent = '🔊';
+    spk.title = '이 문장 듣기';
+    spk.dataset.text = line.en.replace(/[{}]/g, '');
+    if(line.t) spk.dataset.t = line.t.join(',');
+    row.appendChild(spk);
+
+    const body = document.createElement('div');
+    body.className = 'body';
+
+    const para = document.createElement('p');
+    line.en.split(/\{([^}]+)\}/).forEach(function(part, i){
+      if(i % 2 === 0){
+        para.appendChild(document.createTextNode(part));
+      } else {
+        const b = document.createElement('span');
+        b.className = 'blank';
+        b.dataset.answer = part;
+        b.dataset.n = answers.length;
+        b.textContent = part;      /* 글자는 투명, 칸 너비만 잡아줘요 */
+        para.appendChild(b);
+        answers.push(part);
+      }
+    });
+    body.appendChild(para);
+
+    const ko = document.createElement('p');
+    ko.className = 'kohint';
+    ko.textContent = line.ko;
+    body.appendChild(ko);
+
+    row.appendChild(body);
+    txtEl.appendChild(row);
+  });
+
+  const list = shuffle(answers.slice());
+  [tilesWide, tilesNarrow].forEach(function(box){
+    box.innerHTML = '';
+    list.forEach(function(w, i){
+      const b = document.createElement('button');
+      b.type='button'; b.className='tile'; b.dataset.w=w; b.dataset.i=i; b.textContent=w;
+      box.appendChild(b);
+    });
+  });
+
+  markNow();
+  countEl.textContent = (idx+1) + ' / ' + PAGES.length;
+  barFill.style.width = (idx / PAGES.length * 100) + '%';
+  saveIdx(idx);
+}
+
+function markNow(){
+  const all = txtEl.querySelectorAll('.blank');
+  for(let i=0;i<all.length;i++) all[i].classList.remove('now');
+  const rows = txtEl.querySelectorAll('.ln');
+  for(let i=0;i<rows.length;i++) rows[i].classList.remove('now');
+  const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
+  if(b){ b.classList.add('now'); const row = b.closest('.ln'); if(row) row.classList.add('now'); }
+}
+
+function finishPage(){
+  const p = PAGES[idx];
+  const key = p.key || [];
+  const done = txtEl.querySelectorAll('.blank.done');
+  for(let i=0;i<done.length;i++){
+    if(key.some(function(k){ return norm(k) === norm(done[i].dataset.answer); })) done[i].classList.add('key');
+  }
+  const kos = txtEl.querySelectorAll('.kohint');
+  for(let i=0;i<kos.length;i++) kos[i].classList.add('show');
+  btnNext.hidden = false;
+  btnNext.textContent = (idx === PAGES.length-1) ? '끝내기 🎉' : '다음 ▶';
+  barFill.style.width = ((idx+1) / PAGES.length * 100) + '%';
+  setTimeout(playPage, 250);
+}
+
+function onTile(e){
+  const t = e.target.closest ? e.target.closest('.tile') : null;
+  if(!t || t.classList.contains('used')) return;
+  touched = true;
+
+  if(t.dataset.w === answers[cursor]){
+    /* 양쪽(넓은 화면용·좁은 화면용) 같은 자리 타일을 함께 없앱니다 */
+    const same = document.querySelectorAll('.tile[data-i="'+t.dataset.i+'"]');
+    for(let i=0;i<same.length;i++) same[i].classList.add('used');
+
+    const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
+    b.classList.remove('now'); b.classList.add('done');
+    cursor++; misses = 0;
+    const hints = document.querySelectorAll('.tile.hint');
+    for(let i=0;i<hints.length;i++) hints[i].classList.remove('hint');
+
+    if(cursor >= answers.length){ markNow(); finishPage(); }
+    else markNow();
+  } else {
+    t.classList.add('bad');
+    setTimeout(function(){ t.classList.remove('bad'); }, 450);
+    const b = txtEl.querySelector('.blank[data-n="'+cursor+'"]');
+    if(b){ b.classList.add('bad'); setTimeout(function(){ b.classList.remove('bad'); }, 450); }
+    misses++;
+    if(misses >= 3){
+      const want = answers[cursor];
+      const all = document.querySelectorAll('.tile:not(.used)');
+      for(let i=0;i<all.length;i++) if(all[i].dataset.w === want) all[i].classList.add('hint');
+    }
+  }
+}
+tilesWide.addEventListener('click', onTile);
+tilesNarrow.addEventListener('click', onTile);
+
+txtEl.addEventListener('click', function(e){
+  const s = e.target.closest ? e.target.closest('.spk') : null;
+  if(!s) return;
+  touched = true;
+  const marks = txtEl.querySelectorAll('.spk.on');
+  for(let i=0;i<marks.length;i++) marks[i].classList.remove('on');
+  s.classList.add('on');
+  setTimeout(function(){ s.classList.remove('on'); }, 1400);
+  speak(s.dataset.text, s.dataset.t ? s.dataset.t.split(',').map(Number) : null);
+});
+
+$('btnListen').addEventListener('click', function(){ touched = true; playPage(); });
+
+btnNext.addEventListener('click', function(){
+  if(idx === PAGES.length-1){ clearIdx(); $('ovEnd').classList.add('on'); return; }
+  idx++; renderPage();
+  if(touched) setTimeout(playPage, 350);
+  window.scrollTo(0,0);
+});
+
+$('btnAgain').addEventListener('click', function(){ $('ovEnd').classList.remove('on'); idx=0; renderPage(); });
+$('btnRestart').addEventListener('click', function(){ clearIdx(); idx=0; renderPage(); });
+$('btnHelp').addEventListener('click', function(){ $('ovHelp').classList.add('on'); });
+$('btnHelpClose').addEventListener('click', function(){ $('ovHelp').classList.remove('on'); });
+$('ovHelp').addEventListener('click', function(e){ if(e.target === this) this.classList.remove('on'); });
+
+const saved = parseInt(loadIdx() || '0', 10) || 0;
+if(saved > 0 && saved < PAGES.length) idx = saved;
+renderPage();
+</script>
+</body>
+</html>
